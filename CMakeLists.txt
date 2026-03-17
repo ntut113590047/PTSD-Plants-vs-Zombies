@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(REPLACE_WITH_YOUR_PROJECT_NAME)
+project(Plants_vs_Zombies)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -35,6 +35,9 @@ add_executable(${PROJECT_NAME}
     ${SRC_DIR}/main.cpp
     ${SRC_FILES}
     ${HEADER_FILES}
+        src/LevelManager.cpp
+        src/Button.cpp
+        include/Button.hpp
 )
 
 if(MSVC)
