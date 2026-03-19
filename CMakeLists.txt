@@ -38,6 +38,8 @@ add_executable(${PROJECT_NAME}
         src/LevelManager.cpp
         src/Button.cpp
         include/Button.hpp
+        src/PlantCard.cpp
+        include/PlantCard.hpp
 )
 
 if(MSVC)
