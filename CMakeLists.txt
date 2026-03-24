@@ -40,6 +40,8 @@ add_executable(${PROJECT_NAME}
         include/Button.hpp
         src/PlantCard.cpp
         include/PlantCard.hpp
+        src/PlantRegistry.cpp
+        include/PlantRegistry.hpp
 )
 
 if(MSVC)

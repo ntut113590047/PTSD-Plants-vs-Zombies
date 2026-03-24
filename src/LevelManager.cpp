@@ -1,6 +1,12 @@
 #include "LevelManager.hpp"
 #include "Util/Input.hpp"
+#include "Util/Text.hpp"
+#include "Util/Animation.hpp"
+#include "PlantRegistry.hpp"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
 
 #define NUM_CARDS 6
 
@@ -47,6 +53,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         std::make_shared<Util::Image>(path), -10
     );
 	m_Background->m_Transform.scale = {1.1f, 1.1f};
+    m_Background->m_Transform.translation = {200.0f, 0.0f};
     root.AddChild(m_Background);
 
     // ===== 初始化文字動畫 =====
@@ -78,47 +85,28 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     }
 
     // ===== 初始化卡片資料 =====
+    auto& registry = PlantRegistry::GetInstance();
     m_LevelPlants.clear();
     switch (m_CurrentLevel) {
     case 1:
-        m_LevelPlants.push_back({
-            "beanCard", 100, 5.0f, RESOURCE_DIR"/Image/Plants/beanCard.png"
-        });
+        m_LevelPlants.push_back(registry.GetPlantData("bean"));
         break;
 
     case 2:
-        m_LevelPlants.push_back({
-            "beanCard", 100, 5.0f, RESOURCE_DIR"/Image/Plants/beanCard.png"
-        });
-        m_LevelPlants.push_back({
-            "sunflowerCard", 50, 7.0f, RESOURCE_DIR"/Image/Plants/sunflowerCard.png"
-        });
+        m_LevelPlants.push_back(registry.GetPlantData("bean"));
+        m_LevelPlants.push_back(registry.GetPlantData("sunflower"));
         break;
 
     case 3:
-        m_LevelPlants.push_back({
-            "beanCard", 100, 5.0f, RESOURCE_DIR"/Image/Plants/beanCard.png"
-        });
-        m_LevelPlants.push_back({
-            "sunflowerCard", 50, 7.0f, RESOURCE_DIR"/Image/Plants/sunflowerCard.png"
-        });
-        m_LevelPlants.push_back({
-            "cherryCard", 50, 10.0f, RESOURCE_DIR"/Image/Plants/cherryCard.png"
-        });
+        m_LevelPlants.push_back(registry.GetPlantData("bean"));
+        m_LevelPlants.push_back(registry.GetPlantData("sunflower"));
+        m_LevelPlants.push_back(registry.GetPlantData("cherry"));
         break;
-	case 4:
-        m_LevelPlants.push_back({
-            "beanCard", 100, 5.0f, RESOURCE_DIR"/Image/Plants/beanCard.png"
-        });
-        m_LevelPlants.push_back({
-            "sunflowerCard", 50, 7.0f, RESOURCE_DIR"/Image/Plants/sunflowerCard.png"
-        });
-        m_LevelPlants.push_back({
-            "cherryCard", 50, 10.0f, RESOURCE_DIR"/Image/Plants/cherryCard.png"
-        });
-		m_LevelPlants.push_back({
-            "nutCard", 50, 10.0f, RESOURCE_DIR"/Image/Plants/nutCard.png"
-        });
+    case 4:
+        m_LevelPlants.push_back(registry.GetPlantData("bean"));
+        m_LevelPlants.push_back(registry.GetPlantData("sunflower"));
+        m_LevelPlants.push_back(registry.GetPlantData("cherry"));
+        m_LevelPlants.push_back(registry.GetPlantData("nut"));
         break;
 
     default:
@@ -135,6 +123,24 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         root.AddChild(card);
         m_Cards.push_back(card);
     }
+
+    // ===== 初始化草坪網格 =====
+    m_GrassGrid.assign(5, std::vector<bool>(9, false)); // 5行9列，false表示空
+    m_PlacedPlants.clear();
+    m_SelectedCard = nullptr;
+    m_FollowingPlant = nullptr;
+    m_PreviewPlant = nullptr;
+    m_PlayerEnergy = (m_CurrentLevel == 1) ? 150 : 50; // 第一關150，其他50
+
+    m_SunEnergies.clear();
+    m_SunSpawnTimer = 0;
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+    // ===== 初始化能量顯示文字 =====
+    m_EnergyTextPtr = std::make_shared<Util::Text>("C:/PTSD-Plants-vs-Zombies/PTSD/assets/fonts/Inter.ttf", 24, std::to_string(m_PlayerEnergy), Util::Color(0, 0, 0));
+    m_EnergyText = std::make_shared<Util::GameObject>(m_EnergyTextPtr, 30);
+    m_EnergyText->m_Transform.translation = {-540.0f, 285.0f}; // 左上角位置，這裡修改xy座標
+    root.AddChild(m_EnergyText);
 
     m_IntroDone = true; // 初始化完成
 }
@@ -199,6 +205,230 @@ void LevelManager::Update(Util::Renderer& root) {
                 break;
         }
     }
+
+    // ===== 遊戲開始：放置植物 =====
+    if (m_WordPhase == 0) {
+        // 更新能量顯示
+        if (m_EnergyTextPtr) {
+            m_EnergyTextPtr->SetText(std::to_string(m_PlayerEnergy));
+        }
+
+        // 能量掉落產生 (每5秒)
+        m_SunSpawnTimer++;
+        const int spawnFrames = 5 * 60;
+        if (m_SunSpawnTimer >= spawnFrames) {
+            m_SunSpawnTimer = 0;
+            float minX = -540.0f;
+            float maxX = 540.0f;
+            float x = minX + static_cast<float>(std::rand()) / RAND_MAX * (maxX - minX);
+            float y = 330.0f; // 畫面上方
+
+            std::vector<std::string> energyPaths;
+            for (int i = 1; i <= 29; ++i) {
+                energyPaths.push_back(RESOURCE_DIR"/Image/Other/energy/frame_" + std::to_string(i) + ".png");
+            }
+
+            auto energyObj = std::make_shared<Util::GameObject>(
+                std::make_shared<Util::Animation>(energyPaths, true, 50, true, 0), 15
+            );
+            energyObj->m_Transform.translation = {x, y};
+            energyObj->m_Transform.scale = {1.0f, 1.0f}; // 能量2倍大
+            root.AddChild(energyObj);
+
+            float dropSpeed = -40.0f; // 落下速度固定
+            float stopY = -120.0f - static_cast<float>(std::rand()) / RAND_MAX * 80.0f; // 隨機高度 -120 ~ -200
+            m_SunEnergies.push_back({energyObj, {0.0f, dropSpeed}, false, stopY});
+        }
+
+        // 更新卡片冷卻
+        for (auto& card : m_Cards) {
+            card->UpdateCooldown(1.0f / 60.0f); // 假設60FPS
+        }
+
+        auto mousePos = Util::Input::GetCursorPosition();
+        std::cout << "Mouse XY = (" << mousePos.x << ", " << mousePos.y << ")\r" << std::flush;
+
+        // 更新能量掉落、撿取
+        {
+            glm::vec2 targetPos = {-540.0f, 300.0f}; // 能量文字上方一點位置
+            float deltaSeconds = 1.0f / 60.0f;
+            for (int i = static_cast<int>(m_SunEnergies.size()) - 1; i >= 0; --i) {
+                auto& sun = m_SunEnergies[i];
+                auto& obj = sun.object;
+                glm::vec2 pos = obj->m_Transform.translation;
+
+                if (sun.collecting) {
+                    glm::vec2 diff = targetPos - pos;
+                    float dist = std::sqrt(diff.x * diff.x + diff.y * diff.y);
+                    if (dist < 8.0f) {
+                        root.RemoveChild(obj);
+                        m_SunEnergies.erase(m_SunEnergies.begin() + i);
+                        m_PlayerEnergy += 25;
+                        continue;
+                    }
+                    glm::vec2 dir = diff / dist;
+                    float collectSpeed = std::max(200.0f, std::min(1200.0f, dist * 6.0f));
+                    obj->m_Transform.translation += dir * collectSpeed * deltaSeconds; // 從快到慢
+                } else {
+                    obj->m_Transform.translation += sun.velocity * deltaSeconds;
+
+                    if (obj->m_Transform.translation.y < sun.stopY) {
+                        obj->m_Transform.translation.y = sun.stopY;
+                        sun.velocity = {0.0f, 0.0f};
+                    }
+
+                    // 如果飛出底部就刪除（保險）
+                    if (obj->m_Transform.translation.y < -330.0f) {
+                        root.RemoveChild(obj);
+                        m_SunEnergies.erase(m_SunEnergies.begin() + i);
+                        continue;
+                    }
+                    float mouseDist = std::sqrt((mousePos.x - pos.x) * (mousePos.x - pos.x) + (mousePos.y - pos.y) * (mousePos.y - pos.y));
+                    if (mouseDist < 30.0f) {
+                        sun.collecting = true;
+                    }
+                }
+            }
+        }
+
+
+        // 檢查卡片點擊
+        if (Util::Input::IsKeyDown(Util::Keycode::MOUSE_LB) && !m_SelectedCard) {
+            for (auto& card : m_Cards) {
+                if (card->IsReady() && m_PlayerEnergy >= card->GetData().cost) {
+                    // 計算實際大小
+                    auto scaledSize = card->GetScaledSize();
+                    float cardWidth = scaledSize.x;
+                    float cardHeight = scaledSize.y;
+                    float left = card->m_Transform.translation.x - cardWidth * 0.5f;
+                    float right = card->m_Transform.translation.x + cardWidth * 0.5f;
+                    float bottom = card->m_Transform.translation.y - cardHeight * 0.5f;
+                    float top = card->m_Transform.translation.y + cardHeight * 0.5f;
+                    if (mousePos.x >= left && mousePos.x <= right &&
+                        mousePos.y >= bottom && mousePos.y <= top) {
+                        m_SelectedCard = card;
+                        m_FollowingPlant = std::make_shared<Util::GameObject>(
+                            std::make_shared<Util::Animation>(card->GetData().plantAnimationPaths, true, 50, true, 0), 20
+                        );
+                        m_FollowingPlant->m_Transform.scale = {card->GetData().scale, card->GetData().scale};
+                        root.AddChild(m_FollowingPlant);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // 更新跟隨植物位置
+        if (m_FollowingPlant) {
+            m_FollowingPlant->m_Transform.translation = {mousePos.x, mousePos.y};
+
+            // 檢查預覽位置
+            int previewRow = -1, previewCol = -1;
+            float leftX = -300.0f;
+            float rightX = 500.0f;
+            float topY = 180.0f;
+            float bottomY = -290.0f;
+            int cols = 9;
+            int rows = 5;
+            float cellWidth = (rightX - leftX) / (cols - 1);
+            float cellHeight = (topY - bottomY) / (rows - 1);
+
+            for (int r = 0; r < rows; ++r) {
+                for (int c = 0; c < cols; ++c) {
+                    float cellX = leftX + c * cellWidth;
+                    float cellY = topY - r * cellHeight;
+                    float halfSizeX = cellWidth / 2.0f;
+                    float halfSizeY = cellHeight / 2.0f;
+                    if (mousePos.x >= cellX - halfSizeX && mousePos.x < cellX + halfSizeX &&
+                        mousePos.y <= cellY + halfSizeY && mousePos.y > cellY - halfSizeY) {
+                        previewRow = r;
+                        previewCol = c;
+                        break;
+                    }
+                }
+                if (previewRow != -1) break;
+            }
+
+            // 更新預覽植物
+            if (previewRow != -1 && previewCol != -1 && !m_GrassGrid[previewRow][previewCol]) {
+                if (!m_PreviewPlant) {
+                    // 創建預覽植物（半透明）
+                    m_PreviewPlant = std::make_shared<Util::GameObject>(
+                        std::make_shared<Util::Animation>(m_SelectedCard->GetData().plantAnimationPaths, true, 50, true, 0), 10
+                    );
+                    m_PreviewPlant->m_Transform.scale = {m_SelectedCard->GetData().scale, m_SelectedCard->GetData().scale};
+                    // 設置半透明（如果支持的話）
+                    root.AddChild(m_PreviewPlant);
+                }
+                float cellX = leftX + previewCol * cellWidth;
+                float cellY = topY - previewRow * cellHeight;
+                m_PreviewPlant->m_Transform.translation = {cellX, cellY};
+            } else {
+                // 移除預覽植物
+                if (m_PreviewPlant) {
+                    root.RemoveChild(m_PreviewPlant);
+                    m_PreviewPlant = nullptr;
+                }
+            }
+        } else {
+            // 沒有跟隨植物時也要清理預覽
+            if (m_PreviewPlant) {
+                root.RemoveChild(m_PreviewPlant);
+                m_PreviewPlant = nullptr;
+            }
+        }
+
+        // 檢查放置
+        if (Util::Input::IsKeyUp(Util::Keycode::MOUSE_LB) && m_SelectedCard) {
+            // 如果有預覽植物且位置有效，直接使用預覽位置
+            if (m_PreviewPlant) {
+                // 找到對應的格子坐標
+                float leftX = -300.0f;
+                float rightX = 500.0f;
+                float topY = 180.0f;
+                float bottomY = -290.0f;
+                int cols = 9;
+                int rows = 5;
+                float cellWidth = (rightX - leftX) / (cols - 1);
+                float cellHeight = (topY - bottomY) / (rows - 1);
+
+                glm::vec2 previewPos = m_PreviewPlant->m_Transform.translation;
+                int row = -1, col = -1;
+
+                for (int r = 0; r < rows; ++r) {
+                    for (int c = 0; c < cols; ++c) {
+                        float cellX = leftX + c * cellWidth;
+                        float cellY = topY - r * cellHeight;
+                        if (std::abs(previewPos.x - cellX) < 1.0f && std::abs(previewPos.y - cellY) < 1.0f) {
+                            row = r;
+                            col = c;
+                            break;
+                        }
+                    }
+                    if (row != -1) break;
+                }
+
+                if (row != -1 && col != -1 && !m_GrassGrid[row][col]) {
+                    // 將預覽植物轉為正式植物
+                    m_PlacedPlants.push_back(m_PreviewPlant);
+                    m_GrassGrid[row][col] = true;
+                    m_PlayerEnergy -= m_SelectedCard->GetData().cost;
+                    m_SelectedCard->StartCooldown();
+
+                    // 清理
+                    m_PreviewPlant = nullptr;
+                    root.RemoveChild(m_FollowingPlant);
+                    m_FollowingPlant = nullptr;
+                    m_SelectedCard = nullptr;
+                }
+            } else {
+                // 沒有預覽植物，取消選擇
+                root.RemoveChild(m_FollowingPlant);
+                m_FollowingPlant = nullptr;
+                m_SelectedCard = nullptr;
+            }
+        }
+    }
 }
 
 void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
@@ -206,9 +436,19 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     if (m_CardSlot) { root.RemoveChild(m_CardSlot); m_CardSlot = nullptr; }
     for (auto& btn : m_Buttons) root.RemoveChild(btn);
     for (auto& card : m_Cards) root.RemoveChild(card);
+    for (auto& plant : m_PlacedPlants) root.RemoveChild(plant);
+    if (m_FollowingPlant) root.RemoveChild(m_FollowingPlant);
+    if (m_PreviewPlant) root.RemoveChild(m_PreviewPlant);
+    if (m_EnergyText) root.RemoveChild(m_EnergyText);
 
     m_Buttons.clear();
     m_Cards.clear();
+    m_PlacedPlants.clear();
+    m_FollowingPlant = nullptr;
+    m_PreviewPlant = nullptr;
+    m_SelectedCard = nullptr;
+    m_EnergyText = nullptr;
+    m_EnergyTextPtr = nullptr;
 
     m_CurrentLevel = level;
     LoadLevel(root);
