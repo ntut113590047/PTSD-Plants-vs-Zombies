@@ -7,6 +7,8 @@
 #include "Util/GameObject.hpp"
 #include "Util/Renderer.hpp"
 #include "Button.hpp"
+#include "PlantCard.hpp"
+#include "glm/vec2.hpp"
 
 class LevelManager {
 public:
@@ -22,20 +24,13 @@ private:
 private:
     int m_CurrentLevel;
 
+    // 背景
     std::shared_ptr<Util::GameObject> m_Background;
+
+    // 按鈕
     std::vector<std::shared_ptr<Button>> m_Buttons;
 
-    // 🎬 開場動畫
-    int m_IntroPhase = 0;
-    bool m_IntroDone = false;
-
-    float m_Timer = 0.0f;
-    float m_Duration = 120.0f;
-
-    float m_StartX = 0.0f;
-    float m_TargetX = 0.0f;
-
-    // 🔤 Word動畫
+    // 🔤 文字動畫
     int m_WordPhase = 0;
     int m_WordTimer = 0;
     std::shared_ptr<Util::GameObject> m_Word;
@@ -43,8 +38,15 @@ private:
     // 🧩 卡片槽
     std::shared_ptr<Util::GameObject> m_CardSlot;
     bool m_CardSlotActive = false;
-    float m_CardSlotTargetY = 315.0f; // 最終位置
+    float m_CardSlotTargetY = 315.0f; // 卡片槽目標位置
 
+    // 🃏 卡片
+    std::vector<std::shared_ptr<PlantCard>> m_Cards;
+    std::vector<glm::vec2> m_CardPositions; // 卡片在槽內的座標
+    std::vector<PlantData> m_LevelPlants;   // 關卡植物資料
+
+    // 開場動畫控制
+    bool m_IntroDone = false;
 };
 
 #endif

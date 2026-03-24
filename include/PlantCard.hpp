@@ -1,8 +1,24 @@
-//
-// Created by 江惟良 on 2026/3/19.
-//
+#ifndef PLANTCARD_HPP
+#define PLANTCARD_HPP
 
-#ifndef PTSD_PLANTS_VS_ZOMBIES_PLANTCARD_HPP
-#define PTSD_PLANTS_VS_ZOMBIES_PLANTCARD_HPP
+#include "Util/GameObject.hpp"
+#include "Util/Image.hpp"
+#include <string>
 
-#endif //PTSD_PLANTS_VS_ZOMBIES_PLANTCARD_HPP
+struct PlantData {
+    std::string name;
+    int cost;
+    float cooldown;
+    std::string cardImagePath;
+};
+class PlantCard : public Util::GameObject {
+public:
+    PlantCard(const PlantData& data, float x, float y);
+
+    void Follow(float parentY);
+
+private:
+    PlantData m_Data;
+};
+
+#endif
