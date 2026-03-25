@@ -9,6 +9,9 @@
 #include "Util/Text.hpp"
 #include "Button.hpp"
 #include "PlantCard.hpp"
+#include "Plant.hpp"
+#include "Zombie.hpp"
+#include "LawnMower.hpp"
 #include "glm/vec2.hpp"
 
 class LevelManager {
@@ -33,7 +36,7 @@ private:
 
     // 🔤 文字動畫
     int m_WordPhase = 0;
-    float m_WordTimer = 0.0f; // 改為秒為單位
+    float m_WordTimer = 0.0f;
     std::shared_ptr<Util::GameObject> m_Word;
 
     // 🧩 卡片槽
@@ -45,12 +48,18 @@ private:
     std::vector<std::shared_ptr<PlantCard>> m_Cards;
     std::vector<glm::vec2> m_CardPositions; // 卡片在槽內的座標
     std::vector<PlantData> m_LevelPlants;   // 關卡植物資料
+    struct CardVisuals {
+        std::shared_ptr<Util::GameObject> energyDimOverlay;
+        std::shared_ptr<Util::GameObject> cooldownOverlay;
+    };
+    std::vector<CardVisuals> m_CardVisuals;
 
     // 遊戲狀態
     int m_PlayerEnergy = 50; // 玩家能量
     std::vector<std::vector<bool>> m_GrassGrid; // 草坪網格，true表示被佔用
-    std::vector<bool> m_RowAllowed; // 每行是否可放植物
-    std::vector<std::shared_ptr<Util::GameObject>> m_PlacedPlants; // 已放置的植物
+    std::vector<bool> m_RowAllowed; // 每行是否允許放置植物
+    std::vector<std::shared_ptr<LawnMower>> m_LawnMowers; // 每行割草機
+    std::vector<std::shared_ptr<Plant>> m_PlacedPlants; // 已放置的植物
     std::shared_ptr<PlantCard> m_SelectedCard = nullptr; // 當前選擇的卡片
     std::shared_ptr<Util::GameObject> m_FollowingPlant = nullptr; // 跟隨滑鼠的植物圖片
     std::shared_ptr<Util::GameObject> m_PreviewPlant = nullptr; // 預覽植物（半透明）
@@ -65,7 +74,16 @@ private:
     };
 
     std::vector<SunEnergy> m_SunEnergies;
-    float m_SunSpawnTimer = 0.0f; // 改為秒為單位
+    struct BeanProjectile {
+        std::shared_ptr<Util::GameObject> object;
+        int row = 0;
+        float speed = 260.0f;
+        float damage = 20.0f;
+    };
+    std::vector<BeanProjectile> m_BeanProjectiles;
+    float m_SunSpawnTimer = 0.0f; // 計時器（秒）
+    std::vector<std::shared_ptr<Zombie>> m_Zombies;
+    float m_ZombieSpawnTimer = 0.0f;
 
     // 開場動畫控制
     bool m_IntroDone = false;

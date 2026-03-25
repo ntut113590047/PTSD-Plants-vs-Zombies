@@ -36,6 +36,12 @@ add_executable(${PROJECT_NAME}
     ${SRC_FILES}
     ${HEADER_FILES}
         src/LevelManager.cpp
+        src/Plant.cpp
+        src/PeashooterPlant.cpp
+        src/SunflowerPlant.cpp
+        src/Zombie.cpp
+        src/BasicZombie.cpp
+        src/LawnMower.cpp
         src/Button.cpp
         include/Button.hpp
         src/PlantCard.cpp

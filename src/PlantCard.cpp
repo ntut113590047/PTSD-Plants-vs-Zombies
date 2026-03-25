@@ -11,8 +11,7 @@ PlantCard::PlantCard(const PlantData& data, float x, float y)
     m_Transform.translation.y = y;
     m_Transform.scale = {0.25f, 0.25f};
 
-    m_CardImage->SetBrightness(1.0f);
-    m_CardImage->SetCooldownFill(0.0f);
+    m_Brightness = 1.0f; // 初始為完全亮度
 }
 
 void PlantCard::Follow(float parentY) {
@@ -27,16 +26,6 @@ void PlantCard::UpdateCooldown(float deltaTime) {
             m_CooldownTimer = 0.0f;
         }
     }
-
-    float cooldownFill = 0.0f;
-    if (m_Data.cooldown > 0.0f && m_IsOnCooldown) {
-        cooldownFill = m_CooldownTimer / m_Data.cooldown;
-        cooldownFill = std::clamp(cooldownFill, 0.0f, 1.0f);
-    }
-
-    if (m_CardImage) {
-        m_CardImage->SetCooldownFill(cooldownFill);
-    }
 }
 
 void PlantCard::StartCooldown() {
@@ -48,8 +37,8 @@ void PlantCard::SetEnergyAvailable(bool available) {
     if (!m_CardImage) return;
 
     if (available) {
-        m_CardImage->SetBrightness(1.0f);
+        m_Brightness = 1.0f;
     } else {
-        m_CardImage->SetBrightness(0.55f);
+        m_Brightness = 0.7f; // 調低一點點，而不是太暗
     }
 }

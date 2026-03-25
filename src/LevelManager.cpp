@@ -4,10 +4,14 @@
 #include "Util/Animation.hpp"
 #include "Util/Time.hpp"
 #include "PlantRegistry.hpp"
+#include "PeashooterPlant.hpp"
+#include "SunflowerPlant.hpp"
+#include "BasicZombie.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
+#include <algorithm>
 
 #define NUM_CARDS 6
 
@@ -64,6 +68,8 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word1.png"),
         10
     );
+    m_Word->m_Transform.scale = {0.2f, 0.2f}; // 初始縮放
+    m_Word->m_Transform.translation = {0.0f, 0.0f}; // 初始位置
     root.AddChild(m_Word);
 
     // ===== 初始化卡片槽 =====
@@ -115,6 +121,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
 }
     // ===== 創建卡片 =====
     m_Cards.clear();
+    m_CardVisuals.clear();
     for (size_t i = 0; i < NUM_CARDS; ++i) {
         if (i >= m_LevelPlants.size()) break;
         auto& data = m_LevelPlants[i];
@@ -123,6 +130,28 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
 		card->m_Transform.scale = {0.6f, 0.6f};
         root.AddChild(card);
         m_Cards.push_back(card);
+
+        // 卡片上方兩層遮罩：能量不足微暗、冷卻較暗（由底往上）
+        auto energyDim = std::make_shared<Util::GameObject>(
+            std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/card_dim_overlay.png"),
+            card->GetZIndex() + 0.1f
+        );
+        energyDim->m_Transform.translation = card->m_Transform.translation;
+        auto cardSize = card->GetScaledSize();
+        energyDim->m_Transform.scale = {cardSize.x, cardSize.y};
+        energyDim->SetVisible(false);
+        root.AddChild(energyDim);
+
+        auto cooldownDim = std::make_shared<Util::GameObject>(
+            std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/card_cooldown_overlay.png"),
+            card->GetZIndex() + 0.2f
+        );
+        cooldownDim->m_Transform.translation = card->m_Transform.translation;
+        cooldownDim->m_Transform.scale = {cardSize.x, cardSize.y};
+        cooldownDim->SetVisible(false);
+        root.AddChild(cooldownDim);
+
+        m_CardVisuals.push_back({energyDim, cooldownDim});
     }
 
     // ===== 初始化草坪網格 =====
@@ -137,6 +166,28 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     } else {
         for (int i = 0; i < 5; ++i) m_RowAllowed[i] = true; // 全部行可放
     }
+
+    // ===== 初始化每行割草機 =====
+    m_LawnMowers.clear();
+    {
+        float leftX = -300.0f;
+        float topY = 180.0f;
+        float bottomY = -290.0f;
+        int rows = 5;
+        float cellHeight = (topY - bottomY) / (rows - 1);
+
+        for (int r = 0; r < rows; ++r) {
+            if (r >= static_cast<int>(m_RowAllowed.size()) || !m_RowAllowed[r]) {
+                continue;
+            }
+            float rowY = topY - r * cellHeight;
+            auto mower = std::make_shared<LawnMower>(r);
+            mower->m_Transform.translation = {leftX - 85.0f, rowY};
+            root.AddChild(mower);
+            m_LawnMowers.push_back(mower);
+        }
+    }
+
     m_PlacedPlants.clear();
     m_SelectedCard = nullptr;
     m_FollowingPlant = nullptr;
@@ -144,7 +195,10 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     m_PlayerEnergy = (m_CurrentLevel == 1) ? 150 : 50; // 第一關150，其他50
 
     m_SunEnergies.clear();
+    m_BeanProjectiles.clear();
     m_SunSpawnTimer = 0.0f;
+    m_Zombies.clear();
+    m_ZombieSpawnTimer = 0.0f;
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     // ===== 初始化能量顯示文字 =====
@@ -186,6 +240,8 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     m_Word = std::make_shared<Util::GameObject>(
                         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word2.png"), 10
                     );
+                    m_Word->m_Transform.scale = {0.2f, 0.2f}; // 設置初始縮放
+                    m_Word->m_Transform.translation = {0.0f, 0.0f}; // 設置初始位置
                     root.AddChild(m_Word);
                     m_WordPhase = 2; m_WordTimer = 0.0f;
                 }
@@ -200,6 +256,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word3.png"), 10
                     );
                     m_Word->m_Transform.scale = {0.7f,0.7f};
+                    m_Word->m_Transform.translation = {0.0f, 0.0f}; // 設置初始位置
                     root.AddChild(m_Word);
                     m_WordPhase = 3; m_WordTimer = 0.0f;
                 }
@@ -250,15 +307,206 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         }
 
         // 更新卡片冷卻與可用狀態
-        for (auto& card : m_Cards) {
+        for (size_t i = 0; i < m_Cards.size(); ++i) {
+            auto& card = m_Cards[i];
             card->UpdateCooldown(deltaTime); // 使用真實的 deltaTime
             bool hasEnergy = (m_PlayerEnergy >= card->GetData().cost);
             // 不可用的卡片變灰, 有可用變回正常亮度
             card->SetEnergyAvailable(hasEnergy && card->IsReady());
+
+            if (i < m_CardVisuals.size()) {
+                auto& visuals = m_CardVisuals[i];
+                auto cardSize = card->GetScaledSize();
+
+                if (visuals.energyDimOverlay) {
+                    visuals.energyDimOverlay->m_Transform.translation = card->m_Transform.translation;
+                    visuals.energyDimOverlay->m_Transform.scale = {cardSize.x, cardSize.y};
+                    visuals.energyDimOverlay->SetVisible(!hasEnergy);
+                }
+
+                if (visuals.cooldownOverlay) {
+                    float remainRatio = 0.0f;
+                    if (card->GetData().cooldown > 0.0f && card->IsCoolingDown()) {
+                        remainRatio = std::clamp(1.0f - card->GetCooldownProgress(), 0.0f, 1.0f);
+                    }
+
+                    if (remainRatio > 0.0f) {
+                        float h = cardSize.y * remainRatio;
+                        visuals.cooldownOverlay->m_Transform.scale = {cardSize.x, h};
+                        visuals.cooldownOverlay->m_Transform.translation = {
+                            card->m_Transform.translation.x,
+                            card->m_Transform.translation.y + cardSize.y * 0.5f - h * 0.5f
+                        };
+                        visuals.cooldownOverlay->SetVisible(true);
+                    } else {
+                        visuals.cooldownOverlay->SetVisible(false);
+                    }
+                }
+            }
+        }
+
+        // 第一關：右側畫面外生成殭屍並往左走進場
+        if (m_CurrentLevel == 1) {
+            m_ZombieSpawnTimer += deltaTime;
+            const float spawnInterval = 4.0f;
+            if (m_ZombieSpawnTimer >= spawnInterval) {
+                m_ZombieSpawnTimer = 0.0f;
+
+                std::vector<std::string> zombiePaths;
+                for (int i = 1; i <= 22; ++i) {
+                    zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/zombie/frame_" + std::to_string(i) + ".png");
+                }
+
+                float topY = 180.0f;
+                float bottomY = -290.0f;
+                int rows = 5;
+                float cellHeight = (topY - bottomY) / (rows - 1);
+
+                int spawnRow = 2;
+                std::vector<int> allowedRows;
+                for (int r = 0; r < rows; ++r) {
+                    if (r < static_cast<int>(m_RowAllowed.size()) && m_RowAllowed[r]) {
+                        allowedRows.push_back(r);
+                    }
+                }
+                if (!allowedRows.empty()) {
+                    spawnRow = allowedRows[std::rand() % allowedRows.size()];
+                }
+
+                float spawnY = topY - spawnRow * cellHeight + 20.0f;
+                float spawnX = 680.0f; // 可視畫面右側外
+                auto zombie = std::make_shared<BasicZombie>(zombiePaths, spawnRow, 35.0f);
+                zombie->m_Transform.translation = {spawnX, spawnY};
+                root.AddChild(zombie);
+
+                m_Zombies.push_back(zombie);
+            }
+        }
+
+        // 戰鬥：交由植物類別偵測與攻擊（豌豆射手會在自己的 Attack 內發射投射物）
+        for (auto& plant : m_PlacedPlants) {
+            auto projectile = plant->Attack(m_Zombies, deltaTime);
+            if (projectile.has_value() && projectile->object) {
+                root.AddChild(projectile->object);
+                m_BeanProjectiles.push_back({
+                    projectile->object,
+                    projectile->row,
+                    projectile->speed,
+                    projectile->damage
+                });
+            }
+        }
+
+        // 更新豌豆投射物：飛行、碰撞、移除
+        for (int i = static_cast<int>(m_BeanProjectiles.size()) - 1; i >= 0; --i) {
+            auto& bean = m_BeanProjectiles[i];
+            bean.object->m_Transform.translation.x += bean.speed * deltaTime;
+
+            bool consumed = false;
+            for (auto& zombie : m_Zombies) {
+                if (zombie->GetRow() != bean.row) {
+                    continue;
+                }
+                float dx = zombie->m_Transform.translation.x - bean.object->m_Transform.translation.x;
+                float dy = std::abs(zombie->m_Transform.translation.y - bean.object->m_Transform.translation.y);
+                if (dx <= 18.0f && dx >= -18.0f && dy <= 26.0f) {
+                    zombie->TakeDamage(bean.damage);
+                    consumed = true;
+                    break;
+                }
+            }
+
+            if (consumed || bean.object->m_Transform.translation.x > 780.0f) {
+                root.RemoveChild(bean.object);
+                m_BeanProjectiles.erase(m_BeanProjectiles.begin() + i);
+            }
+        }
+
+        // 割草機：偵測殭屍接觸 → 激活並橫掃同排所有殭屍
+        for (auto& mower : m_LawnMowers) {
+            if (mower->IsActive()) {
+                mower->m_Transform.translation.x += LawnMower::kMoveSpeed * deltaTime;
+                for (auto& zombie : m_Zombies) {
+                    if (zombie->GetRow() != mower->GetRow()) continue;
+                    float dx = zombie->m_Transform.translation.x - mower->m_Transform.translation.x;
+                    if (dx >= -40.0f && dx <= 40.0f) {
+                        zombie->TakeDamage(99999.0f);
+                    }
+                }
+            } else {
+                for (auto& zombie : m_Zombies) {
+                    if (zombie->GetRow() != mower->GetRow()) continue;
+                    float dx = zombie->m_Transform.translation.x - mower->m_Transform.translation.x;
+                    if (dx <= 35.0f) {
+                        mower->Activate();
+                        break;
+                    }
+                }
+            }
+        }
+        // 移除已飛出右側畫面的割草機
+        for (int i = static_cast<int>(m_LawnMowers.size()) - 1; i >= 0; --i) {
+            if (m_LawnMowers[i]->IsActive() &&
+                m_LawnMowers[i]->m_Transform.translation.x > 800.0f) {
+                root.RemoveChild(m_LawnMowers[i]);
+                m_LawnMowers.erase(m_LawnMowers.begin() + i);
+            }
+        }
+
+        // 戰鬥：殭屍接觸植物時停下並攻擊，否則持續前進
+        for (auto& zombie : m_Zombies) {
+            zombie->Tick(deltaTime);
+
+            std::shared_ptr<Plant> blockingPlant = nullptr;
+            float nearestDist = 1e9f;
+
+            for (auto& plant : m_PlacedPlants) {
+                if (plant->GetRow() != zombie->GetRow()) {
+                    continue;
+                }
+                float dist = std::abs(zombie->m_Transform.translation.x - plant->m_Transform.translation.x);
+                if (dist <= 55.0f && dist < nearestDist) {
+                    nearestDist = dist;
+                    blockingPlant = plant;
+                }
+            }
+
+            if (blockingPlant) {
+                zombie->SetAttacking(true);
+                if (zombie->TryAttack(deltaTime)) {
+                    blockingPlant->TakeDamage(zombie->GetAttackDamage());
+                }
+            } else {
+                zombie->SetAttacking(false);
+                zombie->Update(deltaTime);
+            }
+        }
+
+        // 移除死亡的殭屍或越界殭屍
+        for (int i = static_cast<int>(m_Zombies.size()) - 1; i >= 0; --i) {
+            auto& z = m_Zombies[i];
+            if (z->IsDead() || z->m_Transform.translation.x < -760.0f) {
+                root.RemoveChild(z);
+                m_Zombies.erase(m_Zombies.begin() + i);
+            }
+        }
+
+        // 移除死亡植物並釋放格子
+        for (int i = static_cast<int>(m_PlacedPlants.size()) - 1; i >= 0; --i) {
+            auto& p = m_PlacedPlants[i];
+            if (p->IsDead()) {
+                int row = p->GetRow();
+                int col = p->GetCol();
+                if (row >= 0 && row < static_cast<int>(m_GrassGrid.size()) &&
+                    col >= 0 && col < static_cast<int>(m_GrassGrid[row].size())) {
+                    m_GrassGrid[row][col] = false;
+                }
+                root.RemoveChild(p);
+                m_PlacedPlants.erase(m_PlacedPlants.begin() + i);
+            }
         }
 
         auto mousePos = Util::Input::GetCursorPosition();
-        std::cout << "Mouse XY = (" << mousePos.x << ", " << mousePos.y << ")\r" << std::flush;
 
         // 更新能量掉落、撿取
         {
@@ -421,10 +669,29 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 }
 
                 if (row != -1 && col != -1 && m_RowAllowed[row] && !m_GrassGrid[row][col]) {
-                    // 將預覽植物轉為正式植物
-                    m_PlacedPlants.push_back(m_PreviewPlant);
+                    // 依卡片建立對應植物類別
+                    std::shared_ptr<Plant> placedPlant;
+                    const auto& data = m_SelectedCard->GetData();
+                    if (data.name == "bean" || data.name == "peashooter") {
+                        placedPlant = std::make_shared<PeashooterPlant>(data);
+                    } else if (data.name == "sunflower") {
+                        placedPlant = std::make_shared<SunflowerPlant>(data);
+                    } else {
+                        placedPlant = std::make_shared<Plant>(
+                            data,
+                            std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
+                            20.0f
+                        );
+                    }
+
+                    placedPlant->m_Transform.translation = m_PreviewPlant->m_Transform.translation;
+                    placedPlant->SetGridPosition(row, col);
+                    root.AddChild(placedPlant);
+                    m_PlacedPlants.push_back(placedPlant);
+
+                    root.RemoveChild(m_PreviewPlant);
                     m_GrassGrid[row][col] = true;
-                    m_PlayerEnergy -= m_SelectedCard->GetData().cost;
+                    m_PlayerEnergy -= data.cost;
                     m_SelectedCard->StartCooldown();
 
                     // 清理
@@ -446,21 +713,38 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     if (m_Background) { root.RemoveChild(m_Background); m_Background = nullptr; }
     if (m_CardSlot) { root.RemoveChild(m_CardSlot); m_CardSlot = nullptr; }
+    if (m_Word) { root.RemoveChild(m_Word); m_Word = nullptr; }
     for (auto& btn : m_Buttons) root.RemoveChild(btn);
     for (auto& card : m_Cards) root.RemoveChild(card);
+    for (auto& visuals : m_CardVisuals) {
+        if (visuals.energyDimOverlay) root.RemoveChild(visuals.energyDimOverlay);
+        if (visuals.cooldownOverlay) root.RemoveChild(visuals.cooldownOverlay);
+    }
+    for (auto& z : m_Zombies) {
+        if (z) root.RemoveChild(z);
+    }
+    for (auto& mower : m_LawnMowers) root.RemoveChild(mower);
     for (auto& plant : m_PlacedPlants) root.RemoveChild(plant);
+    for (auto& bean : m_BeanProjectiles) {
+        if (bean.object) root.RemoveChild(bean.object);
+    }
     if (m_FollowingPlant) root.RemoveChild(m_FollowingPlant);
     if (m_PreviewPlant) root.RemoveChild(m_PreviewPlant);
     if (m_EnergyText) root.RemoveChild(m_EnergyText);
 
     m_Buttons.clear();
     m_Cards.clear();
+    m_CardVisuals.clear();
+    m_Zombies.clear();
+    m_LawnMowers.clear();
     m_PlacedPlants.clear();
+    m_BeanProjectiles.clear();
     m_FollowingPlant = nullptr;
     m_PreviewPlant = nullptr;
     m_SelectedCard = nullptr;
     m_EnergyText = nullptr;
     m_EnergyTextPtr = nullptr;
+    m_IntroDone = false; // 重置 intro 狀態
 
     m_CurrentLevel = level;
     LoadLevel(root);
