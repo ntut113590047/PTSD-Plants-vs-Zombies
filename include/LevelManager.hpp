@@ -16,7 +16,7 @@ public:
     LevelManager(int level);
 
     void LoadLevel(Util::Renderer& root);
-    void Update(Util::Renderer& root);
+    void Update(Util::Renderer& root, float deltaTime);
     void ChangeLevel(int level, Util::Renderer& root);
 
 private:
@@ -33,7 +33,7 @@ private:
 
     // 🔤 文字動畫
     int m_WordPhase = 0;
-    int m_WordTimer = 0;
+    float m_WordTimer = 0.0f; // 改為秒為單位
     std::shared_ptr<Util::GameObject> m_Word;
 
     // 🧩 卡片槽
@@ -49,6 +49,7 @@ private:
     // 遊戲狀態
     int m_PlayerEnergy = 50; // 玩家能量
     std::vector<std::vector<bool>> m_GrassGrid; // 草坪網格，true表示被佔用
+    std::vector<bool> m_RowAllowed; // 每行是否可放植物
     std::vector<std::shared_ptr<Util::GameObject>> m_PlacedPlants; // 已放置的植物
     std::shared_ptr<PlantCard> m_SelectedCard = nullptr; // 當前選擇的卡片
     std::shared_ptr<Util::GameObject> m_FollowingPlant = nullptr; // 跟隨滑鼠的植物圖片
@@ -64,7 +65,7 @@ private:
     };
 
     std::vector<SunEnergy> m_SunEnergies;
-    int m_SunSpawnTimer = 0; // 計時器（幀）
+    float m_SunSpawnTimer = 0.0f; // 改為秒為單位
 
     // 開場動畫控制
     bool m_IntroDone = false;

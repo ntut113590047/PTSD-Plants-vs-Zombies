@@ -16,7 +16,7 @@ public:
     State GetCurrentState() const { return m_CurrentState; }
 
     void Start();
-    void Update();
+    void Update(float deltaTime);
     void End();
 
 private:

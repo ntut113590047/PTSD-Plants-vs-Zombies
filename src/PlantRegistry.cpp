@@ -15,7 +15,7 @@ PlantRegistry::PlantRegistry() {
     }
     
     m_PlantDataMap["bean"] = {
-        "bean", 100, 0.0f, 
+        "bean", 100, 5.0f, 
         RESOURCE_DIR"/Image/Plants/beanCard.png",
         beanAnimationPaths,
         1.0f // bean 顯示大小

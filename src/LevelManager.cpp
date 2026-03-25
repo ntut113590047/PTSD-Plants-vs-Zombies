@@ -2,6 +2,7 @@
 #include "Util/Input.hpp"
 #include "Util/Text.hpp"
 #include "Util/Animation.hpp"
+#include "Util/Time.hpp"
 #include "PlantRegistry.hpp"
 #include <iostream>
 #include <cstdlib>
@@ -58,7 +59,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
 
     // ===== 初始化文字動畫 =====
     m_WordPhase = 1;
-    m_WordTimer = 0;
+    m_WordTimer = 0.0f;
     m_Word = std::make_shared<Util::GameObject>(
         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word1.png"),
         10
@@ -126,6 +127,16 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
 
     // ===== 初始化草坪網格 =====
     m_GrassGrid.assign(5, std::vector<bool>(9, false)); // 5行9列，false表示空
+    m_RowAllowed.assign(5, false);
+    if (m_CurrentLevel == 1) {
+        m_RowAllowed[2] = true; // 中間一橫排
+    } else if (m_CurrentLevel == 2) {
+        m_RowAllowed[1] = true;
+        m_RowAllowed[2] = true;
+        m_RowAllowed[3] = true; // 中間三橫排
+    } else {
+        for (int i = 0; i < 5; ++i) m_RowAllowed[i] = true; // 全部行可放
+    }
     m_PlacedPlants.clear();
     m_SelectedCard = nullptr;
     m_FollowingPlant = nullptr;
@@ -133,7 +144,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     m_PlayerEnergy = (m_CurrentLevel == 1) ? 150 : 50; // 第一關150，其他50
 
     m_SunEnergies.clear();
-    m_SunSpawnTimer = 0;
+    m_SunSpawnTimer = 0.0f;
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     // ===== 初始化能量顯示文字 =====
@@ -145,7 +156,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     m_IntroDone = true; // 初始化完成
 }
 
-void LevelManager::Update(Util::Renderer& root) {
+void LevelManager::Update(Util::Renderer& root, float deltaTime) {
     // ===== 起始畫面按鈕 =====
     if (m_CurrentLevel == 0) {
         auto mousePos = Util::Input::GetCursorPosition();
@@ -163,41 +174,39 @@ void LevelManager::Update(Util::Renderer& root) {
     if (!m_IntroDone || !IsGameLevel()) return;
 
     if (m_WordPhase > 0 && m_Word) {
-        m_WordTimer++;
+        m_WordTimer += deltaTime; // 累計時間（秒）
         auto LerpScale = [](float a, float b, float t) { return a + (b - a) * t; };
 
         switch (m_WordPhase) {
             case 1: {
-                float t = m_WordTimer / 30.0f;
-                if (t > 1.0f) t = 1.0f;
+                float t = std::min(m_WordTimer / 0.5f, 1.0f); // 0.5秒動畫
                 m_Word->m_Transform.scale = { LerpScale(0.2f,0.3f,t), LerpScale(0.2f,0.3f,t) };
-                if (m_WordTimer > 30) {
+                if (m_WordTimer > 0.5f) {
                     root.RemoveChild(m_Word);
                     m_Word = std::make_shared<Util::GameObject>(
                         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word2.png"), 10
                     );
                     root.AddChild(m_Word);
-                    m_WordPhase = 2; m_WordTimer = 0;
+                    m_WordPhase = 2; m_WordTimer = 0.0f;
                 }
                 break;
             }
             case 2: {
-                float t = m_WordTimer / 30.0f;
-                if (t > 1.0f) t = 1.0f;
+                float t = std::min(m_WordTimer / 0.5f, 1.0f); // 0.5秒動畫
                 m_Word->m_Transform.scale = { LerpScale(0.2f,0.3f,t), LerpScale(0.2f,0.3f,t) };
-                if (m_WordTimer > 30) {
+                if (m_WordTimer > 0.5f) {
                     root.RemoveChild(m_Word);
                     m_Word = std::make_shared<Util::GameObject>(
                         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word3.png"), 10
                     );
                     m_Word->m_Transform.scale = {0.7f,0.7f};
                     root.AddChild(m_Word);
-                    m_WordPhase = 3; m_WordTimer = 0;
+                    m_WordPhase = 3; m_WordTimer = 0.0f;
                 }
                 break;
             }
             case 3:
-                if (m_WordTimer > 70) {
+                if (m_WordTimer > 1.17f) { // 約1.17秒顯示
                     root.RemoveChild(m_Word);
                     m_Word = nullptr;
                     m_WordPhase = 0;
@@ -214,10 +223,10 @@ void LevelManager::Update(Util::Renderer& root) {
         }
 
         // 能量掉落產生 (每5秒)
-        m_SunSpawnTimer++;
-        const int spawnFrames = 5 * 60;
-        if (m_SunSpawnTimer >= spawnFrames) {
-            m_SunSpawnTimer = 0;
+        m_SunSpawnTimer += deltaTime; // 累計時間（秒）
+        const float spawnInterval = 5.0f; // 5秒間隔
+        if (m_SunSpawnTimer >= spawnInterval) {
+            m_SunSpawnTimer = 0.0f;
             float minX = -540.0f;
             float maxX = 540.0f;
             float x = minX + static_cast<float>(std::rand()) / RAND_MAX * (maxX - minX);
@@ -240,9 +249,12 @@ void LevelManager::Update(Util::Renderer& root) {
             m_SunEnergies.push_back({energyObj, {0.0f, dropSpeed}, false, stopY});
         }
 
-        // 更新卡片冷卻
+        // 更新卡片冷卻與可用狀態
         for (auto& card : m_Cards) {
-            card->UpdateCooldown(1.0f / 60.0f); // 假設60FPS
+            card->UpdateCooldown(deltaTime); // 使用真實的 deltaTime
+            bool hasEnergy = (m_PlayerEnergy >= card->GetData().cost);
+            // 不可用的卡片變灰, 有可用變回正常亮度
+            card->SetEnergyAvailable(hasEnergy && card->IsReady());
         }
 
         auto mousePos = Util::Input::GetCursorPosition();
@@ -251,7 +263,7 @@ void LevelManager::Update(Util::Renderer& root) {
         // 更新能量掉落、撿取
         {
             glm::vec2 targetPos = {-540.0f, 300.0f}; // 能量文字上方一點位置
-            float deltaSeconds = 1.0f / 60.0f;
+            float deltaSeconds = deltaTime; // 使用真實的 deltaTime
             for (int i = static_cast<int>(m_SunEnergies.size()) - 1; i >= 0; --i) {
                 auto& sun = m_SunEnergies[i];
                 auto& obj = sun.object;
@@ -350,7 +362,7 @@ void LevelManager::Update(Util::Renderer& root) {
             }
 
             // 更新預覽植物
-            if (previewRow != -1 && previewCol != -1 && !m_GrassGrid[previewRow][previewCol]) {
+            if (previewRow != -1 && previewCol != -1 && m_RowAllowed[previewRow] && !m_GrassGrid[previewRow][previewCol]) {
                 if (!m_PreviewPlant) {
                     // 創建預覽植物（半透明）
                     m_PreviewPlant = std::make_shared<Util::GameObject>(
@@ -408,7 +420,7 @@ void LevelManager::Update(Util::Renderer& root) {
                     if (row != -1) break;
                 }
 
-                if (row != -1 && col != -1 && !m_GrassGrid[row][col]) {
+                if (row != -1 && col != -1 && m_RowAllowed[row] && !m_GrassGrid[row][col]) {
                     // 將預覽植物轉為正式植物
                     m_PlacedPlants.push_back(m_PreviewPlant);
                     m_GrassGrid[row][col] = true;

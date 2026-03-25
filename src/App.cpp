@@ -6,16 +6,16 @@
 
 void App::Start() {
 
-    m_LevelManager = std::make_shared<LevelManager>(3);
+    m_LevelManager = std::make_shared<LevelManager>(0);
 
     m_LevelManager->LoadLevel(m_Root);
 
     m_CurrentState = State::UPDATE;
 }
 
-void App::Update() {
+void App::Update(float deltaTime) {
 
-    m_LevelManager->Update(m_Root);
+    m_LevelManager->Update(m_Root, deltaTime);
 
     if (Util::Input::IsKeyUp(Util::Keycode::ESCAPE) ||
         Util::Input::IfExit()) {

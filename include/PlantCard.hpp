@@ -23,10 +23,13 @@ public:
     bool IsReady() const { return !m_IsOnCooldown; }
     const PlantData& GetData() const { return m_Data; }
 
+    void SetEnergyAvailable(bool available);
+
 private:
     PlantData m_Data;
     bool m_IsOnCooldown = false;
     float m_CooldownTimer = 0.0f;
+    std::shared_ptr<Util::Image> m_CardImage;
 };
 
 #endif
