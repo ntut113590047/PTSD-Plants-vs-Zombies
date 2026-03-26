@@ -862,6 +862,9 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     for (auto& bean : m_BeanProjectiles) {
         if (bean.object) root.RemoveChild(bean.object);
     }
+    for (auto& sun : m_SunEnergies) {
+        if (sun.object) root.RemoveChild(sun.object);
+    }
     if (m_FollowingPlant) root.RemoveChild(m_FollowingPlant);
     if (m_PreviewPlant) root.RemoveChild(m_PreviewPlant);
     if (m_EnergyText) root.RemoveChild(m_EnergyText);
@@ -873,12 +876,19 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_LawnMowers.clear();
     m_PlacedPlants.clear();
     m_BeanProjectiles.clear();
+    m_SunEnergies.clear();  // Clear sun energy objects
     m_FollowingPlant = nullptr;
     m_PreviewPlant = nullptr;
     m_SelectedCard = nullptr;
     m_EnergyText = nullptr;
     m_EnergyTextPtr = nullptr;
     m_IntroDone = false; // 重置 intro 狀態
+
+    // Reset energy and timers for new level
+    m_EnergyCollected = 0;  // Reset collected energy
+    m_ElapsedTime = 0.0f;   // Reset elapsed time
+    m_WinDelayTimer = 0.0f; // Reset win delay
+    m_LoseDelayTimer = 0.0f; // Reset lose delay
 
     m_CurrentLevel = level;
     LoadLevel(root);
