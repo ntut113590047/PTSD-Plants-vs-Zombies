@@ -12,6 +12,9 @@
 #include "Plant.hpp"
 #include "Zombie.hpp"
 #include "LawnMower.hpp"
+#include "LevelConfig.hpp"
+#include "LevelConfigParser.hpp"
+#include "GameStateManager.hpp"
 #include "glm/vec2.hpp"
 
 // 配置常量
@@ -34,6 +37,7 @@ public:
 
 private:
     bool IsGameLevel() const;
+    std::shared_ptr<Zombie> SpawnZombie(const std::string& zombieType, int row, float y);
 
 private:
     int m_CurrentLevel;
@@ -97,6 +101,19 @@ private:
 
     // 開場動畫控制
     bool m_IntroDone = false;
+
+    // Wave system - using levels.json configuration
+    std::vector<LevelConfig> m_AllLevelConfigs;
+    LevelConfig m_CurrentLevelConfig;
+    GameStateManager m_GameStateManager;
+    float m_WaveStartTimer = 0.0f;  // Track time within current wave
+    float m_WaveSpawnTimer = 0.0f;  // Timer for individual zombie spawns
+    int m_ZombiesSpawnedInWave = 0;  // Count of zombies spawned in current wave
+    int m_CurrentZombieSpawnTypeIndex = 0;  // Which zombie type in wave we're spawning
+    float m_CurrentZombieTypeSpawnTimer = 0.0f;  // Timer for current zombie type
+    int m_CurrentZombieTypeSpawned = 0;  // How many of current type spawned
+    float m_ElapsedTime = 0.0f;  // Total elapsed time for win conditions
+    int m_EnergyCollected = 0;  // Track collected energy for win condition
 };
 
 #endif

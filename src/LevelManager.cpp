@@ -21,8 +21,11 @@
 #include <cmath>
 #include <algorithm>
 
-// Helper function to spawn zombies of different types
-std::shared_ptr<Zombie> SpawnZombie(const std::string& zombieType, int row, float y) {
+
+LevelManager::LevelManager(int level)
+    : m_CurrentLevel(level) {}
+
+std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType, int row, float y) {
     std::vector<std::string> zombiePaths;
 
     if (zombieType == "ConeZombie") {
@@ -54,9 +57,6 @@ std::shared_ptr<Zombie> SpawnZombie(const std::string& zombieType, int row, floa
     }
 }
 
-LevelManager::LevelManager(int level)
-    : m_CurrentLevel(level) {}
-
 bool LevelManager::IsGameLevel() const {
     return m_CurrentLevel != 0;
 }
@@ -85,14 +85,36 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     }
 
     // ===== 正式關卡 =====
-    std::string path;
-    switch (m_CurrentLevel) {
-        case 1: path = RESOURCE_DIR"/Image/Background/phase1.png"; break;
-        case 2: path = RESOURCE_DIR"/Image/Background/phase2.png"; break;
-        case 3: path = RESOURCE_DIR"/Image/Background/phase3.png"; break;
-        default: path = RESOURCE_DIR"/Image/Background/phase3.png"; break;
+    // Load level configuration from JSON
+    if (m_AllLevelConfigs.empty()) {
+        m_AllLevelConfigs = LevelConfigParser::LoadFromFile(RESOURCE_DIR"/levels/levels.json");
     }
 
+    // Get config for current level (1-indexed)
+    if (m_CurrentLevel >= 1 && m_CurrentLevel <= static_cast<int>(m_AllLevelConfigs.size())) {
+        m_CurrentLevelConfig = m_AllLevelConfigs[m_CurrentLevel - 1];
+    } else {
+        // Fallback if level not found
+        m_CurrentLevelConfig.level_number = m_CurrentLevel;
+        m_CurrentLevelConfig.background = "phase3.png";
+        m_CurrentLevelConfig.starting_energy = 50;
+    }
+
+    // Reset wave counters
+    m_GameStateManager.Reset();
+    m_GameStateManager.SetTotalWaves(m_CurrentLevelConfig.waves.size());
+    m_GameStateManager.SetWinCondition(m_CurrentLevelConfig.win_condition);
+
+    m_WaveStartTimer = 0.0f;
+    m_WaveSpawnTimer = 0.0f;
+    m_ZombiesSpawnedInWave = 0;
+    m_CurrentZombieSpawnTypeIndex = 0;
+    m_CurrentZombieTypeSpawnTimer = 0.0f;
+    m_CurrentZombieTypeSpawned = 0;
+    m_ElapsedTime = 0.0f;
+    m_EnergyCollected = 0;
+
+    std::string path = RESOURCE_DIR"/Image/Background/" + m_CurrentLevelConfig.background;
     m_Background = std::make_shared<Util::GameObject>(
         std::make_shared<Util::Image>(path), -10
     );
@@ -196,14 +218,10 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     // ===== 初始化草坪網格 =====
     m_GrassGrid.assign(5, std::vector<bool>(9, false)); // 5行9列，false表示空
     m_RowAllowed.assign(5, false);
-    if (m_CurrentLevel == 1) {
-        m_RowAllowed[2] = true; // 中間一橫排
-    } else if (m_CurrentLevel == 2) {
-        m_RowAllowed[1] = true;
-        m_RowAllowed[2] = true;
-        m_RowAllowed[3] = true; // 中間三橫排
-    } else {
-        for (int i = 0; i < 5; ++i) m_RowAllowed[i] = true; // 全部行可放
+    for (int row : m_CurrentLevelConfig.rows_unlocked) {
+        if (row >= 0 && row < 5) {
+            m_RowAllowed[row] = true;
+        }
     }
 
     // ===== 初始化每行割草機 =====
@@ -231,13 +249,12 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     m_SelectedCard = nullptr;
     m_FollowingPlant = nullptr;
     m_PreviewPlant = nullptr;
-    m_PlayerEnergy = (m_CurrentLevel == 1) ? 150 : 50; // 第一關150，其他50
+    m_PlayerEnergy = m_CurrentLevelConfig.starting_energy;
 
     m_SunEnergies.clear();
     m_BeanProjectiles.clear();
     m_SunSpawnTimer = 0.0f;
     m_Zombies.clear();
-    m_ZombieSpawnTimer = 0.0f;
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     // ===== 初始化能量顯示文字 =====
@@ -313,6 +330,9 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 
     // ===== 遊戲開始：放置植物 =====
     if (m_WordPhase == 0) {
+        // Track elapsed time and update win condition checks
+        m_ElapsedTime += deltaTime;
+
         // 更新能量顯示
         if (m_EnergyTextPtr) {
             m_EnergyTextPtr->SetText(std::to_string(m_PlayerEnergy));
@@ -384,37 +404,84 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
         }
 
-        // 第一關：右側畫面外生成殭屍並往左走進場
-        if (m_CurrentLevel == 1) {
-            m_ZombieSpawnTimer += deltaTime;
-            const float spawnInterval = 4.0f;
-            if (m_ZombieSpawnTimer >= spawnInterval) {
-                m_ZombieSpawnTimer = 0.0f;
+        // Wave-based zombie spawning system
+        if (m_CurrentLevel >= 1 && m_CurrentLevel <= 10 && m_GameStateManager.GetCurrentWave() < static_cast<int>(m_CurrentLevelConfig.waves.size())) {
+            const Wave& currentWave = m_CurrentLevelConfig.waves[m_GameStateManager.GetCurrentWave()];
+            m_WaveStartTimer += deltaTime;
 
-                float topY = 180.0f;
-                float bottomY = -290.0f;
-                int rows = 5;
-                float cellHeight = (topY - bottomY) / (rows - 1);
+            // Check if wave delay has passed
+            if (m_WaveStartTimer >= currentWave.start_delay) {
+                // Wave is active, spawn zombies
+                if (m_CurrentZombieSpawnTypeIndex < static_cast<int>(currentWave.zombies.size())) {
+                    const ZombieSpawn& spawnConfig = currentWave.zombies[m_CurrentZombieSpawnTypeIndex];
 
-                int spawnRow = 2;
-                std::vector<int> allowedRows;
-                for (int r = 0; r < rows; ++r) {
-                    if (r < static_cast<int>(m_RowAllowed.size()) && m_RowAllowed[r]) {
-                        allowedRows.push_back(r);
+                    // Check if we've spawned all of this zombie type
+                    if (m_CurrentZombieTypeSpawned < spawnConfig.count) {
+                        m_CurrentZombieTypeSpawnTimer += deltaTime;
+
+                        // Spawn zombie if timer exceeds interval, accounting for delay_offset on first spawn
+                        float spawnThreshold = spawnConfig.spawn_interval;
+                        if (m_CurrentZombieTypeSpawned == 0) {
+                            spawnThreshold = spawnConfig.delay_offset + spawnConfig.spawn_interval;
+                        }
+
+                        if (m_CurrentZombieTypeSpawnTimer >= spawnThreshold) {
+                            // Get a random allowed row
+                            int spawnRow = 2; // Default to middle row
+                            std::vector<int> allowedRows;
+                            for (int r = 0; r < 5; ++r) {
+                                if (r < static_cast<int>(m_RowAllowed.size()) && m_RowAllowed[r]) {
+                                    allowedRows.push_back(r);
+                                }
+                            }
+                            if (!allowedRows.empty()) {
+                                spawnRow = allowedRows[std::rand() % allowedRows.size()];
+                            }
+
+                            float topY = 180.0f;
+                            float bottomY = -290.0f;
+                            int rows = 5;
+                            float cellHeight = (topY - bottomY) / (rows - 1);
+                            float spawnY = topY - spawnRow * cellHeight + 20.0f;
+                            float spawnX = 680.0f; // Right side of screen
+
+                            auto zombie = SpawnZombie(spawnConfig.type, spawnRow, spawnY);
+                            zombie->m_Transform.translation = {spawnX, spawnY};
+                            root.AddChild(zombie);
+                            m_Zombies.push_back(zombie);
+                            m_GameStateManager.RegisterZombieSpawned();
+
+                            m_CurrentZombieTypeSpawned++;
+                            m_ZombiesSpawnedInWave++;
+                            m_CurrentZombieTypeSpawnTimer -= spawnThreshold; // Subtract to handle timing properly for next spawn
+                        }
+                    } else {
+                        // Move to next zombie type in this wave
+                        m_CurrentZombieSpawnTypeIndex++;
+                        m_CurrentZombieTypeSpawned = 0;
+                        m_CurrentZombieTypeSpawnTimer = 0.0f;
+                    }
+                } else {
+                    // All zombies for this wave have been spawned
+                    // Check if all zombies are dead to advance to next wave
+                    if (m_GameStateManager.GetZombiesAlive() == 0) {
+                        m_GameStateManager.AdvanceWave();
+                        m_WaveStartTimer = 0.0f;
+                        m_ZombiesSpawnedInWave = 0;
+                        m_CurrentZombieSpawnTypeIndex = 0;
+                        m_CurrentZombieTypeSpawned = 0;
+                        m_CurrentZombieTypeSpawnTimer = 0.0f;
                     }
                 }
-                if (!allowedRows.empty()) {
-                    spawnRow = allowedRows[std::rand() % allowedRows.size()];
-                }
-
-                float spawnY = topY - spawnRow * cellHeight + 20.0f;
-                float spawnX = 680.0f; // 可視畫面右側外
-                auto zombie = SpawnZombie("BasicZombie", spawnRow, spawnY);
-                zombie->m_Transform.translation = {spawnX, spawnY};
-                root.AddChild(zombie);
-
-                m_Zombies.push_back(zombie);
             }
+        }
+
+        // Check win/lose conditions periodically
+        if (m_GameStateManager.CheckWinCondition(m_ElapsedTime, m_EnergyCollected)) {
+            // Game won - can implement next level transition here
+        }
+        if (m_GameStateManager.HasLost()) {
+            // Game lost - can implement restart or level select here
         }
 
         // 戰鬥：交由植物類別偵測與攻擊（豌豆射手會在自己的 Attack 內發射投射物）
@@ -519,9 +586,20 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         // 移除死亡的殭屍或越界殭屍
         for (int i = static_cast<int>(m_Zombies.size()) - 1; i >= 0; --i) {
             auto& z = m_Zombies[i];
-            if (z->IsDead() || z->m_Transform.translation.x < -760.0f) {
+            if (z->IsDead()) {
+                m_GameStateManager.RegisterZombieDied();
                 root.RemoveChild(z);
                 m_Zombies.erase(m_Zombies.begin() + i);
+            } else if (z->m_Transform.translation.x < -760.0f) {
+                // Zombie breached the left boundary
+                m_GameStateManager.RegisterZombieBreach();
+                root.RemoveChild(z);
+                m_Zombies.erase(m_Zombies.begin() + i);
+
+                // Check if we've exceeded max breaches
+                if (!m_GameStateManager.CheckWinCondition(m_ElapsedTime, m_EnergyCollected)) {
+                    // Game lost due to breach
+                }
             }
         }
 
@@ -558,6 +636,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         root.RemoveChild(obj);
                         m_SunEnergies.erase(m_SunEnergies.begin() + i);
                         m_PlayerEnergy += 25;
+                        m_EnergyCollected += 25;  // Track energy for win condition
                         continue;
                     }
                     glm::vec2 dir = diff / dist;
