@@ -17,7 +17,7 @@ PoleVaulterZombie::PoleVaulterZombie(const std::vector<std::string>& framePaths,
 
     auto idleAnim = std::make_shared<Util::Animation>(framePaths, true, 90, true, 0);
 
-    // Create bright idle frames
+    // Create bright idle frames for hit flash effect
     std::vector<std::string> idleBrightPaths;
     idleBrightPaths.reserve(framePaths.size());
     for (const auto& path : framePaths) {
@@ -32,5 +32,7 @@ PoleVaulterZombie::PoleVaulterZombie(const std::vector<std::string>& framePaths,
     }
     auto idleBrightAnim = std::make_shared<Util::Animation>(idleBrightPaths, true, 90, true, 0);
 
+    // Configure drawables: idle as both idle and attack
+    // When hit, show bright version
     ConfigureVisualDrawables(idleAnim, idleAnim, idleBrightAnim, idleBrightAnim);
 }

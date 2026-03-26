@@ -18,7 +18,7 @@ ConeZombie::ConeZombie(const std::vector<std::string>& framePaths, int row, floa
     // Create idle animation
     auto idleAnim = std::make_shared<Util::Animation>(framePaths, true, 90, true, 0);
 
-    // Create attack animation for hit flash effect
+    // Create attack animation
     std::vector<std::string> attackPaths;
     attackPaths.reserve(framePaths.size());
     for (const auto& path : framePaths) {
@@ -33,7 +33,8 @@ ConeZombie::ConeZombie(const std::vector<std::string>& framePaths, int row, floa
     }
     auto attackAnim = std::make_shared<Util::Animation>(attackPaths, true, 90, true, 0);
 
-    // Configure two drawables: idle and attack (for hit flash)
-    ConfigureVisualDrawables(idleAnim, idleAnim, attackAnim, attackAnim);
+    // Configure drawables: idle and attack
+    // When hit, keep showing idle/attack (no bright variants available)
+    ConfigureVisualDrawables(idleAnim, attackAnim, idleAnim, attackAnim);
 }
 
