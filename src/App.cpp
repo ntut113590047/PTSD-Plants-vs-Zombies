@@ -6,7 +6,7 @@
 
 void App::Start() {
 
-    m_LevelManager = std::make_shared<LevelManager>(2);
+    m_LevelManager = std::make_shared<LevelManager>(0);
 
     m_LevelManager->LoadLevel(m_Root);
 
@@ -20,6 +20,11 @@ void App::Update(float deltaTime) {
     if (Util::Input::IsKeyUp(Util::Keycode::ESCAPE) ||
         Util::Input::IfExit()) {
         m_CurrentState = State::END;
+    }
+
+    // Debug: Press T to skip to next level
+    if (Util::Input::IsKeyUp(Util::Keycode::T)) {
+        m_LevelManager->SkipToNextLevel(m_Root);
     }
 
     m_Root.Update();

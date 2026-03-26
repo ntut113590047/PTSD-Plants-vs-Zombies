@@ -70,12 +70,12 @@ PlantRegistry::PlantRegistry() {
 
     // Walnut - defensive plant
     {
-        std::string basePath = RESOURCE_DIR"/Image/Plants/walnut";
+        std::string basePath = RESOURCE_DIR"/Image/Plants/wallnut";
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["walnut"] = {
             "walnut", 50, 8.0f,
-            RESOURCE_DIR"/Image/Plants/walnut/frame_1.png",
+            RESOURCE_DIR"/Image/Plants/nutCard.png",
             paths,
             1.0f
         };
@@ -88,7 +88,7 @@ PlantRegistry::PlantRegistry() {
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["potato"] = {
             "potato", 25, 6.0f,
-            RESOURCE_DIR"/Image/Plants/potato/frame_1.png",
+            RESOURCE_DIR"/Image/Plants/potatoCard.png",
             paths,
             0.8f
         };
@@ -101,33 +101,20 @@ PlantRegistry::PlantRegistry() {
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["repeater"] = {
             "repeater", 200, 1.0f,
-            RESOURCE_DIR"/Image/Plants/repeater/frame_1.png",
+            RESOURCE_DIR"/Image/Plants/doubleBeanCard.png",
             paths,
             1.0f
         };
     }
 
-    // Squash - jumping plant
-    {
-        std::string basePath = RESOURCE_DIR"/Image/Plants/squash";
-        int frameCount = GetFrameCountForPath(basePath);
-        auto paths = GetFramePaths(basePath, frameCount);
-        m_PlantDataMap["squash"] = {
-            "squash", 150, 4.0f,
-            RESOURCE_DIR"/Image/Plants/squash/frame_1.png",
-            paths,
-            0.9f
-        };
-    }
-
     // Cherry Bomb - explosive plant
     {
-        std::string basePath = RESOURCE_DIR"/Image/Plants/cherry";
+        std::string basePath = RESOURCE_DIR"/Image/Plants/cherryBomb";
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["cherry"] = {
             "cherry", 50, 6.0f,
-            RESOURCE_DIR"/Image/Plants/cherry/frame_1.png",
+            RESOURCE_DIR"/Image/Plants/cherryCard.png",
             paths,
             0.9f
         };
@@ -135,25 +122,24 @@ PlantRegistry::PlantRegistry() {
 
     // Snow Pea - ice plant
     {
-        std::string basePath = RESOURCE_DIR"/Image/Plants/snowpea";
+        std::string basePath = RESOURCE_DIR"/Image/Plants/snowPea";
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["snowpea"] = {
             "snowpea", 175, 1.5f,
-            RESOURCE_DIR"/Image/Plants/snowpea/frame_1.png",
+            RESOURCE_DIR"/Image/Plants/coldBeanCard.png",
             paths,
             0.8f
         };
     }
-
     // Chomper - eating plant
     {
-        std::string basePath = RESOURCE_DIR"/Image/Plants/chomper";
+        std::string basePath = RESOURCE_DIR"/Image/Plants/bigMouse";
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["chomper"] = {
             "chomper", 150, 15.0f,
-            RESOURCE_DIR"/Image/Plants/chomper/frame_1.png",
+            RESOURCE_DIR"/Image/Plants/bigMouseCard.png",
             paths,
             1.0f
         };
