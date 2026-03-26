@@ -32,7 +32,7 @@
   },
   "level_3": {
     "background": "phase2.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
+    "rows_unlocked": [1, 2, 3],
     "available_plants": ["bean", "sunflower", "cherry"],
     "starting_energy": 100,
     "waves": [
