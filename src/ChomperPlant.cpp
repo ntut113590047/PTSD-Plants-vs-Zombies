@@ -7,7 +7,7 @@
 ChomperPlant::ChomperPlant(const PlantData& data)
     : Plant(data,
             std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
-            150.0f,
+            20.0f,
             999.0f,
             100.0f,
             15.0f) {}

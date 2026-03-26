@@ -7,7 +7,7 @@
 CherryBombPlant::CherryBombPlant(const PlantData& data)
     : Plant(data,
             std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
-            50.0f,
+            20.0f,
             200.0f,
             100.0f,
             6.0f) {}
