@@ -76,11 +76,40 @@ PlantRegistry::PlantRegistry() {
         0.9f
     };
 
+    // Cherry Bomb - explosive plant
+    std::vector<std::string> cherryFrames;
+    for (int i = 1; i <= 8; ++i) {
+        cherryFrames.push_back(RESOURCE_DIR"/Image/Plants/cherry/frame_" + std::to_string(i) + ".png");
+    }
     m_PlantDataMap["cherry"] = {
-        "cherry", 50, 10.0f,
-        RESOURCE_DIR"/Image/Plants/cherryCard.png",
-        {RESOURCE_DIR"/Image/Plants/cherryCard.png"},
-        0.5f
+        "cherry", 50, 6.0f,
+        RESOURCE_DIR"/Image/Plants/cherry/frame_1.png",
+        cherryFrames,
+        0.9f
+    };
+
+    // Snow Pea - ice plant
+    std::vector<std::string> snowpeaFrames;
+    for (int i = 1; i <= 8; ++i) {
+        snowpeaFrames.push_back(RESOURCE_DIR"/Image/Plants/snowpea/frame_" + std::to_string(i) + ".png");
+    }
+    m_PlantDataMap["snowpea"] = {
+        "snowpea", 175, 1.5f,
+        RESOURCE_DIR"/Image/Plants/snowpea/frame_1.png",
+        snowpeaFrames,
+        0.8f
+    };
+
+    // Chomper - eating plant
+    std::vector<std::string> chomperFrames;
+    for (int i = 1; i <= 8; ++i) {
+        chomperFrames.push_back(RESOURCE_DIR"/Image/Plants/chomper/frame_" + std::to_string(i) + ".png");
+    }
+    m_PlantDataMap["chomper"] = {
+        "chomper", 150, 15.0f,
+        RESOURCE_DIR"/Image/Plants/chomper/frame_1.png",
+        chomperFrames,
+        1.0f
     };
 
     m_PlantDataMap["nut"] = {

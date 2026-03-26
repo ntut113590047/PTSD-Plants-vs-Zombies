@@ -10,11 +10,14 @@
 #include "PotatoMinePlant.hpp"
 #include "RepeaterPlant.hpp"
 #include "SquashPlant.hpp"
+#include "CherryBombPlant.hpp"
+#include "SnowPeaPlant.hpp"
+#include "ChomperPlant.hpp"
 #include "BasicZombie.hpp"
 #include "ConeZombie.hpp"
 #include "BucketZombie.hpp"
 #include "PoleVaulterZombie.hpp"
-#include "FootballZombie.hpp"
+#include "FlagZombie.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -43,11 +46,11 @@ std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType,
             zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/polevaulter/frame_" + std::to_string(i) + ".png");
         }
         return std::make_shared<PoleVaulterZombie>(zombiePaths, row, 35.0f);
-    } else if (zombieType == "FootballZombie") {
+    } else if (zombieType == "FlagZombie") {
         for (int i = 1; i <= 8; ++i) {
-            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/football/frame_" + std::to_string(i) + ".png");
+            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/flag/frame_" + std::to_string(i) + ".png");
         }
-        return std::make_shared<FootballZombie>(zombiePaths, row, 35.0f);
+        return std::make_shared<FlagZombie>(zombiePaths, row, 35.0f);
     } else {
         // Default to BasicZombie
         for (int i = 1; i <= 22; ++i) {
@@ -810,6 +813,12 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         placedPlant = std::make_shared<RepeaterPlant>(data);
                     } else if (data.name == "squash") {
                         placedPlant = std::make_shared<SquashPlant>(data);
+                    } else if (data.name == "cherry") {
+                        placedPlant = std::make_shared<CherryBombPlant>(data);
+                    } else if (data.name == "snowpea") {
+                        placedPlant = std::make_shared<SnowPeaPlant>(data);
+                    } else if (data.name == "chomper") {
+                        placedPlant = std::make_shared<ChomperPlant>(data);
                     } else {
                         placedPlant = std::make_shared<Plant>(
                             data,

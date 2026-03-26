@@ -8,12 +8,15 @@ set(SRC_FILES
     SquashPlant.cpp
     PotatoMinePlant.cpp
     WallnutPlant.cpp
+    CherryBombPlant.cpp
+    SnowPeaPlant.cpp
+    ChomperPlant.cpp
     Zombie.cpp
     BasicZombie.cpp
     ConeZombie.cpp
     BucketZombie.cpp
     PoleVaulterZombie.cpp
-    FootballZombie.cpp
+    FlagZombie.cpp
     LawnMower.cpp
     Button.cpp
     PlantCard.cpp
@@ -33,12 +36,15 @@ set(INCLUDE_FILES
     SquashPlant.hpp
     PotatoMinePlant.hpp
     WallnutPlant.hpp
+    CherryBombPlant.hpp
+    SnowPeaPlant.hpp
+    ChomperPlant.hpp
     Zombie.hpp
     BasicZombie.hpp
     ConeZombie.hpp
     BucketZombie.hpp
     PoleVaulterZombie.hpp
-    FootballZombie.hpp
+    FlagZombie.hpp
     LawnMower.hpp
     Button.hpp
     PlantCard.hpp
