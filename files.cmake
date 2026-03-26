@@ -1,9 +1,51 @@
 set(SRC_FILES
     App.cpp
+    LevelManager.cpp
+    Plant.cpp
+    PeashooterPlant.cpp
+    SunflowerPlant.cpp
+    RepeaterPlant.cpp
+    SquashPlant.cpp
+    PotatoMinePlant.cpp
+    WallnutPlant.cpp
+    Zombie.cpp
+    BasicZombie.cpp
+    ConeZombie.cpp
+    BucketZombie.cpp
+    PoleVaulterZombie.cpp
+    FootballZombie.cpp
+    LawnMower.cpp
+    Button.cpp
+    PlantCard.cpp
+    PlantRegistry.cpp
+    GameStateManager.cpp
+    LevelConfigParser.cpp
 )
 
 set(INCLUDE_FILES
     App.hpp
+    Background.hpp
+    LevelManager.hpp
+    Plant.hpp
+    PeashooterPlant.hpp
+    SunflowerPlant.hpp
+    RepeaterPlant.hpp
+    SquashPlant.hpp
+    PotatoMinePlant.hpp
+    WallnutPlant.hpp
+    Zombie.hpp
+    BasicZombie.hpp
+    ConeZombie.hpp
+    BucketZombie.hpp
+    PoleVaulterZombie.hpp
+    FootballZombie.hpp
+    LawnMower.hpp
+    Button.hpp
+    PlantCard.hpp
+    PlantRegistry.hpp
+    GameStateManager.hpp
+    LevelConfig.hpp
+    LevelConfigParser.hpp
 )
 
 set(TEST_FILES

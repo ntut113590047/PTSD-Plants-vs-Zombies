@@ -14,6 +14,16 @@
 #include "LawnMower.hpp"
 #include "glm/vec2.hpp"
 
+// 配置常量
+namespace LevelManagerConfig {
+    constexpr int NUM_CARDS = 6;
+    constexpr float CARDSLOT_TARGET_Y = 315.0f;
+    constexpr float SUN_STOPPING_HEIGHT = -150.0f;
+    constexpr float BEAN_SPEED = 260.0f;
+    constexpr float BEAN_DAMAGE = 20.0f;
+    constexpr int INITIAL_PLAYER_ENERGY = 50;
+}
+
 class LevelManager {
 public:
     LevelManager(int level);
@@ -42,7 +52,7 @@ private:
     // 🧩 卡片槽
     std::shared_ptr<Util::GameObject> m_CardSlot;
     bool m_CardSlotActive = false;
-    float m_CardSlotTargetY = 315.0f; // 卡片槽目標位置
+    float m_CardSlotTargetY = LevelManagerConfig::CARDSLOT_TARGET_Y;
 
     // 🃏 卡片
     std::vector<std::shared_ptr<PlantCard>> m_Cards;
@@ -55,7 +65,7 @@ private:
     std::vector<CardVisuals> m_CardVisuals;
 
     // 遊戲狀態
-    int m_PlayerEnergy = 50; // 玩家能量
+    int m_PlayerEnergy = LevelManagerConfig::INITIAL_PLAYER_ENERGY;
     std::vector<std::vector<bool>> m_GrassGrid; // 草坪網格，true表示被佔用
     std::vector<bool> m_RowAllowed; // 每行是否允許放置植物
     std::vector<std::shared_ptr<LawnMower>> m_LawnMowers; // 每行割草機
@@ -70,15 +80,15 @@ private:
         std::shared_ptr<Util::GameObject> object;
         glm::vec2 velocity;
         bool collecting = false;
-        float stopY = -150.0f; // 隨機停止高度
+        float stopY = LevelManagerConfig::SUN_STOPPING_HEIGHT; // 隨機停止高度
     };
 
     std::vector<SunEnergy> m_SunEnergies;
     struct BeanProjectile {
         std::shared_ptr<Util::GameObject> object;
         int row = 0;
-        float speed = 260.0f;
-        float damage = 20.0f;
+        float speed = LevelManagerConfig::BEAN_SPEED;
+        float damage = LevelManagerConfig::BEAN_DAMAGE;
     };
     std::vector<BeanProjectile> m_BeanProjectiles;
     float m_SunSpawnTimer = 0.0f; // 計時器（秒）

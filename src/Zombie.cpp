@@ -53,27 +53,27 @@ void Zombie::Update(float deltaTime) {
     m_Transform.translation.x -= m_Speed * deltaTime;
 }
 
-        void Zombie::Tick(float deltaTime) {
-            if (m_HitFlashTimer > 0.0f) {
-                m_HitFlashTimer -= deltaTime;
-                if (m_HitFlashTimer <= 0.0f) {
-                    m_HitFlashTimer = 0.0f;
-                    RefreshCurrentDrawable();
-                }
-            }
-        }
-
-        void Zombie::SetAttacking(bool attacking) {
-            if (m_IsAttacking == attacking) {
-                return;
-            }
-            m_IsAttacking = attacking;
+void Zombie::Tick(float deltaTime) {
+    if (m_HitFlashTimer > 0.0f) {
+        m_HitFlashTimer -= deltaTime;
+        if (m_HitFlashTimer <= 0.0f) {
+            m_HitFlashTimer = 0.0f;
             RefreshCurrentDrawable();
         }
+    }
+}
 
-        bool Zombie::IsAttacking() const {
-            return m_IsAttacking;
-        }
+void Zombie::SetAttacking(bool attacking) {
+    if (m_IsAttacking == attacking) {
+        return;
+    }
+    m_IsAttacking = attacking;
+    RefreshCurrentDrawable();
+}
+
+bool Zombie::IsAttacking() const {
+    return m_IsAttacking;
+}
 
 void Zombie::SetImageScale(float scaleX, float scaleY) {
     m_Transform.scale = {scaleX, scaleY};

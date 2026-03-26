@@ -6,14 +6,53 @@
 #include "PlantRegistry.hpp"
 #include "PeashooterPlant.hpp"
 #include "SunflowerPlant.hpp"
+#include "WallnutPlant.hpp"
+#include "PotatoMinePlant.hpp"
+#include "RepeaterPlant.hpp"
+#include "SquashPlant.hpp"
 #include "BasicZombie.hpp"
+#include "ConeZombie.hpp"
+#include "BucketZombie.hpp"
+#include "PoleVaulterZombie.hpp"
+#include "FootballZombie.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
 #include <cmath>
 #include <algorithm>
 
-#define NUM_CARDS 6
+// Helper function to spawn zombies of different types
+std::shared_ptr<Zombie> SpawnZombie(const std::string& zombieType, int row, float y) {
+    std::vector<std::string> zombiePaths;
+
+    if (zombieType == "ConeZombie") {
+        for (int i = 1; i <= 8; ++i) {
+            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/cone/frame_" + std::to_string(i) + ".png");
+        }
+        return std::make_shared<ConeZombie>(zombiePaths, row, 35.0f);
+    } else if (zombieType == "BucketZombie") {
+        for (int i = 1; i <= 8; ++i) {
+            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/bucket/frame_" + std::to_string(i) + ".png");
+        }
+        return std::make_shared<BucketZombie>(zombiePaths, row, 35.0f);
+    } else if (zombieType == "PoleVaulterZombie") {
+        for (int i = 1; i <= 8; ++i) {
+            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/polevaulter/frame_" + std::to_string(i) + ".png");
+        }
+        return std::make_shared<PoleVaulterZombie>(zombiePaths, row, 35.0f);
+    } else if (zombieType == "FootballZombie") {
+        for (int i = 1; i <= 8; ++i) {
+            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/football/frame_" + std::to_string(i) + ".png");
+        }
+        return std::make_shared<FootballZombie>(zombiePaths, row, 35.0f);
+    } else {
+        // Default to BasicZombie
+        for (int i = 1; i <= 22; ++i) {
+            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/zombie/frame_" + std::to_string(i) + ".png");
+        }
+        return std::make_shared<BasicZombie>(zombiePaths, row, 35.0f);
+    }
+}
 
 LevelManager::LevelManager(int level)
     : m_CurrentLevel(level) {}
@@ -87,7 +126,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     float startX = m_CardSlot->m_Transform.translation.x - 150.0f;
     float startY = m_CardSlot->m_Transform.translation.y;
     float spacing = 80.0f;
-    for (size_t i = 0; i < NUM_CARDS; ++i) {
+    for (size_t i = 0; i < LevelManagerConfig::NUM_CARDS; ++i) {
         m_CardPositions.push_back(glm::vec2(startX + i * spacing, startY));
     }
 
@@ -122,7 +161,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     // ===== 創建卡片 =====
     m_Cards.clear();
     m_CardVisuals.clear();
-    for (size_t i = 0; i < NUM_CARDS; ++i) {
+    for (size_t i = 0; i < LevelManagerConfig::NUM_CARDS; ++i) {
         if (i >= m_LevelPlants.size()) break;
         auto& data = m_LevelPlants[i];
         auto card = std::make_shared<PlantCard>(data, m_CardPositions[i].x, m_CardPositions[i].y);
@@ -352,11 +391,6 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             if (m_ZombieSpawnTimer >= spawnInterval) {
                 m_ZombieSpawnTimer = 0.0f;
 
-                std::vector<std::string> zombiePaths;
-                for (int i = 1; i <= 22; ++i) {
-                    zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/zombie/frame_" + std::to_string(i) + ".png");
-                }
-
                 float topY = 180.0f;
                 float bottomY = -290.0f;
                 int rows = 5;
@@ -375,7 +409,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 
                 float spawnY = topY - spawnRow * cellHeight + 20.0f;
                 float spawnX = 680.0f; // 可視畫面右側外
-                auto zombie = std::make_shared<BasicZombie>(zombiePaths, spawnRow, 35.0f);
+                auto zombie = SpawnZombie("BasicZombie", spawnRow, spawnY);
                 zombie->m_Transform.translation = {spawnX, spawnY};
                 root.AddChild(zombie);
 
@@ -676,6 +710,14 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         placedPlant = std::make_shared<PeashooterPlant>(data);
                     } else if (data.name == "sunflower") {
                         placedPlant = std::make_shared<SunflowerPlant>(data);
+                    } else if (data.name == "walnut") {
+                        placedPlant = std::make_shared<WallnutPlant>(data);
+                    } else if (data.name == "potato") {
+                        placedPlant = std::make_shared<PotatoMinePlant>(data);
+                    } else if (data.name == "repeater") {
+                        placedPlant = std::make_shared<RepeaterPlant>(data);
+                    } else if (data.name == "squash") {
+                        placedPlant = std::make_shared<SquashPlant>(data);
                     } else {
                         placedPlant = std::make_shared<Plant>(
                             data,
