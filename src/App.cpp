@@ -6,7 +6,7 @@
 
 void App::Start() {
 
-    m_LevelManager = std::make_shared<LevelManager>(0);
+    m_LevelManager = std::make_shared<LevelManager>(2);
 
     m_LevelManager->LoadLevel(m_Root);
 

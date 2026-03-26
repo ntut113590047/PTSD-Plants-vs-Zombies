@@ -51,12 +51,22 @@ PlantRegistry::PlantRegistry() {
         };
     }
 
-    m_PlantDataMap["sunflower"] = {
-        "sunflower", 50, 7.0f,
-        RESOURCE_DIR"/Image/Plants/sunflowerCard.png",
-        {RESOURCE_DIR"/Image/Plants/sunflowerCard.png"},
-        0.5f
-    };
+    // Sunflower - energy plant (with animation frames)
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/sunflower";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        // If no frames found, use card image as fallback
+        if (paths.empty()) {
+            paths.push_back(RESOURCE_DIR"/Image/Plants/sunflowerCard.png");
+        }
+        m_PlantDataMap["sunflower"] = {
+            "sunflower", 50, 7.0f,
+            RESOURCE_DIR"/Image/Plants/sunflowerCard.png",
+            paths,
+            0.8f
+        };
+    }
 
     // Walnut - defensive plant
     {
