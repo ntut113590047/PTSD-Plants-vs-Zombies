@@ -1,5 +1,36 @@
 #include "PlantRegistry.hpp"
 #include <string>
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+// Helper function to auto-detect frame count in a directory
+static int GetFrameCountForPath(const std::string& basePath) {
+    int maxFrame = 0;
+    try {
+        for (int i = 1; i <= 999; ++i) {
+            std::string framePath = basePath + "/frame_" + std::to_string(i) + ".png";
+            if (fs::exists(framePath)) {
+                maxFrame = i;
+            } else if (i > maxFrame + 10) {
+                // Stop searching after 10 consecutive misses
+                break;
+            }
+        }
+    } catch (...) {
+        // If filesystem check fails, return 0
+    }
+    return (maxFrame > 0) ? maxFrame : 1; // Default to 1 if nothing found
+}
+
+// Helper function to generate frame paths for any plant
+static std::vector<std::string> GetFramePaths(const std::string& resourcePath, int frameCount) {
+    std::vector<std::string> paths;
+    for (int i = 1; i <= frameCount; ++i) {
+        paths.push_back(resourcePath + "/frame_" + std::to_string(i) + ".png");
+    }
+    return paths;
+}
 
 PlantRegistry& PlantRegistry::GetInstance() {
     static PlantRegistry instance;
@@ -7,19 +38,18 @@ PlantRegistry& PlantRegistry::GetInstance() {
 }
 
 PlantRegistry::PlantRegistry() {
-    // 預定義植物資料
-    // Bean 動畫幀
-    std::vector<std::string> beanAnimationPaths;
-    for (int i = 1; i <= 25; ++i) {
-        beanAnimationPaths.push_back(RESOURCE_DIR"/Image/Plants/bean/frame_" + std::to_string(i) + ".png");
+    // Bean 動畫幀 - auto-detect frame count
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/bean";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["bean"] = {
+            "bean", 100, 5.0f,
+            RESOURCE_DIR"/Image/Plants/beanCard.png",
+            paths,
+            1.0f
+        };
     }
-
-    m_PlantDataMap["bean"] = {
-        "bean", 100, 5.0f,
-        RESOURCE_DIR"/Image/Plants/beanCard.png",
-        beanAnimationPaths,
-        1.0f
-    };
 
     m_PlantDataMap["sunflower"] = {
         "sunflower", 50, 7.0f,
@@ -29,88 +59,95 @@ PlantRegistry::PlantRegistry() {
     };
 
     // Walnut - defensive plant
-    std::vector<std::string> walnutFrames;
-    for (int i = 1; i <= 8; ++i) {
-        walnutFrames.push_back(RESOURCE_DIR"/Image/Plants/walnut/frame_" + std::to_string(i) + ".png");
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/walnut";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["walnut"] = {
+            "walnut", 50, 8.0f,
+            RESOURCE_DIR"/Image/Plants/walnut/frame_1.png",
+            paths,
+            1.0f
+        };
     }
-    m_PlantDataMap["walnut"] = {
-        "walnut", 50, 8.0f,
-        RESOURCE_DIR"/Image/Plants/walnut/frame_1.png",
-        walnutFrames,
-        1.0f
-    };
 
     // Potato Mine - explosive plant
-    std::vector<std::string> potatoFrames;
-    for (int i = 1; i <= 8; ++i) {
-        potatoFrames.push_back(RESOURCE_DIR"/Image/Plants/potato/frame_" + std::to_string(i) + ".png");
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/potato";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["potato"] = {
+            "potato", 25, 6.0f,
+            RESOURCE_DIR"/Image/Plants/potato/frame_1.png",
+            paths,
+            0.8f
+        };
     }
-    m_PlantDataMap["potato"] = {
-        "potato", 25, 6.0f,
-        RESOURCE_DIR"/Image/Plants/potato/frame_1.png",
-        potatoFrames,
-        0.8f
-    };
 
     // Repeater - double shooter
-    std::vector<std::string> repeaterFrames;
-    for (int i = 1; i <= 8; ++i) {
-        repeaterFrames.push_back(RESOURCE_DIR"/Image/Plants/repeater/frame_" + std::to_string(i) + ".png");
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/repeater";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["repeater"] = {
+            "repeater", 200, 1.0f,
+            RESOURCE_DIR"/Image/Plants/repeater/frame_1.png",
+            paths,
+            1.0f
+        };
     }
-    m_PlantDataMap["repeater"] = {
-        "repeater", 200, 1.0f,
-        RESOURCE_DIR"/Image/Plants/repeater/frame_1.png",
-        repeaterFrames,
-        1.0f
-    };
 
     // Squash - jumping plant
-    std::vector<std::string> squashFrames;
-    for (int i = 1; i <= 8; ++i) {
-        squashFrames.push_back(RESOURCE_DIR"/Image/Plants/squash/frame_" + std::to_string(i) + ".png");
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/squash";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["squash"] = {
+            "squash", 150, 4.0f,
+            RESOURCE_DIR"/Image/Plants/squash/frame_1.png",
+            paths,
+            0.9f
+        };
     }
-    m_PlantDataMap["squash"] = {
-        "squash", 150, 4.0f,
-        RESOURCE_DIR"/Image/Plants/squash/frame_1.png",
-        squashFrames,
-        0.9f
-    };
 
     // Cherry Bomb - explosive plant
-    std::vector<std::string> cherryFrames;
-    for (int i = 1; i <= 8; ++i) {
-        cherryFrames.push_back(RESOURCE_DIR"/Image/Plants/cherry/frame_" + std::to_string(i) + ".png");
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/cherry";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["cherry"] = {
+            "cherry", 50, 6.0f,
+            RESOURCE_DIR"/Image/Plants/cherry/frame_1.png",
+            paths,
+            0.9f
+        };
     }
-    m_PlantDataMap["cherry"] = {
-        "cherry", 50, 6.0f,
-        RESOURCE_DIR"/Image/Plants/cherry/frame_1.png",
-        cherryFrames,
-        0.9f
-    };
 
     // Snow Pea - ice plant
-    std::vector<std::string> snowpeaFrames;
-    for (int i = 1; i <= 8; ++i) {
-        snowpeaFrames.push_back(RESOURCE_DIR"/Image/Plants/snowpea/frame_" + std::to_string(i) + ".png");
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/snowpea";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["snowpea"] = {
+            "snowpea", 175, 1.5f,
+            RESOURCE_DIR"/Image/Plants/snowpea/frame_1.png",
+            paths,
+            0.8f
+        };
     }
-    m_PlantDataMap["snowpea"] = {
-        "snowpea", 175, 1.5f,
-        RESOURCE_DIR"/Image/Plants/snowpea/frame_1.png",
-        snowpeaFrames,
-        0.8f
-    };
 
     // Chomper - eating plant
-    std::vector<std::string> chomperFrames;
-    for (int i = 1; i <= 8; ++i) {
-        chomperFrames.push_back(RESOURCE_DIR"/Image/Plants/chomper/frame_" + std::to_string(i) + ".png");
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/chomper";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["chomper"] = {
+            "chomper", 150, 15.0f,
+            RESOURCE_DIR"/Image/Plants/chomper/frame_1.png",
+            paths,
+            1.0f
+        };
     }
-    m_PlantDataMap["chomper"] = {
-        "chomper", 150, 15.0f,
-        RESOURCE_DIR"/Image/Plants/chomper/frame_1.png",
-        chomperFrames,
-        1.0f
-    };
 
     m_PlantDataMap["nut"] = {
         "nut", 50, 10.0f,

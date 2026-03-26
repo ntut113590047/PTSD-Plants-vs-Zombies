@@ -23,40 +23,71 @@
 #include <ctime>
 #include <cmath>
 #include <algorithm>
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+// Helper function to auto-detect frame count in a directory
+static int GetFrameCountForPath(const std::string& basePath) {
+    int maxFrame = 0;
+    try {
+        for (int i = 1; i <= 999; ++i) {
+            std::string framePath = basePath + "/frame_" + std::to_string(i) + ".png";
+            if (fs::exists(framePath)) {
+                maxFrame = i;
+            } else if (i > maxFrame + 10) {
+                // Stop searching after 10 consecutive misses
+                break;
+            }
+        }
+    } catch (...) {
+        // If filesystem check fails, return 0
+    }
+    return (maxFrame > 0) ? maxFrame : 8; // Default to 8 if nothing found
+}
+
+// Helper function to generate frame paths for any zombie/plant type
+static std::vector<std::string> GetFramePaths(const std::string& resourcePath, int frameCount) {
+    std::vector<std::string> paths;
+    for (int i = 1; i <= frameCount; ++i) {
+        paths.push_back(resourcePath + "/frame_" + std::to_string(i) + ".png");
+    }
+    return paths;
+}
 
 
 LevelManager::LevelManager(int level)
     : m_CurrentLevel(level) {}
 
 std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType, int row, float y) {
-    std::vector<std::string> zombiePaths;
+    (void)y;
 
     if (zombieType == "ConeZombie") {
-        for (int i = 1; i <= 8; ++i) {
-            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/cone/frame_" + std::to_string(i) + ".png");
-        }
-        return std::make_shared<ConeZombie>(zombiePaths, row, 35.0f);
+        std::string basePath = RESOURCE_DIR"/Image/zombies/cone";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        return std::make_shared<ConeZombie>(paths, row, 35.0f);
     } else if (zombieType == "BucketZombie") {
-        for (int i = 1; i <= 8; ++i) {
-            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/bucket/frame_" + std::to_string(i) + ".png");
-        }
-        return std::make_shared<BucketZombie>(zombiePaths, row, 35.0f);
+        std::string basePath = RESOURCE_DIR"/Image/zombies/bucket";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        return std::make_shared<BucketZombie>(paths, row, 35.0f);
     } else if (zombieType == "PoleVaulterZombie") {
-        for (int i = 1; i <= 8; ++i) {
-            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/polevaulter/frame_" + std::to_string(i) + ".png");
-        }
-        return std::make_shared<PoleVaulterZombie>(zombiePaths, row, 35.0f);
+        std::string basePath = RESOURCE_DIR"/Image/zombies/polevaulter";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        return std::make_shared<PoleVaulterZombie>(paths, row, 35.0f);
     } else if (zombieType == "FlagZombie") {
-        for (int i = 1; i <= 8; ++i) {
-            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/flag/frame_" + std::to_string(i) + ".png");
-        }
-        return std::make_shared<FlagZombie>(zombiePaths, row, 35.0f);
+        std::string basePath = RESOURCE_DIR"/Image/zombies/flag";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        return std::make_shared<FlagZombie>(paths, row, 35.0f);
     } else {
         // Default to BasicZombie
-        for (int i = 1; i <= 22; ++i) {
-            zombiePaths.push_back(RESOURCE_DIR"/Image/zombies/zombie/frame_" + std::to_string(i) + ".png");
-        }
-        return std::make_shared<BasicZombie>(zombiePaths, row, 35.0f);
+        std::string basePath = RESOURCE_DIR"/Image/zombies/zombie";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        return std::make_shared<BasicZombie>(paths, row, 35.0f);
     }
 }
 
