@@ -15,7 +15,7 @@
     "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
   },
   "level_2": {
-    "background": "phase1.png",
+    "background": "phase2.png",
     "rows_unlocked": [1, 2, 3],
     "available_plants": ["bean", "sunflower"],
     "starting_energy": 150,
