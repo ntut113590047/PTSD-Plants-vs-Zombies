@@ -114,6 +114,10 @@ private:
     int m_CurrentZombieTypeSpawned = 0;  // How many of current type spawned
     float m_ElapsedTime = 0.0f;  // Total elapsed time for win conditions
     int m_EnergyCollected = 0;  // Track collected energy for win condition
+
+    // Level transition timers
+    float m_WinDelayTimer = 0.0f;  // Delay before advancing to next level
+    float m_LoseDelayTimer = 0.0f;  // Delay before restarting level
 };
 
 #endif

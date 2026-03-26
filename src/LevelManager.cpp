@@ -478,10 +478,23 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 
         // Check win/lose conditions periodically
         if (m_GameStateManager.CheckWinCondition(m_ElapsedTime, m_EnergyCollected)) {
-            // Game won - can implement next level transition here
+            // Game won - automatically advance to next level after 2 seconds
+            m_WinDelayTimer += deltaTime;
+            if (m_WinDelayTimer >= 2.0f) {
+                if (m_CurrentLevel < 10) {
+                    ChangeLevel(m_CurrentLevel + 1, root);
+                } else {
+                    // All levels completed! Loop back to level 1
+                    ChangeLevel(1, root);
+                }
+            }
         }
         if (m_GameStateManager.HasLost()) {
-            // Game lost - can implement restart or level select here
+            // Game lost - automatically restart level after 2 seconds
+            m_LoseDelayTimer += deltaTime;
+            if (m_LoseDelayTimer >= 2.0f) {
+                ChangeLevel(m_CurrentLevel, root);  // Restart current level
+            }
         }
 
         // 戰鬥：交由植物類別偵測與攻擊（豌豆射手會在自己的 Attack 內發射投射物）

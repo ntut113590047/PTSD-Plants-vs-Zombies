@@ -1,13 +1,22 @@
 {
   "level_1": {
     "background": "phase1.png",
-    "rows_unlocked": [2],
-    "available_plants": ["bean"],
+    "rows_unlocked": [
+      2
+    ],
+    "available_plants": [
+      "bean"
+    ],
     "starting_energy": 150,
     "waves": [
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 4, "spawn_interval": 30.0, "delay_offset": 0.0}
+          {
+            "type": "BasicZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       }
@@ -19,20 +28,42 @@
   },
   "level_2": {
     "background": "phase2.png",
-    "rows_unlocked": [1, 2, 3],
-    "available_plants": ["bean", "sunflower"],
+    "rows_unlocked": [
+      1,
+      2,
+      3
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower"
+    ],
     "starting_energy": 50,
     "waves": [
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 5, "spawn_interval": 25.0, "delay_offset": 0.0}
+          {
+            "type": "BasicZombie",
+            "count": 5,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 3, "spawn_interval": 20.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 2, "spawn_interval": 20.0, "delay_offset": 2.0}
+          {
+            "type": "BasicZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "ConeZombie",
+            "count": 2,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 10.0
       }
@@ -44,26 +75,56 @@
   },
   "level_3": {
     "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "walnut"],
+    "rows_unlocked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower",
+      "walnut"
+    ],
     "starting_energy": 50,
     "waves": [
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 4, "spawn_interval": 20.0, "delay_offset": 0.0}
+          {
+            "type": "BasicZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "ConeZombie", "count": 4, "spawn_interval": 18.0, "delay_offset": 0.0}
+          {
+            "type": "ConeZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 3, "spawn_interval": 15.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 3, "spawn_interval": 15.0, "delay_offset": 1.0}
+          {
+            "type": "BasicZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "ConeZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       }
@@ -75,28 +136,69 @@
   },
   "level_4": {
     "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "walnut", "potato"],
+    "rows_unlocked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower",
+      "walnut",
+      "potato"
+    ],
     "starting_energy": 75,
     "waves": [
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 3, "spawn_interval": 20.0, "delay_offset": 0.0},
-          {"type": "BucketZombie", "count": 2, "spawn_interval": 20.0, "delay_offset": 2.0}
+          {
+            "type": "BasicZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "BucketZombie",
+            "count": 2,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BucketZombie", "count": 4, "spawn_interval": 18.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 2, "spawn_interval": 18.0, "delay_offset": 1.0}
+          {
+            "type": "BucketZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "ConeZombie",
+            "count": 2,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 5, "spawn_interval": 15.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 3, "spawn_interval": 15.0, "delay_offset": 1.0}
+          {
+            "type": "BasicZombie",
+            "count": 5,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "ConeZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       }
@@ -108,28 +210,70 @@
   },
   "level_5": {
     "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "walnut", "potato", "repeater"],
+    "rows_unlocked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower",
+      "walnut",
+      "potato",
+      "repeater"
+    ],
     "starting_energy": 100,
     "waves": [
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 5, "spawn_interval": 18.0, "delay_offset": 0.0},
-          {"type": "PoleVaulterZombie", "count": 2, "spawn_interval": 18.0, "delay_offset": 2.0}
+          {
+            "type": "BasicZombie",
+            "count": 5,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "PoleVaulterZombie",
+            "count": 2,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BucketZombie", "count": 3, "spawn_interval": 16.0, "delay_offset": 0.0},
-          {"type": "PoleVaulterZombie", "count": 3, "spawn_interval": 16.0, "delay_offset": 1.0}
+          {
+            "type": "BucketZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "PoleVaulterZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "ConeZombie", "count": 4, "spawn_interval": 14.0, "delay_offset": 0.0},
-          {"type": "PoleVaulterZombie", "count": 4, "spawn_interval": 14.0, "delay_offset": 1.0}
+          {
+            "type": "ConeZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "PoleVaulterZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       }
@@ -141,26 +285,59 @@
   },
   "level_6": {
     "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "walnut", "potato", "repeater", "squash"],
+    "rows_unlocked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower",
+      "walnut",
+      "potato",
+      "repeater",
+      "squash"
+    ],
     "starting_energy": 100,
     "waves": [
       {
         "zombies": [
-          {"type": "ConeZombie", "count": 6, "spawn_interval": 15.0, "delay_offset": 0.0}
+          {
+            "type": "ConeZombie",
+            "count": 6,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BucketZombie", "count": 4, "spawn_interval": 14.0, "delay_offset": 0.0},
-          {"type": "FootballZombie", "count": 2, "spawn_interval": 14.0, "delay_offset": 2.0}
+          {
+            "type": "BucketZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "FootballZombie",
+            "count": 2,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 8, "spawn_interval": 12.0, "delay_offset": 0.0}
+          {
+            "type": "BasicZombie",
+            "count": 8,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       }
@@ -172,28 +349,71 @@
   },
   "level_7": {
     "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "walnut", "potato", "repeater", "squash"],
+    "rows_unlocked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower",
+      "walnut",
+      "potato",
+      "repeater",
+      "squash"
+    ],
     "starting_energy": 150,
     "waves": [
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 1, "spawn_interval": 25.0, "delay_offset": 0.0}
+          {
+            "type": "BasicZombie",
+            "count": 1,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 4, "spawn_interval": 20.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 2, "spawn_interval": 20.0, "delay_offset": 1.0}
+          {
+            "type": "BasicZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "ConeZombie",
+            "count": 2,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BucketZombie", "count": 3, "spawn_interval": 12.0, "delay_offset": 0.0},
-          {"type": "PoleVaulterZombie", "count": 3, "spawn_interval": 12.0, "delay_offset": 1.0},
-          {"type": "FootballZombie", "count": 2, "spawn_interval": 12.0, "delay_offset": 2.0}
+          {
+            "type": "BucketZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "PoleVaulterZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          },
+          {
+            "type": "FootballZombie",
+            "count": 2,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 5.0
       }
@@ -205,41 +425,99 @@
   },
   "level_8": {
     "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "walnut", "potato", "repeater", "squash"],
+    "rows_unlocked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower",
+      "walnut",
+      "potato",
+      "repeater",
+      "squash"
+    ],
     "starting_energy": 150,
     "waves": [
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 6, "spawn_interval": 15.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 3, "spawn_interval": 15.0, "delay_offset": 1.0}
+          {
+            "type": "BasicZombie",
+            "count": 6,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "ConeZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BucketZombie", "count": 5, "spawn_interval": 14.0, "delay_offset": 0.0},
-          {"type": "PoleVaulterZombie", "count": 4, "spawn_interval": 14.0, "delay_offset": 1.0}
+          {
+            "type": "BucketZombie",
+            "count": 5,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "PoleVaulterZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "ConeZombie", "count": 4, "spawn_interval": 12.0, "delay_offset": 0.0},
-          {"type": "FootballZombie", "count": 3, "spawn_interval": 12.0, "delay_offset": 2.0}
+          {
+            "type": "ConeZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "FootballZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 8, "spawn_interval": 10.0, "delay_offset": 0.0}
+          {
+            "type": "BasicZombie",
+            "count": 8,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BucketZombie", "count": 6, "spawn_interval": 10.0, "delay_offset": 0.0},
-          {"type": "FootballZombie", "count": 4, "spawn_interval": 10.0, "delay_offset": 1.0}
+          {
+            "type": "BucketZombie",
+            "count": 6,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "FootballZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       }
@@ -251,21 +529,54 @@
   },
   "level_9": {
     "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "walnut", "potato", "repeater", "squash"],
+    "rows_unlocked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower",
+      "walnut",
+      "potato",
+      "repeater",
+      "squash"
+    ],
     "starting_energy": 200,
     "waves": [
       {
         "zombies": [
-          {"type": "FootballZombie", "count": 10, "spawn_interval": 15.0, "delay_offset": 0.0}
+          {
+            "type": "FootballZombie",
+            "count": 10,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BucketZombie", "count": 4, "spawn_interval": 12.0, "delay_offset": 0.0},
-          {"type": "FootballZombie", "count": 3, "spawn_interval": 12.0, "delay_offset": 1.0},
-          {"type": "PoleVaulterZombie", "count": 3, "spawn_interval": 12.0, "delay_offset": 2.0}
+          {
+            "type": "BucketZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "FootballZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          },
+          {
+            "type": "PoleVaulterZombie",
+            "count": 3,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 5.0
       }
@@ -277,30 +588,83 @@
   },
   "level_10": {
     "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "walnut", "potato", "repeater", "squash"],
+    "rows_unlocked": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "available_plants": [
+      "bean",
+      "sunflower",
+      "walnut",
+      "potato",
+      "repeater",
+      "squash"
+    ],
     "starting_energy": 200,
     "waves": [
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 4, "spawn_interval": 12.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 4, "spawn_interval": 12.0, "delay_offset": 1.0},
-          {"type": "BucketZombie", "count": 4, "spawn_interval": 12.0, "delay_offset": 2.0}
+          {
+            "type": "BasicZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "ConeZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          },
+          {
+            "type": "BucketZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "FootballZombie", "count": 8, "spawn_interval": 10.0, "delay_offset": 0.0},
-          {"type": "BucketZombie", "count": 4, "spawn_interval": 10.0, "delay_offset": 1.0}
+          {
+            "type": "FootballZombie",
+            "count": 8,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "BucketZombie",
+            "count": 4,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          }
         ],
         "start_delay": 5.0
       },
       {
         "zombies": [
-          {"type": "BasicZombie", "count": 6, "spawn_interval": 8.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 5, "spawn_interval": 8.0, "delay_offset": 1.0},
-          {"type": "PoleVaulterZombie", "count": 5, "spawn_interval": 8.0, "delay_offset": 2.0}
+          {
+            "type": "BasicZombie",
+            "count": 6,
+            "spawn_interval": 5.0,
+            "delay_offset": 0.0
+          },
+          {
+            "type": "ConeZombie",
+            "count": 5,
+            "spawn_interval": 5.0,
+            "delay_offset": 1.0
+          },
+          {
+            "type": "PoleVaulterZombie",
+            "count": 5,
+            "spawn_interval": 5.0,
+            "delay_offset": 2.0
+          }
         ],
         "start_delay": 5.0
       }
