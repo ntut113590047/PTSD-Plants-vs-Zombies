@@ -34,6 +34,7 @@ public:
     void LoadLevel(Util::Renderer& root);
     void Update(Util::Renderer& root, float deltaTime);
     void ChangeLevel(int level, Util::Renderer& root);
+    void SkipToNextLevel(Util::Renderer& root);  // Debug: skip to next level
 
 private:
     bool IsGameLevel() const;
@@ -73,6 +74,14 @@ private:
     std::vector<std::vector<bool>> m_GrassGrid; // 草坪網格，true表示被佔用
     std::vector<bool> m_RowAllowed; // 每行是否允許放置植物
     std::vector<std::shared_ptr<LawnMower>> m_LawnMowers; // 每行割草機
+
+    // 動態網格坐標（根據允許的行數調整）
+    float m_GridTopY = 180.0f;
+    float m_GridBottomY = -290.0f;
+    float m_GridLeftX = -300.0f;
+    float m_GridRightX = 500.0f;
+    int m_GridCols = 9;
+    float m_GridCellHeight = 70.0f;
     std::vector<std::shared_ptr<Plant>> m_PlacedPlants; // 已放置的植物
     std::shared_ptr<PlantCard> m_SelectedCard = nullptr; // 當前選擇的卡片
     std::shared_ptr<Util::GameObject> m_FollowingPlant = nullptr; // 跟隨滑鼠的植物圖片

@@ -9,7 +9,6 @@
 #include "WallnutPlant.hpp"
 #include "PotatoMinePlant.hpp"
 #include "RepeaterPlant.hpp"
-#include "SquashPlant.hpp"
 #include "CherryBombPlant.hpp"
 #include "SnowPeaPlant.hpp"
 #include "ChomperPlant.hpp"
@@ -201,31 +200,9 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     // ===== 初始化卡片資料 =====
     auto& registry = PlantRegistry::GetInstance();
     m_LevelPlants.clear();
-    switch (m_CurrentLevel) {
-    case 1:
-        m_LevelPlants.push_back(registry.GetPlantData("bean"));
-        break;
-
-    case 2:
-        m_LevelPlants.push_back(registry.GetPlantData("bean"));
-        m_LevelPlants.push_back(registry.GetPlantData("sunflower"));
-        break;
-
-    case 3:
-        m_LevelPlants.push_back(registry.GetPlantData("bean"));
-        m_LevelPlants.push_back(registry.GetPlantData("sunflower"));
-        m_LevelPlants.push_back(registry.GetPlantData("cherry"));
-        break;
-    case 4:
-        m_LevelPlants.push_back(registry.GetPlantData("bean"));
-        m_LevelPlants.push_back(registry.GetPlantData("sunflower"));
-        m_LevelPlants.push_back(registry.GetPlantData("cherry"));
-        m_LevelPlants.push_back(registry.GetPlantData("nut"));
-        break;
-
-    default:
-        break;
-}
+    for (const auto& plantName : m_CurrentLevelConfig.available_plants) {
+        m_LevelPlants.push_back(registry.GetPlantData(plantName));
+    }
     // ===== 創建卡片 =====
     m_Cards.clear();
     m_CardVisuals.clear();
@@ -270,20 +247,46 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         }
     }
 
+    // 根據允許的行數動態計算網格坐標
+    int allowedRowCount = 0;
+    int minRow = 4, maxRow = 0;
+    for (int r = 0; r < 5; ++r) {
+        if (m_RowAllowed[r]) {
+            allowedRowCount++;
+            minRow = std::min(minRow, r);
+            maxRow = std::max(maxRow, r);
+        }
+    }
+
+    if (allowedRowCount > 0) {
+        // 根據允許行的範圍計算網格座標
+        float baseTop = 180.0f;
+        float baseBottom = -290.0f;
+        float totalHeight = baseTop - baseBottom; // 470
+
+        if (allowedRowCount == 1) {
+            // 單行居中
+            m_GridTopY = 0.0f;
+            m_GridBottomY = 0.0f;
+            m_GridCellHeight = 0.0f;
+        } else {
+            // 多行均勻分布
+            m_GridCellHeight = totalHeight / (5 - 1); // 每行間距（基于5行滿布）
+            m_GridTopY = baseTop - minRow * m_GridCellHeight;
+            m_GridBottomY = baseTop - maxRow * m_GridCellHeight;
+        }
+    }
+
     // ===== 初始化每行割草機 =====
     m_LawnMowers.clear();
     {
-        float leftX = -300.0f;
-        float topY = 180.0f;
-        float bottomY = -290.0f;
-        int rows = 5;
-        float cellHeight = (topY - bottomY) / (rows - 1);
+        float leftX = m_GridLeftX;
 
-        for (int r = 0; r < rows; ++r) {
+        for (int r = 0; r < 5; ++r) {
             if (r >= static_cast<int>(m_RowAllowed.size()) || !m_RowAllowed[r]) {
                 continue;
             }
-            float rowY = topY - r * cellHeight;
+            float rowY = (allowedRowCount == 1) ? m_GridTopY : (m_GridTopY - (r - minRow) * m_GridCellHeight);
             auto mower = std::make_shared<LawnMower>(r);
             mower->m_Transform.translation = {leftX - 85.0f, rowY};
             root.AddChild(mower);
@@ -756,23 +759,25 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 
             // 檢查預覽位置
             int previewRow = -1, previewCol = -1;
-            float leftX = -300.0f;
-            float rightX = 500.0f;
-            float topY = 180.0f;
-            float bottomY = -290.0f;
-            int cols = 9;
-            int rows = 5;
-            float cellWidth = (rightX - leftX) / (cols - 1);
-            float cellHeight = (topY - bottomY) / (rows - 1);
+            float cellWidth = (m_GridRightX - m_GridLeftX) / (m_GridCols - 1);
 
-            for (int r = 0; r < rows; ++r) {
-                for (int c = 0; c < cols; ++c) {
-                    float cellX = leftX + c * cellWidth;
-                    float cellY = topY - r * cellHeight;
+            for (int r = 0; r < 5; ++r) {
+                if (!m_RowAllowed[r]) continue;
+
+                // 計算此行的Y座標
+                float rowY;
+                if (m_GridCellHeight == 0.0f) {
+                    rowY = m_GridTopY; // 單行情況
+                } else {
+                    rowY = m_GridTopY - r * m_GridCellHeight;
+                }
+
+                for (int c = 0; c < m_GridCols; ++c) {
+                    float cellX = m_GridLeftX + c * cellWidth;
                     float halfSizeX = cellWidth / 2.0f;
-                    float halfSizeY = cellHeight / 2.0f;
+                    float halfSizeY = m_GridCellHeight / 2.0f;
                     if (mousePos.x >= cellX - halfSizeX && mousePos.x < cellX + halfSizeX &&
-                        mousePos.y <= cellY + halfSizeY && mousePos.y > cellY - halfSizeY) {
+                        mousePos.y <= rowY + halfSizeY && mousePos.y > rowY - halfSizeY) {
                         previewRow = r;
                         previewCol = c;
                         break;
@@ -792,9 +797,9 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     // 設置半透明（如果支持的話）
                     root.AddChild(m_PreviewPlant);
                 }
-                float cellX = leftX + previewCol * cellWidth;
-                float cellY = topY - previewRow * cellHeight;
-                m_PreviewPlant->m_Transform.translation = {cellX, cellY};
+                float cellX = m_GridLeftX + previewCol * cellWidth;
+                float rowY = (m_GridCellHeight == 0.0f) ? m_GridTopY : (m_GridTopY - previewRow * m_GridCellHeight);
+                m_PreviewPlant->m_Transform.translation = {cellX, rowY};
             } else {
                 // 移除預覽植物
                 if (m_PreviewPlant) {
@@ -815,29 +820,26 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             // 如果有預覽植物且位置有效，直接使用預覽位置
             if (m_PreviewPlant) {
                 // 找到對應的格子坐標
-                float leftX = -300.0f;
-                float rightX = 500.0f;
-                float topY = 180.0f;
-                float bottomY = -290.0f;
-                int cols = 9;
-                int rows = 5;
-                float cellWidth = (rightX - leftX) / (cols - 1);
-                float cellHeight = (topY - bottomY) / (rows - 1);
-
+                float cellWidth = (m_GridRightX - m_GridLeftX) / (m_GridCols - 1);
                 glm::vec2 previewPos = m_PreviewPlant->m_Transform.translation;
                 int row = -1, col = -1;
 
-                for (int r = 0; r < rows; ++r) {
-                    for (int c = 0; c < cols; ++c) {
-                        float cellX = leftX + c * cellWidth;
-                        float cellY = topY - r * cellHeight;
-                        if (std::abs(previewPos.x - cellX) < 1.0f && std::abs(previewPos.y - cellY) < 1.0f) {
-                            row = r;
-                            col = c;
-                            break;
-                        }
+                for (int r = 0; r < 5; ++r) {
+                    if (!m_RowAllowed[r]) continue;
+
+                    float rowY = (m_GridCellHeight == 0.0f) ? m_GridTopY : (m_GridTopY - r * m_GridCellHeight);
+                    if (std::abs(previewPos.y - rowY) < 1.0f) {
+                        row = r;
+                        break;
                     }
-                    if (row != -1) break;
+                }
+
+                for (int c = 0; c < m_GridCols; ++c) {
+                    float cellX = m_GridLeftX + c * cellWidth;
+                    if (std::abs(previewPos.x - cellX) < 1.0f) {
+                        col = c;
+                        break;
+                    }
                 }
 
                 if (row != -1 && col != -1 && m_RowAllowed[row] && !m_GrassGrid[row][col]) {
@@ -854,8 +856,6 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         placedPlant = std::make_shared<PotatoMinePlant>(data);
                     } else if (data.name == "repeater") {
                         placedPlant = std::make_shared<RepeaterPlant>(data);
-                    } else if (data.name == "squash") {
-                        placedPlant = std::make_shared<SquashPlant>(data);
                     } else if (data.name == "cherry") {
                         placedPlant = std::make_shared<CherryBombPlant>(data);
                     } else if (data.name == "snowpea") {
@@ -944,4 +944,8 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
 
     m_CurrentLevel = level;
     LoadLevel(root);
+}
+
+void LevelManager::SkipToNextLevel(Util::Renderer& root) {
+    ChangeLevel(m_CurrentLevel + 1, root);
 }

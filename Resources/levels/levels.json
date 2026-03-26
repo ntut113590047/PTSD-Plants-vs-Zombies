@@ -3,7 +3,7 @@
     "background": "phase1.png",
     "rows_unlocked": [2],
     "available_plants": ["bean"],
-    "starting_energy": 200,
+    "starting_energy": 150,
     "waves": [
       {
         "zombies": [
@@ -48,7 +48,7 @@
     "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
   },
   "level_4": {
-    "background": "phase2.png",
+    "background": "phase3.png",
     "rows_unlocked": [0, 1, 2, 3, 4],
     "available_plants": ["bean", "sunflower", "cherry", "walnut"],
     "starting_energy": 150,
