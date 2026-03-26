@@ -258,22 +258,25 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         }
     }
 
+    m_GridMinRow = minRow;
+    m_GridMaxRow = maxRow;
+
     if (allowedRowCount > 0) {
-        // 根據允許行的範圍計算網格座標
         float baseTop = 180.0f;
         float baseBottom = -290.0f;
         float totalHeight = baseTop - baseBottom; // 470
+        float baselineSpacing = totalHeight / (5 - 1); // 基础行间距=117.5
 
         if (allowedRowCount == 1) {
-            // 單行居中
-            m_GridTopY = 0.0f;
-            m_GridBottomY = 0.0f;
-            m_GridCellHeight = 0.0f;
+            // 單行居中：使用基础间距
+            m_GridCellHeight = baselineSpacing;
+            m_GridTopY = baseTop - minRow * baselineSpacing;
+            m_GridBottomY = m_GridTopY;
         } else {
             // 多行均勻分布
-            m_GridCellHeight = totalHeight / (5 - 1); // 每行間距（基于5行滿布）
-            m_GridTopY = baseTop - minRow * m_GridCellHeight;
-            m_GridBottomY = baseTop - maxRow * m_GridCellHeight;
+            m_GridCellHeight = baselineSpacing;
+            m_GridTopY = baseTop - minRow * baselineSpacing;
+            m_GridBottomY = baseTop - maxRow * baselineSpacing;
         }
     }
 
@@ -286,7 +289,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
             if (r >= static_cast<int>(m_RowAllowed.size()) || !m_RowAllowed[r]) {
                 continue;
             }
-            float rowY = (allowedRowCount == 1) ? m_GridTopY : (m_GridTopY - (r - minRow) * m_GridCellHeight);
+            float rowY = m_GridTopY - (r - m_GridMinRow) * m_GridCellHeight;
             auto mower = std::make_shared<LawnMower>(r);
             mower->m_Transform.translation = {leftX - 85.0f, rowY};
             root.AddChild(mower);
@@ -764,13 +767,8 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             for (int r = 0; r < 5; ++r) {
                 if (!m_RowAllowed[r]) continue;
 
-                // 計算此行的Y座標
-                float rowY;
-                if (m_GridCellHeight == 0.0f) {
-                    rowY = m_GridTopY; // 單行情況
-                } else {
-                    rowY = m_GridTopY - r * m_GridCellHeight;
-                }
+                // 計算此行的Y座標（基於最小行的相對偏移）
+                float rowY = m_GridTopY - (r - m_GridMinRow) * m_GridCellHeight;
 
                 for (int c = 0; c < m_GridCols; ++c) {
                     float cellX = m_GridLeftX + c * cellWidth;
@@ -794,11 +792,10 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         std::make_shared<Util::Animation>(m_SelectedCard->GetData().plantAnimationPaths, true, 50, true, 0), 10
                     );
                     m_PreviewPlant->m_Transform.scale = {m_SelectedCard->GetData().scale, m_SelectedCard->GetData().scale};
-                    // 設置半透明（如果支持的話）
                     root.AddChild(m_PreviewPlant);
                 }
                 float cellX = m_GridLeftX + previewCol * cellWidth;
-                float rowY = (m_GridCellHeight == 0.0f) ? m_GridTopY : (m_GridTopY - previewRow * m_GridCellHeight);
+                float rowY = m_GridTopY - (previewRow - m_GridMinRow) * m_GridCellHeight;
                 m_PreviewPlant->m_Transform.translation = {cellX, rowY};
             } else {
                 // 移除預覽植物
@@ -827,7 +824,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 for (int r = 0; r < 5; ++r) {
                     if (!m_RowAllowed[r]) continue;
 
-                    float rowY = (m_GridCellHeight == 0.0f) ? m_GridTopY : (m_GridTopY - r * m_GridCellHeight);
+                    float rowY = m_GridTopY - (r - m_GridMinRow) * m_GridCellHeight;
                     if (std::abs(previewPos.y - rowY) < 1.0f) {
                         row = r;
                         break;

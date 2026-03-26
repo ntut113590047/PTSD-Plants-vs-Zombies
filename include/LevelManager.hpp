@@ -82,6 +82,8 @@ private:
     float m_GridRightX = 500.0f;
     int m_GridCols = 9;
     float m_GridCellHeight = 70.0f;
+    int m_GridMinRow = 0;  // 最小允許的行索引
+    int m_GridMaxRow = 4;  // 最大允許的行索引
     std::vector<std::shared_ptr<Plant>> m_PlacedPlants; // 已放置的植物
     std::shared_ptr<PlantCard> m_SelectedCard = nullptr; // 當前選擇的卡片
     std::shared_ptr<Util::GameObject> m_FollowingPlant = nullptr; // 跟隨滑鼠的植物圖片
