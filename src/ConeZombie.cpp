@@ -18,22 +18,22 @@ ConeZombie::ConeZombie(const std::vector<std::string>& framePaths, int row, floa
     // Create idle animation
     auto idleAnim = std::make_shared<Util::Animation>(framePaths, true, 90, true, 0);
 
-    // Create bright idle frames (hit effect)
-    std::vector<std::string> idleBrightPaths;
-    idleBrightPaths.reserve(framePaths.size());
+    // Create attack animation for hit flash effect
+    std::vector<std::string> attackPaths;
+    attackPaths.reserve(framePaths.size());
     for (const auto& path : framePaths) {
-        std::string brightPath = path;
-        const std::string marker = "/cone/";
-        const std::string replacement = "/cone_bright/";
-        const auto pos = brightPath.find(marker);
+        std::string attackPath = path;
+        const std::string marker = "/coneZombie/";
+        const std::string replacement = "/coneZombieAttack/";
+        const auto pos = attackPath.find(marker);
         if (pos != std::string::npos) {
-            brightPath.replace(pos, marker.size(), replacement);
+            attackPath.replace(pos, marker.size(), replacement);
         }
-        idleBrightPaths.push_back(brightPath);
+        attackPaths.push_back(attackPath);
     }
-    auto idleBrightAnim = std::make_shared<Util::Animation>(idleBrightPaths, true, 90, true, 0);
+    auto attackAnim = std::make_shared<Util::Animation>(attackPaths, true, 90, true, 0);
 
-    // Configure two drawables: normal and bright
-    ConfigureVisualDrawables(idleAnim, idleAnim, idleBrightAnim, idleBrightAnim);
+    // Configure two drawables: idle and attack (for hit flash)
+    ConfigureVisualDrawables(idleAnim, idleAnim, attackAnim, attackAnim);
 }
 

@@ -63,12 +63,12 @@ std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType,
     (void)y;
 
     if (zombieType == "ConeZombie") {
-        std::string basePath = RESOURCE_DIR"/Image/zombies/cone";
+        std::string basePath = RESOURCE_DIR"/Image/zombies/coneZombie";
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         return std::make_shared<ConeZombie>(paths, row, 35.0f);
     } else if (zombieType == "BucketZombie") {
-        std::string basePath = RESOURCE_DIR"/Image/zombies/bucket";
+        std::string basePath = RESOURCE_DIR"/Image/zombies/bucketZombie";
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         return std::make_shared<BucketZombie>(paths, row, 35.0f);
@@ -78,7 +78,7 @@ std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType,
         auto paths = GetFramePaths(basePath, frameCount);
         return std::make_shared<PoleVaulterZombie>(paths, row, 35.0f);
     } else if (zombieType == "FlagZombie") {
-        std::string basePath = RESOURCE_DIR"/Image/zombies/flag";
+        std::string basePath = RESOURCE_DIR"/Image/zombies/flagZombie";
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         return std::make_shared<FlagZombie>(paths, row, 35.0f);

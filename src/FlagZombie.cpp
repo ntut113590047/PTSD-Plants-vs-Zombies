@@ -17,20 +17,20 @@ FlagZombie::FlagZombie(const std::vector<std::string>& framePaths, int row, floa
 
     auto idleAnim = std::make_shared<Util::Animation>(framePaths, true, 90, true, 0);
 
-    // Create bright idle frames
-    std::vector<std::string> idleBrightPaths;
-    idleBrightPaths.reserve(framePaths.size());
+    // Create attack animation for hit flash effect
+    std::vector<std::string> attackPaths;
+    attackPaths.reserve(framePaths.size());
     for (const auto& path : framePaths) {
-        std::string brightPath = path;
-        const std::string marker = "/flag/";
-        const std::string replacement = "/flag_bright/";
-        const auto pos = brightPath.find(marker);
+        std::string attackPath = path;
+        const std::string marker = "/flagZombie/";
+        const std::string replacement = "/flagZombieAttack/";
+        const auto pos = attackPath.find(marker);
         if (pos != std::string::npos) {
-            brightPath.replace(pos, marker.size(), replacement);
+            attackPath.replace(pos, marker.size(), replacement);
         }
-        idleBrightPaths.push_back(brightPath);
+        attackPaths.push_back(attackPath);
     }
-    auto idleBrightAnim = std::make_shared<Util::Animation>(idleBrightPaths, true, 90, true, 0);
+    auto attackAnim = std::make_shared<Util::Animation>(attackPaths, true, 90, true, 0);
 
-    ConfigureVisualDrawables(idleAnim, idleAnim, idleBrightAnim, idleBrightAnim);
+    ConfigureVisualDrawables(idleAnim, idleAnim, attackAnim, attackAnim);
 }
