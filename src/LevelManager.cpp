@@ -63,14 +63,22 @@ std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType,
     (void)y;
 
     if (zombieType == "ConeZombie") {
-        std::string basePath = RESOURCE_DIR"/Image/zombies/coneZombie";
-        int frameCount = GetFrameCountForPath(basePath);
-        auto paths = GetFramePaths(basePath, frameCount);
+        std::string idlePath = RESOURCE_DIR"/Image/zombies/coneZombie";
+        std::string attackPath = RESOURCE_DIR"/Image/zombies/coneZombieAttack";
+        int idleFrames = GetFrameCountForPath(idlePath);
+        int attackFrames = GetFrameCountForPath(attackPath);
+        // Use minimum frame count to avoid loading non-existent files
+        int frameCount = std::min(idleFrames, attackFrames);
+        auto paths = GetFramePaths(idlePath, frameCount);
         return std::make_shared<ConeZombie>(paths, row, 35.0f);
     } else if (zombieType == "BucketZombie") {
-        std::string basePath = RESOURCE_DIR"/Image/zombies/bucketZombie";
-        int frameCount = GetFrameCountForPath(basePath);
-        auto paths = GetFramePaths(basePath, frameCount);
+        std::string idlePath = RESOURCE_DIR"/Image/zombies/bucketZombie";
+        std::string attackPath = RESOURCE_DIR"/Image/zombies/bucketZombieAttack";
+        int idleFrames = GetFrameCountForPath(idlePath);
+        int attackFrames = GetFrameCountForPath(attackPath);
+        // Use minimum frame count to avoid loading non-existent files
+        int frameCount = std::min(idleFrames, attackFrames);
+        auto paths = GetFramePaths(idlePath, frameCount);
         return std::make_shared<BucketZombie>(paths, row, 35.0f);
     } else if (zombieType == "PoleVaulterZombie") {
         std::string basePath = RESOURCE_DIR"/Image/zombies/polevaulter";
@@ -78,9 +86,13 @@ std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType,
         auto paths = GetFramePaths(basePath, frameCount);
         return std::make_shared<PoleVaulterZombie>(paths, row, 35.0f);
     } else if (zombieType == "FlagZombie") {
-        std::string basePath = RESOURCE_DIR"/Image/zombies/flagZombie";
-        int frameCount = GetFrameCountForPath(basePath);
-        auto paths = GetFramePaths(basePath, frameCount);
+        std::string idlePath = RESOURCE_DIR"/Image/zombies/flagZombie";
+        std::string attackPath = RESOURCE_DIR"/Image/zombies/flagZombieAttack";
+        int idleFrames = GetFrameCountForPath(idlePath);
+        int attackFrames = GetFrameCountForPath(attackPath);
+        // Use minimum frame count to avoid loading non-existent files
+        int frameCount = std::min(idleFrames, attackFrames);
+        auto paths = GetFramePaths(idlePath, frameCount);
         return std::make_shared<FlagZombie>(paths, row, 35.0f);
     } else {
         // Default to BasicZombie
