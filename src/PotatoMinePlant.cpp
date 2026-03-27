@@ -10,8 +10,8 @@ PotatoMinePlant::PotatoMinePlant(const PlantData& data,
     : Plant(data,
             drawable != nullptr ? drawable : std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
             zIndex,
-            100.0f,
-            60.0f,
+        300.0f,
+        1800.0f,
             0.0f) {}
 
 void PotatoMinePlant::Update(float deltaTime) {

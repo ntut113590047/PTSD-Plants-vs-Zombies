@@ -10,8 +10,8 @@ PoleVaulterZombie::PoleVaulterZombie(const std::vector<std::string>& framePaths,
              row,
              14.0f,
              1.0f,
-             180.0f,
-             15.0f,
+             500.0f,
+             100.0f,
              1.0f) {
     (void)zIndex;
 
@@ -35,4 +35,18 @@ PoleVaulterZombie::PoleVaulterZombie(const std::vector<std::string>& framePaths,
     // Configure drawables: idle as both idle and attack
     // When hit, show bright version
     ConfigureVisualDrawables(idleAnim, idleAnim, idleBrightAnim, idleBrightAnim);
+}
+
+bool PoleVaulterZombie::HasVaulted() const {
+    return m_HasVaulted;
+}
+
+void PoleVaulterZombie::VaultOverPlant(float cellWidth) {
+    if (m_HasVaulted) {
+        return;
+    }
+
+    m_Transform.translation.x -= cellWidth;
+    m_Speed = 23.0f;
+    m_HasVaulted = true;
 }

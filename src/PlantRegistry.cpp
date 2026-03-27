@@ -44,7 +44,7 @@ PlantRegistry::PlantRegistry() {
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["bean"] = {
-            "bean", 100, 5.0f,
+            "bean", 100, 7.5f,
             RESOURCE_DIR"/Image/Plants/beanCard.png",
             paths,
             1.0f
@@ -61,7 +61,7 @@ PlantRegistry::PlantRegistry() {
             paths.push_back(RESOURCE_DIR"/Image/Plants/sunflowerCard.png");
         }
         m_PlantDataMap["sunflower"] = {
-            "sunflower", 50, 7.0f,
+            "sunflower", 50, 7.5f,
             RESOURCE_DIR"/Image/Plants/sunflowerCard.png",
             paths,
             0.8f
@@ -74,7 +74,7 @@ PlantRegistry::PlantRegistry() {
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["walnut"] = {
-            "walnut", 50, 8.0f,
+            "walnut", 50, 30.0f,
             RESOURCE_DIR"/Image/Plants/nutCard.png",
             paths,
             1.0f
@@ -87,7 +87,7 @@ PlantRegistry::PlantRegistry() {
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["potato"] = {
-            "potato", 25, 6.0f,
+            "potato", 25, 30.0f,
             RESOURCE_DIR"/Image/Plants/potatoCard.png",
             paths,
             0.8f
@@ -113,7 +113,7 @@ PlantRegistry::PlantRegistry() {
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["cherry"] = {
-            "cherry", 50, 6.0f,
+            "cherry", 150, 50.0f,
             RESOURCE_DIR"/Image/Plants/cherryCard.png",
             paths,
             0.9f
@@ -126,7 +126,7 @@ PlantRegistry::PlantRegistry() {
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
         m_PlantDataMap["snowpea"] = {
-            "snowpea", 175, 1.5f,
+            "snowpea", 175, 7.5f,
             RESOURCE_DIR"/Image/Plants/coldBeanCard.png",
             paths,
             0.8f

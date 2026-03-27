@@ -8,7 +8,7 @@ SnowPeaPlant::SnowPeaPlant(const PlantData& data)
     : Plant(data,
             std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
             20.0f,
-            999.0f,
+            300.0f,
             20.0f,
             1.5f) {}
 
@@ -35,5 +35,5 @@ std::optional<PlantProjectile> SnowPeaPlant::Attack(const std::vector<std::share
     };
     peaObj->m_Transform.scale = {0.5f, 0.5f};
 
-    return PlantProjectile{peaObj, GetRow(), 500.0f, GetAttackDamage()};
+    return PlantProjectile{peaObj, GetRow(), 500.0f, GetAttackDamage(), 0.5f, 1.5f};
 }

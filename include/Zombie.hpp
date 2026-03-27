@@ -32,6 +32,7 @@ public:
     float GetAttackDamage() const;
     float GetAttackCooldown() const;
     void TakeDamage(float damage);
+    void ApplySlow(float slowMultiplier, float duration);
     bool IsDead() const;
     bool TryAttack(float deltaTime);
 
@@ -52,6 +53,8 @@ protected:
     float m_AttackCooldown = 1.0f;
     float m_AttackTimer = 0.0f;
     bool m_IsAttacking = false;
+    float m_SlowMultiplier = 1.0f;
+    float m_SlowTimer = 0.0f;
     float m_HitFlashTimer = 0.0f;
     float m_HitFlashDuration = 0.10f;
     std::shared_ptr<Core::Drawable> m_IdleDrawable = nullptr;

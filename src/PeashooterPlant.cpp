@@ -8,9 +8,9 @@ PeashooterPlant::PeashooterPlant(const PlantData& data)
     : Plant(data,
             std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
             20.0f,
-            140.0f,
-            24.0f,
-            1.0f) {}
+            300.0f,
+            20.0f,
+            1.5f) {}
 
 void PeashooterPlant::Update(float deltaTime) {
     (void)deltaTime;

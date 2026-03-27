@@ -50,7 +50,16 @@ Zombie::Zombie(const std::shared_ptr<Core::Drawable>& drawable,
 }
 
 void Zombie::Update(float deltaTime) {
-    m_Transform.translation.x -= m_Speed * deltaTime;
+    if (m_SlowTimer > 0.0f) {
+        m_SlowTimer -= deltaTime;
+        if (m_SlowTimer <= 0.0f) {
+            m_SlowTimer = 0.0f;
+            m_SlowMultiplier = 1.0f;
+        }
+    }
+
+    const float effectiveSpeed = m_Speed * m_SlowMultiplier;
+    m_Transform.translation.x -= effectiveSpeed * deltaTime;
 }
 
 void Zombie::Tick(float deltaTime) {
@@ -110,6 +119,16 @@ void Zombie::TakeDamage(float damage) {
     m_Health -= damage;
     m_HitFlashTimer = m_HitFlashDuration;
     RefreshCurrentDrawable();
+}
+
+void Zombie::ApplySlow(float slowMultiplier, float duration) {
+    if (duration <= 0.0f) {
+        return;
+    }
+
+    const float clampedMultiplier = std::clamp(slowMultiplier, 0.05f, 1.0f);
+    m_SlowMultiplier = std::min(m_SlowMultiplier, clampedMultiplier);
+    m_SlowTimer = std::max(m_SlowTimer, duration);
 }
 
 bool Zombie::IsDead() const {

@@ -39,6 +39,8 @@ public:
 private:
     bool IsGameLevel() const;
     std::shared_ptr<Zombie> SpawnZombie(const std::string& zombieType, int row, float y);
+    void TriggerGameOver(Util::Renderer& root);
+    void UpdateGameOverAnimation(Util::Renderer& root, float deltaTime);
 
 private:
     int m_CurrentLevel;
@@ -104,6 +106,8 @@ private:
         int row = 0;
         float speed = LevelManagerConfig::BEAN_SPEED;
         float damage = LevelManagerConfig::BEAN_DAMAGE;
+        float slowMultiplier = 1.0f;
+        float slowDuration = 0.0f;
     };
     std::vector<BeanProjectile> m_BeanProjectiles;
     float m_SunSpawnTimer = 0.0f; // 計時器（秒）
@@ -129,6 +133,16 @@ private:
     // Level transition timers
     float m_WinDelayTimer = 0.0f;  // Delay before advancing to next level
     float m_LoseDelayTimer = 0.0f;  // Delay before restarting level
+
+    // Game-over freeze and animation state
+    bool m_IsGameOver = false;
+    bool m_GameOverPanelShown = false;
+    float m_GameOverScaleTimer = 0.0f;
+    float m_GameOverShakeTimer = 0.0f;
+    glm::vec2 m_GameOverBasePosition = {0.0f, 0.0f};
+    std::shared_ptr<Util::GameObject> m_GameOverWord = nullptr;
+    std::shared_ptr<Util::GameObject> m_GameOverBoard = nullptr;
+    std::shared_ptr<Util::GameObject> m_GameOverButton = nullptr;
 };
 
 #endif

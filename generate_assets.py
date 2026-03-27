@@ -119,28 +119,6 @@ def generate_repeater_frames():
 
     return frames
 
-def generate_squash_frames():
-    """Generate Squash sprite (jumping attacker)"""
-    frames = []
-    for i in range(8):
-        img = Image.new('RGBA', (FRAME_SIZE, FRAME_SIZE), (255, 255, 255, 255))
-        draw = ImageDraw.Draw(img)
-
-        # Orange squash body
-        # Jumping animation: squash moves up and down
-        y_offset = abs(4 - i) * 3 if i < 8 else 0
-
-        draw.ellipse([25, 40 - y_offset, 75, 75 - y_offset],
-                    fill=(255, 140, 0), outline='black', width=2)
-
-        # Eyes
-        draw.ellipse([35, 50 - y_offset, 40, 55 - y_offset], fill='black')
-        draw.ellipse([60, 50 - y_offset, 65, 55 - y_offset], fill='black')
-
-        frames.append(img)
-
-    return frames
-
 # ===== ZOMBIE SPRITES =====
 
 def generate_zombie_head(draw, x, y, is_attacking=False):
@@ -295,7 +273,6 @@ def main():
         "Plants/wallnut": generate_walnut_frames(),
         "Plants/potato": generate_potato_frames(),
         "Plants/repeater": generate_repeater_frames(),
-        "Plants/squash": generate_squash_frames(),
     }
 
     for plant_name, frames in plants_output.items():

@@ -5,7 +5,6 @@ set(SRC_FILES
     PeashooterPlant.cpp
     SunflowerPlant.cpp
     RepeaterPlant.cpp
-    SquashPlant.cpp
     PotatoMinePlant.cpp
     WallnutPlant.cpp
     CherryBombPlant.cpp
@@ -33,7 +32,6 @@ set(INCLUDE_FILES
     PeashooterPlant.hpp
     SunflowerPlant.hpp
     RepeaterPlant.hpp
-    SquashPlant.hpp
     PotatoMinePlant.hpp
     WallnutPlant.hpp
     CherryBombPlant.hpp

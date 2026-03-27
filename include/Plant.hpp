@@ -15,6 +15,8 @@ struct PlantProjectile {
     int row = 0;
     float speed = 0.0f;
     float damage = 0.0f;
+    float slowMultiplier = 1.0f;
+    float slowDuration = 0.0f;
 };
 
 class Plant : public Util::GameObject {

@@ -58,6 +58,102 @@ static std::vector<std::string> GetFramePaths(const std::string& resourcePath, i
 LevelManager::LevelManager(int level)
     : m_CurrentLevel(level) {}
 
+void LevelManager::TriggerGameOver(Util::Renderer& root) {
+    if (m_IsGameOver) {
+        return;
+    }
+
+    m_IsGameOver = true;
+    m_GameOverPanelShown = false;
+    m_GameOverScaleTimer = 0.0f;
+    m_GameOverShakeTimer = 0.0f;
+    m_GameOverBasePosition = {0.0f, 0.0f};
+
+    if (m_GameOverBoard) {
+        root.RemoveChild(m_GameOverBoard);
+        m_GameOverBoard = nullptr;
+    }
+    if (m_GameOverButton) {
+        root.RemoveChild(m_GameOverButton);
+        m_GameOverButton = nullptr;
+    }
+
+    m_GameOverWord = std::make_shared<Util::GameObject>(
+        std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/gameover_Word.png"),
+        31.0f
+    );
+    m_GameOverWord->m_Transform.translation = m_GameOverBasePosition;
+    m_GameOverWord->m_Transform.scale = {0.35f, 0.35f};
+    root.AddChild(m_GameOverWord);
+}
+
+void LevelManager::UpdateGameOverAnimation(Util::Renderer& root, float deltaTime) {
+    if (!m_GameOverWord) {
+        return;
+    }
+
+    if (m_GameOverPanelShown && m_GameOverButton) {
+        const auto mousePos = Util::Input::GetCursorPosition();
+        const auto buttonSize = m_GameOverButton->GetScaledSize();
+        const float left = m_GameOverButton->m_Transform.translation.x - buttonSize.x * 0.5f;
+        const float right = m_GameOverButton->m_Transform.translation.x + buttonSize.x * 0.5f;
+        const float bottom = m_GameOverButton->m_Transform.translation.y - buttonSize.y * 0.5f;
+        const float top = m_GameOverButton->m_Transform.translation.y + buttonSize.y * 0.5f;
+
+        if (mousePos.x >= left && mousePos.x <= right &&
+            mousePos.y >= bottom && mousePos.y <= top &&
+            Util::Input::IsKeyUp(Util::Keycode::MOUSE_LB)) {
+            ChangeLevel(m_CurrentLevel, root);
+            return;
+        }
+
+        return;
+    }
+
+    constexpr float kStartScale = 0.35f;
+    constexpr float kMaxScale = 1.25f;
+    constexpr float kScaleDuration = 1.10f;
+
+    m_GameOverScaleTimer += deltaTime;
+    const float t = std::clamp(m_GameOverScaleTimer / kScaleDuration, 0.0f, 1.0f);
+    const float easeOut = 1.0f - (1.0f - t) * (1.0f - t);
+    const float currentScale = kStartScale + (kMaxScale - kStartScale) * easeOut;
+    m_GameOverWord->m_Transform.scale = {currentScale, currentScale};
+
+    if (t >= 1.0f) {
+        m_GameOverShakeTimer += deltaTime;
+        const float shakeX = std::sin(m_GameOverShakeTimer * 24.0f) * 3.0f;
+        const float shakeY = std::cos(m_GameOverShakeTimer * 20.0f) * 2.0f;
+        m_GameOverWord->m_Transform.translation = {
+            m_GameOverBasePosition.x + shakeX,
+            m_GameOverBasePosition.y + shakeY
+        };
+
+        if (!m_GameOverPanelShown && m_GameOverShakeTimer >= 3.0f) {
+            m_GameOverPanelShown = true;
+
+            m_GameOverWord->SetVisible(false);
+
+            m_GameOverBoard = std::make_shared<Util::GameObject>(
+                std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/gameoverBoard.png"),
+                32.0f
+            );
+            m_GameOverBoard->m_Transform.translation = {0.0f, 0.0f};
+            root.AddChild(m_GameOverBoard);
+
+            m_GameOverButton = std::make_shared<Util::GameObject>(
+                std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/gameoverButton.png"),
+                33.0f
+            );
+            m_GameOverButton->m_Transform.translation = {0.0f, -120.0f};
+            m_GameOverButton->m_Transform.scale = {0.5f, 0.5f};
+            root.AddChild(m_GameOverButton);
+        }
+    } else {
+        m_GameOverWord->m_Transform.translation = m_GameOverBasePosition;
+    }
+}
+
 std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType, int row, float y) {
     (void)y;
 
@@ -98,7 +194,7 @@ std::shared_ptr<Zombie> LevelManager::SpawnZombie(const std::string& zombieType,
         std::string basePath = RESOURCE_DIR"/Image/zombies/zombie";
         int frameCount = GetFrameCountForPath(basePath);
         auto paths = GetFramePaths(basePath, frameCount);
-        return std::make_shared<BasicZombie>(paths, row, 35.0f);
+        return std::make_shared<BasicZombie>(paths, row, 23.0f);
     }
 }
 
@@ -335,6 +431,11 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
     // ===== 正式關卡文字動畫 =====
     if (!m_IntroDone || !IsGameLevel()) return;
 
+    if (m_IsGameOver) {
+        UpdateGameOverAnimation(root, deltaTime);
+        return;
+    }
+
     if (m_WordPhase > 0 && m_Word) {
         m_WordTimer += deltaTime; // 累計時間（秒）
         auto LerpScale = [](float a, float b, float t) { return a + (b - a) * t; };
@@ -542,15 +643,20 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
         }
         if (m_GameStateManager.HasLost()) {
-            // Game lost - automatically restart level after 2 seconds
-            m_LoseDelayTimer += deltaTime;
-            if (m_LoseDelayTimer >= 2.0f) {
-                ChangeLevel(m_CurrentLevel, root);  // Restart current level
-            }
+            TriggerGameOver(root);
+            return;
         }
 
         // 戰鬥：交由植物類別偵測與攻擊（豌豆射手會在自己的 Attack 內發射投射物）
         for (auto& plant : m_PlacedPlants) {
+            plant->Update(deltaTime);
+
+            if (auto sunflower = std::dynamic_pointer_cast<SunflowerPlant>(plant); sunflower && sunflower->TryProduceSun()) {
+                const int producedSun = sunflower->GetSunProductionAmount();
+                m_PlayerEnergy += producedSun;
+                m_EnergyCollected += producedSun;
+            }
+
             auto projectile = plant->Attack(m_Zombies, deltaTime);
             if (projectile.has_value() && projectile->object) {
                 root.AddChild(projectile->object);
@@ -558,7 +664,9 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     projectile->object,
                     projectile->row,
                     projectile->speed,
-                    projectile->damage
+                    projectile->damage,
+                    projectile->slowMultiplier,
+                    projectile->slowDuration
                 });
             }
         }
@@ -577,6 +685,9 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 float dy = std::abs(zombie->m_Transform.translation.y - bean.object->m_Transform.translation.y);
                 if (dx <= 18.0f && dx >= -18.0f && dy <= 26.0f) {
                     zombie->TakeDamage(bean.damage);
+                    if (bean.slowMultiplier < 1.0f && bean.slowDuration > 0.0f) {
+                        zombie->ApplySlow(bean.slowMultiplier, bean.slowDuration);
+                    }
                     consumed = true;
                     break;
                 }
@@ -620,7 +731,14 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         }
 
         // 戰鬥：殭屍接觸植物時停下並攻擊，否則持續前進
+        const float gameOverLineX = (m_GridLeftX - 85.0f) - 10.0f;
         for (auto& zombie : m_Zombies) {
+            // Unified fail line: any zombie type crossing this line ends the game.
+            if (zombie->m_Transform.translation.x <= gameOverLineX) {
+                TriggerGameOver(root);
+                return;
+            }
+
             zombie->Tick(deltaTime);
 
             std::shared_ptr<Plant> blockingPlant = nullptr;
@@ -638,6 +756,12 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
 
             if (blockingPlant) {
+                if (auto poleVaulter = std::dynamic_pointer_cast<PoleVaulterZombie>(zombie); poleVaulter && !poleVaulter->HasVaulted()) {
+                    poleVaulter->VaultOverPlant();
+                    zombie->SetAttacking(false);
+                    continue;
+                }
+
                 zombie->SetAttacking(true);
                 if (zombie->TryAttack(deltaTime)) {
                     blockingPlant->TakeDamage(zombie->GetAttackDamage());
@@ -656,15 +780,8 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 root.RemoveChild(z);
                 m_Zombies.erase(m_Zombies.begin() + i);
             } else if (z->m_Transform.translation.x < -760.0f) {
-                // Zombie breached the left boundary
-                m_GameStateManager.RegisterZombieBreach();
-                root.RemoveChild(z);
-                m_Zombies.erase(m_Zombies.begin() + i);
-
-                // Check if we've exceeded max breaches
-                if (!m_GameStateManager.CheckWinCondition(m_ElapsedTime, m_EnergyCollected)) {
-                    // Game lost due to breach
-                }
+                TriggerGameOver(root);
+                return;
             }
         }
 
@@ -917,6 +1034,9 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     if (m_FollowingPlant) root.RemoveChild(m_FollowingPlant);
     if (m_PreviewPlant) root.RemoveChild(m_PreviewPlant);
     if (m_EnergyText) root.RemoveChild(m_EnergyText);
+    if (m_GameOverWord) root.RemoveChild(m_GameOverWord);
+    if (m_GameOverBoard) root.RemoveChild(m_GameOverBoard);
+    if (m_GameOverButton) root.RemoveChild(m_GameOverButton);
 
     m_Buttons.clear();
     m_Cards.clear();
@@ -931,6 +1051,9 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_SelectedCard = nullptr;
     m_EnergyText = nullptr;
     m_EnergyTextPtr = nullptr;
+    m_GameOverWord = nullptr;
+    m_GameOverBoard = nullptr;
+    m_GameOverButton = nullptr;
     m_IntroDone = false; // 重置 intro 狀態
 
     // Reset energy and timers for new level
@@ -938,6 +1061,11 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_ElapsedTime = 0.0f;   // Reset elapsed time
     m_WinDelayTimer = 0.0f; // Reset win delay
     m_LoseDelayTimer = 0.0f; // Reset lose delay
+    m_IsGameOver = false;
+    m_GameOverPanelShown = false;
+    m_GameOverScaleTimer = 0.0f;
+    m_GameOverShakeTimer = 0.0f;
+    m_GameOverBasePosition = {0.0f, 0.0f};
 
     m_CurrentLevel = level;
     LoadLevel(root);

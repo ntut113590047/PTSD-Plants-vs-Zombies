@@ -9,6 +9,9 @@ public:
 
     void Update(float deltaTime) override;
     std::optional<PlantProjectile> Attack(const std::vector<std::shared_ptr<Zombie>>& zombies, float deltaTime) override;
+
+private:
+    bool m_HasExploded = false;
 };
 
 #endif

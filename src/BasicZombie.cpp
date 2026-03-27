@@ -10,8 +10,8 @@ BasicZombie::BasicZombie(const std::vector<std::string>& framePaths, int row, fl
              row,
              14.0f,
              1.0f,
-             260.0f,
-             18.0f,
+             270.0f,
+             100.0f,
              1.0f) {
     auto idleAnim = std::make_shared<Util::Animation>(framePaths, true, 90, true, 0);
 

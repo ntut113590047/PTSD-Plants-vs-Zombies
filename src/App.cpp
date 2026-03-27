@@ -14,7 +14,6 @@ void App::Start() {
 }
 
 void App::Update(float deltaTime) {
-
     m_LevelManager->Update(m_Root, deltaTime);
 
     if (Util::Input::IsKeyUp(Util::Keycode::ESCAPE) ||

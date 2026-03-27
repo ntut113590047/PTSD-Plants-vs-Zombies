@@ -14,7 +14,7 @@ public:
 
 private:
     float m_ExplodeTimer = 0.0f;
-    float m_ExplodeDelay = 3.0f;
+    float m_ExplodeDelay = 15.0f;
     bool m_HasExploded = false;
 };
 
