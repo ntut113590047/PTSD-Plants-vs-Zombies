@@ -2,6 +2,7 @@
 #define LEVELMANAGER_HPP
 
 #include <memory>
+#include <unordered_set>
 #include <vector>
 #include <string>
 #include "Util/GameObject.hpp"
@@ -41,6 +42,9 @@ private:
     std::shared_ptr<Zombie> SpawnZombie(const std::string& zombieType, int row, float y);
     void TriggerGameOver(Util::Renderer& root);
     void UpdateGameOverAnimation(Util::Renderer& root, float deltaTime);
+    void StartLevelClearReward(Util::Renderer& root);
+    void UpdateLevelClearReward(Util::Renderer& root, float deltaTime);
+    std::string GetRewardPlantNameForCurrentLevel() const;
 
 private:
     int m_CurrentLevel;
@@ -134,6 +138,20 @@ private:
     float m_WinDelayTimer = 0.0f;  // Delay before advancing to next level
     float m_LoseDelayTimer = 0.0f;  // Delay before restarting level
 
+    // Level-clear reward flow state
+    bool m_IsLevelClearRewardActive = false;
+    bool m_IsRewardCardLanded = false;
+    bool m_IsRewardPanelShown = false;
+    bool m_RewardClaimed = false;
+    glm::vec2 m_LastZombieDeathPosition = {0.0f, 0.0f};
+    glm::vec2 m_RewardDropVelocity = {0.0f, 0.0f};
+    float m_RewardDropGravity = -520.0f;
+    std::string m_RewardPlantName;
+    std::shared_ptr<Button> m_DroppedRewardCard = nullptr;
+    std::shared_ptr<Util::GameObject> m_GetPlantBoard = nullptr;
+    std::shared_ptr<Util::GameObject> m_RewardCardDisplay = nullptr;
+    std::shared_ptr<Button> m_NextLevelButton = nullptr;
+
     // Game-over freeze and animation state
     bool m_IsGameOver = false;
     bool m_GameOverPanelShown = false;
@@ -142,7 +160,7 @@ private:
     glm::vec2 m_GameOverBasePosition = {0.0f, 0.0f};
     std::shared_ptr<Util::GameObject> m_GameOverWord = nullptr;
     std::shared_ptr<Util::GameObject> m_GameOverBoard = nullptr;
-    std::shared_ptr<Util::GameObject> m_GameOverButton = nullptr;
+    std::shared_ptr<Button> m_GameOverButton = nullptr;
 };
 
 #endif

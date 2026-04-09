@@ -1,176 +1,2630 @@
 {
-  "level_1": {
-    "background": "phase1.png",
-    "rows_unlocked": [2],
-    "available_plants": ["bean"],
-    "starting_energy": 150,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 4, "spawn_interval": 5.0, "delay_offset": 0.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_2": {
-    "background": "phase2.png",
-    "rows_unlocked": [1, 2, 3],
-    "available_plants": ["bean", "sunflower"],
-    "starting_energy": 150,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "FlagZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 1.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_3": {
-    "background": "phase2.png",
-    "rows_unlocked": [1, 2, 3],
-    "available_plants": ["bean", "sunflower", "cherry"],
-    "starting_energy": 100,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "FlagZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 1.0},
-          {"type": "ConeZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 2.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_4": {
-    "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "cherry", "walnut"],
-    "starting_energy": 150,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "FlagZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 1.0},
-          {"type": "ConeZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 2.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_5": {
-    "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "cherry", "walnut", "potato"],
-    "starting_energy": 150,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 4, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "FlagZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 1.0},
-          {"type": "ConeZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 2.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_6": {
-    "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "cherry", "walnut", "potato", "snowpea"],
-    "starting_energy": 200,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "FlagZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 1.0},
-          {"type": "ConeZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 2.0},
-          {"type": "PoleVaulterZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 3.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_7": {
-    "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "cherry", "walnut", "potato", "snowpea", "chomper"],
-    "starting_energy": 250,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 4, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "FlagZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 1.0},
-          {"type": "ConeZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 2.0},
-          {"type": "PoleVaulterZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 3.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_8": {
-    "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "cherry", "walnut", "potato", "snowpea", "chomper", "repeater"],
-    "starting_energy": 300,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "FlagZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 1.0},
-          {"type": "ConeZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 2.0},
-          {"type": "BucketZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 3.0},
-          {"type": "PoleVaulterZombie", "count": 2, "spawn_interval": 5.0, "delay_offset": 4.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_9": {
-    "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "cherry", "walnut", "potato", "snowpea", "chomper", "repeater"],
-    "starting_energy": 350,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "FlagZombie", "count": 4, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "ConeZombie", "count": 4, "spawn_interval": 5.0, "delay_offset": 1.0},
-          {"type": "BucketZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 2.0},
-          {"type": "PoleVaulterZombie", "count": 3, "spawn_interval": 5.0, "delay_offset": 3.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  },
-  "level_10": {
-    "background": "phase3.png",
-    "rows_unlocked": [0, 1, 2, 3, 4],
-    "available_plants": ["bean", "sunflower", "cherry", "walnut", "potato", "snowpea", "chomper", "repeater"],
-    "starting_energy": 400,
-    "waves": [
-      {
-        "zombies": [
-          {"type": "BasicZombie", "count": 5, "spawn_interval": 5.0, "delay_offset": 0.0},
-          {"type": "FlagZombie", "count": 4, "spawn_interval": 5.0, "delay_offset": 1.0},
-          {"type": "ConeZombie", "count": 5, "spawn_interval": 5.0, "delay_offset": 2.0},
-          {"type": "BucketZombie", "count": 4, "spawn_interval": 5.0, "delay_offset": 3.0},
-          {"type": "PoleVaulterZombie", "count": 4, "spawn_interval": 5.0, "delay_offset": 4.0}
-        ],
-        "start_delay": 5.0
-      }
-    ],
-    "win_condition": {"type": "DEFEAT_ALL_ZOMBIES", "value": 0.0}
-  }
+    "level_1":  {
+                    "background":  "phase1.png",
+                    "rows_unlocked":  [
+                                          2
+                                      ],
+                    "available_plants":  [
+                                             "bean"
+                                         ],
+                    "starting_energy":  150,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_2":  {
+                    "background":  "phase2.png",
+                    "rows_unlocked":  [
+                                          1,
+                                          2,
+                                          3
+                                      ],
+                    "available_plants":  [
+                                             "bean",
+                                             "sunflower"
+                                         ],
+                    "starting_energy":  150,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  1.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_3":  {
+                    "background":  "phase2.png",
+                    "rows_unlocked":  [
+                                          1,
+                                          2,
+                                          3
+                                      ],
+                    "available_plants":  [
+                                             "bean",
+                                             "sunflower",
+                                             "cherry"
+                                         ],
+                    "starting_energy":  100,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  8,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_4":  {
+                    "background":  "phase3.png",
+                    "rows_unlocked":  [
+                                          0,
+                                          1,
+                                          2,
+                                          3,
+                                          4
+                                      ],
+                    "available_plants":  [
+                                             "bean",
+                                             "sunflower",
+                                             "cherry",
+                                             "walnut"
+                                         ],
+                    "starting_energy":  150,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  6,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  1.0
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  2.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_5":  {
+                    "background":  "phase3.png",
+                    "rows_unlocked":  [
+                                          0,
+                                          1,
+                                          2,
+                                          3,
+                                          4
+                                      ],
+                    "available_plants":  [
+                                             "bean",
+                                             "sunflower",
+                                             "cherry",
+                                             "walnut",
+                                             "potato"
+                                         ],
+                    "starting_energy":  150,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.0
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  2.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_6":  {
+                    "background":  "phase3.png",
+                    "rows_unlocked":  [
+                                          0,
+                                          1,
+                                          2,
+                                          3,
+                                          4
+                                      ],
+                    "available_plants":  [
+                                             "bean",
+                                             "sunflower",
+                                             "cherry",
+                                             "walnut",
+                                             "potato",
+                                             "snowpea"
+                                         ],
+                    "starting_energy":  200,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.6
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  1.3
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.6
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  1.3
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.7
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.6
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  2.4
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_7":  {
+                    "background":  "phase3.png",
+                    "rows_unlocked":  [
+                                          0,
+                                          1,
+                                          2,
+                                          3,
+                                          4
+                                      ],
+                    "available_plants":  [
+                                             "bean",
+                                             "sunflower",
+                                             "cherry",
+                                             "walnut",
+                                             "potato",
+                                             "snowpea",
+                                             "chomper"
+                                         ],
+                    "starting_energy":  250,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  1.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  6,
+                                                          "spawn_interval":  1.2,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  1.6
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  2.4
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  8,
+                                                          "spawn_interval":  1.1,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.6
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  2.6
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_8":  {
+                    "background":  "phase3.png",
+                    "rows_unlocked":  [
+                                          0,
+                                          1,
+                                          2,
+                                          3,
+                                          4
+                                      ],
+                    "available_plants":  [
+                                             "bean",
+                                             "sunflower",
+                                             "cherry",
+                                             "walnut",
+                                             "potato",
+                                             "snowpea",
+                                             "chomper",
+                                             "repeater"
+                                         ],
+                    "starting_energy":  300,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.2,
+                                                          "delay_offset":  2.1
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.2,
+                                                          "delay_offset":  2.1
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  2.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  6,
+                                                          "spawn_interval":  1.2,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  2.0
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  2.7
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_9":  {
+                    "background":  "phase3.png",
+                    "rows_unlocked":  [
+                                          0,
+                                          1,
+                                          2,
+                                          3,
+                                          4
+                                      ],
+                    "available_plants":  [
+                                             "bean",
+                                             "sunflower",
+                                             "cherry",
+                                             "walnut",
+                                             "potato",
+                                             "snowpea",
+                                             "chomper",
+                                             "repeater"
+                                         ],
+                    "starting_energy":  350,
+                    "waves":  [
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  1.6
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.6
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.6
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  1.5
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  6,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  1.5
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  2.4
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  6,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  1.5
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  2.2
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  6,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  1.5
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  2.2
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  6,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  1.5
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  2.0,
+                                                          "delay_offset":  2.2
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  7,
+                                                          "spawn_interval":  1.2,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  2.1
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  7,
+                                                          "spawn_interval":  1.2,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  2.1
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  7,
+                                                          "spawn_interval":  1.2,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  2.1
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  7,
+                                                          "spawn_interval":  1.2,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  2,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  2.1
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  7,
+                                                          "spawn_interval":  1.2,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.6,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.9,
+                                                          "delay_offset":  2.1
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  8,
+                                                          "spawn_interval":  1.1,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  5,
+                                                          "spawn_interval":  1.3,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.5,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  3,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  2.1
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.8,
+                                                          "delay_offset":  2.8
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  },
+                                  {
+                                      "zombies":  [
+                                                      {
+                                                          "type":  "BasicZombie",
+                                                          "count":  10,
+                                                          "spawn_interval":  1.0,
+                                                          "delay_offset":  0.0
+                                                      },
+                                                      {
+                                                          "type":  "ConeZombie",
+                                                          "count":  6,
+                                                          "spawn_interval":  1.2,
+                                                          "delay_offset":  0.8
+                                                      },
+                                                      {
+                                                          "type":  "PoleVaulterZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.4,
+                                                          "delay_offset":  1.4
+                                                      },
+                                                      {
+                                                          "type":  "BucketZombie",
+                                                          "count":  4,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  2.0
+                                                      },
+                                                      {
+                                                          "type":  "FlagZombie",
+                                                          "count":  1,
+                                                          "spawn_interval":  1.7,
+                                                          "delay_offset":  3.0
+                                                      }
+                                                  ],
+                                      "start_delay":  10
+                                  }
+                              ],
+                    "win_condition":  {
+                                          "type":  "DEFEAT_ALL_ZOMBIES",
+                                          "value":  0.0
+                                      }
+                },
+    "level_10":  {
+                     "background":  "phase3.png",
+                     "rows_unlocked":  [
+                                           0,
+                                           1,
+                                           2,
+                                           3,
+                                           4
+                                       ],
+                     "available_plants":  [
+                                              "bean",
+                                              "sunflower",
+                                              "cherry",
+                                              "walnut",
+                                              "potato",
+                                              "snowpea",
+                                              "chomper",
+                                              "repeater"
+                                          ],
+                     "starting_energy":  400,
+                     "waves":  [
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  2.0,
+                                                           "delay_offset":  1.6
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.8,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  1.6
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.8,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  1.6
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.5,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  1.5
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.5,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  1.5
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  5,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.8,
+                                                           "delay_offset":  1.5
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  5,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.8,
+                                                           "delay_offset":  1.5
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  5,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.8,
+                                                           "delay_offset":  1.5
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  6,
+                                                           "spawn_interval":  1.3,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.5,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  1.5
+                                                       },
+                                                       {
+                                                           "type":  "FlagZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  1.8,
+                                                           "delay_offset":  2.4
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  6,
+                                                           "spawn_interval":  1.3,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.5,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  1.5
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  2.0,
+                                                           "delay_offset":  2.2
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  6,
+                                                           "spawn_interval":  1.3,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.5,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  1.5
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  2.0,
+                                                           "delay_offset":  2.2
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  6,
+                                                           "spawn_interval":  1.3,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.5,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  1.5
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  2.0,
+                                                           "delay_offset":  2.2
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  7,
+                                                           "spawn_interval":  1.2,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  1.4
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  2.1
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  7,
+                                                           "spawn_interval":  1.2,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  1.4
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  2.1
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  7,
+                                                           "spawn_interval":  1.2,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  1.4
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  2.1
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  7,
+                                                           "spawn_interval":  1.2,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  5,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  1.4
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  2,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  2.1
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  7,
+                                                           "spawn_interval":  1.2,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  5,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.6,
+                                                           "delay_offset":  1.4
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.9,
+                                                           "delay_offset":  2.1
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  8,
+                                                           "spawn_interval":  1.1,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  5,
+                                                           "spawn_interval":  1.3,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.5,
+                                                           "delay_offset":  1.4
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  3,
+                                                           "spawn_interval":  1.8,
+                                                           "delay_offset":  2.1
+                                                       },
+                                                       {
+                                                           "type":  "FlagZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  1.8,
+                                                           "delay_offset":  2.8
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   },
+                                   {
+                                       "zombies":  [
+                                                       {
+                                                           "type":  "BasicZombie",
+                                                           "count":  10,
+                                                           "spawn_interval":  1.0,
+                                                           "delay_offset":  0.0
+                                                       },
+                                                       {
+                                                           "type":  "ConeZombie",
+                                                           "count":  6,
+                                                           "spawn_interval":  1.2,
+                                                           "delay_offset":  0.8
+                                                       },
+                                                       {
+                                                           "type":  "PoleVaulterZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.4,
+                                                           "delay_offset":  1.4
+                                                       },
+                                                       {
+                                                           "type":  "BucketZombie",
+                                                           "count":  4,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  2.0
+                                                       },
+                                                       {
+                                                           "type":  "FlagZombie",
+                                                           "count":  1,
+                                                           "spawn_interval":  1.7,
+                                                           "delay_offset":  3.0
+                                                       }
+                                                   ],
+                                       "start_delay":  10
+                                   }
+                               ],
+                     "win_condition":  {
+                                           "type":  "DEFEAT_ALL_ZOMBIES",
+                                           "value":  0.0
+                                       }
+                 }
 }

@@ -23,6 +23,7 @@
 #include <cmath>
 #include <algorithm>
 #include <filesystem>
+#include <unordered_set>
 
 namespace fs = std::filesystem;
 
@@ -94,15 +95,8 @@ void LevelManager::UpdateGameOverAnimation(Util::Renderer& root, float deltaTime
 
     if (m_GameOverPanelShown && m_GameOverButton) {
         const auto mousePos = Util::Input::GetCursorPosition();
-        const auto buttonSize = m_GameOverButton->GetScaledSize();
-        const float left = m_GameOverButton->m_Transform.translation.x - buttonSize.x * 0.5f;
-        const float right = m_GameOverButton->m_Transform.translation.x + buttonSize.x * 0.5f;
-        const float bottom = m_GameOverButton->m_Transform.translation.y - buttonSize.y * 0.5f;
-        const float top = m_GameOverButton->m_Transform.translation.y + buttonSize.y * 0.5f;
-
-        if (mousePos.x >= left && mousePos.x <= right &&
-            mousePos.y >= bottom && mousePos.y <= top &&
-            Util::Input::IsKeyUp(Util::Keycode::MOUSE_LB)) {
+        m_GameOverButton->UpdateHoverState(mousePos.x, mousePos.y);
+        if (m_GameOverButton->IsClicked()) {
             ChangeLevel(m_CurrentLevel, root);
             return;
         }
@@ -141,16 +135,149 @@ void LevelManager::UpdateGameOverAnimation(Util::Renderer& root, float deltaTime
             m_GameOverBoard->m_Transform.translation = {0.0f, 0.0f};
             root.AddChild(m_GameOverBoard);
 
-            m_GameOverButton = std::make_shared<Util::GameObject>(
-                std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/gameoverButton.png"),
-                33.0f
+            m_GameOverButton = std::make_shared<Button>(
+                RESOURCE_DIR"/Image/Other/gameoverButton.png",
+                RESOURCE_DIR"/Image/Other/gameoverButton_2.png"
             );
-            m_GameOverButton->m_Transform.translation = {0.0f, -120.0f};
-            m_GameOverButton->m_Transform.scale = {0.5f, 0.5f};
+            m_GameOverButton->SetZIndex(33.0f);
+            m_GameOverButton->SetPosition(0.0f, -120.0f);
+            m_GameOverButton->SetScale(0.4f, 0.4f);
             root.AddChild(m_GameOverButton);
         }
     } else {
         m_GameOverWord->m_Transform.translation = m_GameOverBasePosition;
+    }
+}
+
+std::string LevelManager::GetRewardPlantNameForCurrentLevel() const {
+    if (m_CurrentLevel < 1 || m_CurrentLevel > static_cast<int>(m_AllLevelConfigs.size())) {
+        return "sunflower";
+    }
+
+    const LevelConfig& current = m_AllLevelConfigs[m_CurrentLevel - 1];
+    if (m_CurrentLevel < static_cast<int>(m_AllLevelConfigs.size())) {
+        const LevelConfig& next = m_AllLevelConfigs[m_CurrentLevel];
+
+        std::unordered_set<std::string> currentSet(current.available_plants.begin(), current.available_plants.end());
+        for (const auto& plant : next.available_plants) {
+            if (currentSet.find(plant) == currentSet.end()) {
+                return plant;
+            }
+        }
+    }
+
+    if (!current.available_plants.empty()) {
+        return current.available_plants.back();
+    }
+    return "sunflower";
+}
+
+void LevelManager::StartLevelClearReward(Util::Renderer& root) {
+    if (m_IsLevelClearRewardActive || m_IsGameOver) {
+        return;
+    }
+
+    m_IsLevelClearRewardActive = true;
+    m_IsRewardCardLanded = false;
+    m_IsRewardPanelShown = false;
+    m_RewardClaimed = false;
+
+    m_RewardPlantName = GetRewardPlantNameForCurrentLevel();
+    PlantData rewardData = PlantRegistry::GetInstance().GetPlantData(m_RewardPlantName);
+    const std::string cardPath = rewardData.cardImagePath.empty()
+        ? std::string(RESOURCE_DIR "/Image/Plants/sunflowerCard.png")
+        : rewardData.cardImagePath;
+
+    m_DroppedRewardCard = std::make_shared<Button>(cardPath, cardPath);
+    m_DroppedRewardCard->SetZIndex(36.0f);
+    m_DroppedRewardCard->SetScale(0.75f, 0.75f);
+    m_DroppedRewardCard->SetPosition(m_LastZombieDeathPosition.x, m_LastZombieDeathPosition.y + 12.0f);
+    root.AddChild(m_DroppedRewardCard);
+
+    m_RewardDropVelocity = {0.0f, 260.0f};
+}
+
+void LevelManager::UpdateLevelClearReward(Util::Renderer& root, float deltaTime) {
+    if (!m_IsLevelClearRewardActive) {
+        return;
+    }
+
+    if (!m_RewardClaimed) {
+        if (!m_DroppedRewardCard) {
+            return;
+        }
+
+        const float landingY = m_LastZombieDeathPosition.y;
+        if (!m_IsRewardCardLanded) {
+            glm::vec2 pos = m_DroppedRewardCard->m_Transform.translation;
+            m_RewardDropVelocity.y += m_RewardDropGravity * deltaTime;
+            pos += m_RewardDropVelocity * deltaTime;
+
+            if (pos.y <= landingY) {
+                pos.y = landingY;
+                m_IsRewardCardLanded = true;
+                m_RewardDropVelocity = {0.0f, 0.0f};
+            }
+
+            m_DroppedRewardCard->SetPosition(pos.x, pos.y);
+            return;
+        }
+
+        const auto mousePos = Util::Input::GetCursorPosition();
+        m_DroppedRewardCard->UpdateHoverState(mousePos.x, mousePos.y);
+
+        if (!m_DroppedRewardCard->IsClicked()) {
+            return;
+        }
+
+        m_RewardClaimed = true;
+        root.RemoveChild(m_DroppedRewardCard);
+        m_DroppedRewardCard = nullptr;
+
+        m_GetPlantBoard = std::make_shared<Util::GameObject>(
+            std::make_shared<Util::Image>(RESOURCE_DIR "/Image/Other/getPlantBoard.png"),
+            34.0f
+        );
+        m_GetPlantBoard->m_Transform.translation = {0.0f, 0.0f};
+        m_GetPlantBoard->m_Transform.scale = {0.9f, 0.9f};
+        root.AddChild(m_GetPlantBoard);
+
+        PlantData rewardData = PlantRegistry::GetInstance().GetPlantData(m_RewardPlantName);
+        const std::string cardPath = rewardData.cardImagePath.empty()
+            ? std::string(RESOURCE_DIR "/Image/Plants/sunflowerCard.png")
+            : rewardData.cardImagePath;
+
+        m_RewardCardDisplay = std::make_shared<Util::GameObject>(
+            std::make_shared<Util::Image>(cardPath),
+            35.0f
+        );
+        m_RewardCardDisplay->m_Transform.translation = {0.0f, 95.0f};
+        m_RewardCardDisplay->m_Transform.scale = {0.9f, 0.9f};
+        root.AddChild(m_RewardCardDisplay);
+
+        m_NextLevelButton = std::make_shared<Button>(
+            RESOURCE_DIR "/Image/Other/nextlevelButton.png",
+            RESOURCE_DIR "/Image/Other/nextlevelButton_2.png"
+        );
+        m_NextLevelButton->SetZIndex(35.0f);
+        m_NextLevelButton->SetPosition(0.0f, -210.0f);
+        m_NextLevelButton->SetScale(0.25f, 0.25f);
+        root.AddChild(m_NextLevelButton);
+
+        m_IsRewardPanelShown = true;
+        return;
+    }
+
+    if (m_IsRewardPanelShown && m_NextLevelButton) {
+        const auto mousePos = Util::Input::GetCursorPosition();
+        m_NextLevelButton->UpdateHoverState(mousePos.x, mousePos.y);
+        if (m_NextLevelButton->IsClicked()) {
+            if (m_CurrentLevel < 10) {
+                ChangeLevel(m_CurrentLevel + 1, root);
+            } else {
+                ChangeLevel(1, root);
+            }
+        }
     }
 }
 
@@ -436,6 +563,11 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         return;
     }
 
+    if (m_IsLevelClearRewardActive) {
+        UpdateLevelClearReward(root, deltaTime);
+        return;
+    }
+
     if (m_WordPhase > 0 && m_Word) {
         m_WordTimer += deltaTime; // 累計時間（秒）
         auto LerpScale = [](float a, float b, float t) { return a + (b - a) * t; };
@@ -615,32 +747,22 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         m_CurrentZombieTypeSpawnTimer = 0.0f;
                     }
                 } else {
-                    // All zombies for this wave have been spawned
-                    // Check if all zombies are dead to advance to next wave
-                    if (m_GameStateManager.GetZombiesAlive() == 0) {
-                        m_GameStateManager.AdvanceWave();
-                        m_WaveStartTimer = 0.0f;
-                        m_ZombiesSpawnedInWave = 0;
-                        m_CurrentZombieSpawnTypeIndex = 0;
-                        m_CurrentZombieTypeSpawned = 0;
-                        m_CurrentZombieTypeSpawnTimer = 0.0f;
-                    }
+                    // All zombies for this wave have been scheduled.
+                    // Move to next wave immediately (no need to clear previous wave first).
+                    m_GameStateManager.AdvanceWave();
+                    m_WaveStartTimer = 0.0f;
+                    m_ZombiesSpawnedInWave = 0;
+                    m_CurrentZombieSpawnTypeIndex = 0;
+                    m_CurrentZombieTypeSpawned = 0;
+                    m_CurrentZombieTypeSpawnTimer = 0.0f;
                 }
             }
         }
 
         // Check win/lose conditions periodically
-        if (m_GameStateManager.CheckWinCondition(m_ElapsedTime, m_EnergyCollected)) {
-            // Game won - automatically advance to next level after 2 seconds
-            m_WinDelayTimer += deltaTime;
-            if (m_WinDelayTimer >= 2.0f) {
-                if (m_CurrentLevel < 10) {
-                    ChangeLevel(m_CurrentLevel + 1, root);
-                } else {
-                    // All levels completed! Loop back to level 1
-                    ChangeLevel(1, root);
-                }
-            }
+        if (!m_IsLevelClearRewardActive && m_GameStateManager.CheckWinCondition(m_ElapsedTime, m_EnergyCollected)) {
+            StartLevelClearReward(root);
+            return;
         }
         if (m_GameStateManager.HasLost()) {
             TriggerGameOver(root);
@@ -776,6 +898,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         for (int i = static_cast<int>(m_Zombies.size()) - 1; i >= 0; --i) {
             auto& z = m_Zombies[i];
             if (z->IsDead()) {
+                m_LastZombieDeathPosition = z->m_Transform.translation;
                 m_GameStateManager.RegisterZombieDied();
                 root.RemoveChild(z);
                 m_Zombies.erase(m_Zombies.begin() + i);
@@ -783,6 +906,11 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 TriggerGameOver(root);
                 return;
             }
+        }
+
+        if (!m_IsLevelClearRewardActive && m_GameStateManager.CheckWinCondition(m_ElapsedTime, m_EnergyCollected)) {
+            StartLevelClearReward(root);
+            return;
         }
 
         // 移除死亡植物並釋放格子
@@ -1037,6 +1165,10 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     if (m_GameOverWord) root.RemoveChild(m_GameOverWord);
     if (m_GameOverBoard) root.RemoveChild(m_GameOverBoard);
     if (m_GameOverButton) root.RemoveChild(m_GameOverButton);
+    if (m_DroppedRewardCard) root.RemoveChild(m_DroppedRewardCard);
+    if (m_GetPlantBoard) root.RemoveChild(m_GetPlantBoard);
+    if (m_RewardCardDisplay) root.RemoveChild(m_RewardCardDisplay);
+    if (m_NextLevelButton) root.RemoveChild(m_NextLevelButton);
 
     m_Buttons.clear();
     m_Cards.clear();
@@ -1054,6 +1186,10 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_GameOverWord = nullptr;
     m_GameOverBoard = nullptr;
     m_GameOverButton = nullptr;
+    m_DroppedRewardCard = nullptr;
+    m_GetPlantBoard = nullptr;
+    m_RewardCardDisplay = nullptr;
+    m_NextLevelButton = nullptr;
     m_IntroDone = false; // 重置 intro 狀態
 
     // Reset energy and timers for new level
@@ -1066,6 +1202,13 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_GameOverScaleTimer = 0.0f;
     m_GameOverShakeTimer = 0.0f;
     m_GameOverBasePosition = {0.0f, 0.0f};
+    m_IsLevelClearRewardActive = false;
+    m_IsRewardCardLanded = false;
+    m_IsRewardPanelShown = false;
+    m_RewardClaimed = false;
+    m_LastZombieDeathPosition = {0.0f, 0.0f};
+    m_RewardDropVelocity = {0.0f, 0.0f};
+    m_RewardPlantName.clear();
 
     m_CurrentLevel = level;
     LoadLevel(root);
