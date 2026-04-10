@@ -82,8 +82,8 @@ private:
     std::vector<std::shared_ptr<LawnMower>> m_LawnMowers; // 每行割草機
 
     // 動態網格坐標（根據允許的行數調整）
-    float m_GridTopY = 180.0f;
-    float m_GridBottomY = -290.0f;
+    float m_GridTopY = 200.0f;
+    float m_GridBottomY = -270.0f;
     float m_GridLeftX = -300.0f;
     float m_GridRightX = 500.0f;
     int m_GridCols = 9;
@@ -101,7 +101,8 @@ private:
         std::shared_ptr<Util::GameObject> object;
         glm::vec2 velocity;
         bool collecting = false;
-        float stopY = LevelManagerConfig::SUN_STOPPING_HEIGHT; // 隨機停止高度
+        float stopY = LevelManagerConfig::SUN_STOPPING_HEIGHT;
+        float gravity = 0.0f;
     };
 
     std::vector<SunEnergy> m_SunEnergies;

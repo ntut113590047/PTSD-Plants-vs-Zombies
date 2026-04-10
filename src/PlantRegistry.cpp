@@ -64,7 +64,7 @@ PlantRegistry::PlantRegistry() {
             "sunflower", 50, 7.5f,
             RESOURCE_DIR"/Image/Plants/sunflowerCard.png",
             paths,
-            0.8f
+            1.0f
         };
     }
 
@@ -90,7 +90,7 @@ PlantRegistry::PlantRegistry() {
             "potato", 25, 30.0f,
             RESOURCE_DIR"/Image/Plants/potatoCard.png",
             paths,
-            0.8f
+            1.0f
         };
     }
 
@@ -116,7 +116,7 @@ PlantRegistry::PlantRegistry() {
             "cherry", 150, 50.0f,
             RESOURCE_DIR"/Image/Plants/cherryCard.png",
             paths,
-            0.9f
+            1.0f
         };
     }
 
@@ -129,7 +129,7 @@ PlantRegistry::PlantRegistry() {
             "snowpea", 175, 7.5f,
             RESOURCE_DIR"/Image/Plants/coldBeanCard.png",
             paths,
-            0.8f
+            1.0f
         };
     }
     // Chomper - eating plant

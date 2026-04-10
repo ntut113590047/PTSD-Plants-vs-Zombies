@@ -1,4 +1,4 @@
-#include "LevelManager.hpp"
+﻿#include "LevelManager.hpp"
 #include "Util/Input.hpp"
 #include "Util/Text.hpp"
 #include "Util/Animation.hpp"
@@ -331,7 +331,7 @@ bool LevelManager::IsGameLevel() const {
 
 void LevelManager::LoadLevel(Util::Renderer& root) {
 
-    // ===== 起始畫面 =====
+    // ===== 韏瑕??恍 =====
     if (m_CurrentLevel == 0) {
         m_Background = std::make_shared<Util::GameObject>(
             std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Background/startBackGround.png"),
@@ -349,10 +349,10 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         root.AddChild(startButton);
         m_Buttons.push_back(startButton);
 
-        return; // 起始畫面不初始化卡片或文字動畫
+        return; // 韏瑕??恍銝?憪??∠???摮???
     }
 
-    // ===== 正式關卡 =====
+    // ===== 甇??? =====
     // Load level configuration from JSON
     if (m_AllLevelConfigs.empty()) {
         m_AllLevelConfigs = LevelConfigParser::LoadFromFile(RESOURCE_DIR"/levels/levels.json");
@@ -390,18 +390,18 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     m_Background->m_Transform.translation = {200.0f, 0.0f};
     root.AddChild(m_Background);
 
-    // ===== 初始化文字動畫 =====
+    // ===== ????摮???=====
     m_WordPhase = 1;
     m_WordTimer = 0.0f;
     m_Word = std::make_shared<Util::GameObject>(
         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word1.png"),
         10
     );
-    m_Word->m_Transform.scale = {0.2f, 0.2f}; // 初始縮放
-    m_Word->m_Transform.translation = {0.0f, 0.0f}; // 初始位置
+    m_Word->m_Transform.scale = {0.2f, 0.2f}; // ??蝮格
+    m_Word->m_Transform.translation = {0.0f, 0.0f}; // ??雿蔭
     root.AddChild(m_Word);
 
-    // ===== 初始化卡片槽 =====
+    // ===== ????局 =====
     m_CardSlot = std::make_shared<Util::GameObject>(
         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/cardplot.png"),
         10
@@ -411,7 +411,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     root.AddChild(m_CardSlot);
     m_CardSlotActive = true;
 
-    // ===== 初始化卡片位置 =====
+    // ===== ?????蝵?=====
     m_CardPositions.clear();
     float startX = m_CardSlot->m_Transform.translation.x - 150.0f;
     float startY = m_CardSlot->m_Transform.translation.y;
@@ -420,13 +420,13 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         m_CardPositions.push_back(glm::vec2(startX + i * spacing, startY));
     }
 
-    // ===== 初始化卡片資料 =====
+    // ===== ???????=====
     auto& registry = PlantRegistry::GetInstance();
     m_LevelPlants.clear();
     for (const auto& plantName : m_CurrentLevelConfig.available_plants) {
         m_LevelPlants.push_back(registry.GetPlantData(plantName));
     }
-    // ===== 創建卡片 =====
+    // ===== ?萄遣?∠? =====
     m_Cards.clear();
     m_CardVisuals.clear();
     for (size_t i = 0; i < LevelManagerConfig::NUM_CARDS; ++i) {
@@ -438,7 +438,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         root.AddChild(card);
         m_Cards.push_back(card);
 
-        // 卡片上方兩層遮罩：能量不足微暗、冷卻較暗（由底往上）
+        // ?∠?銝?拙惜?桃蔗嚗??頞喳凝??餉????勗?敺銝?
         auto energyDim = std::make_shared<Util::GameObject>(
             std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/card_dim_overlay.png"),
             card->GetZIndex() + 0.1f
@@ -461,8 +461,8 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         m_CardVisuals.push_back({energyDim, cooldownDim});
     }
 
-    // ===== 初始化草坪網格 =====
-    m_GrassGrid.assign(5, std::vector<bool>(9, false)); // 5行9列，false表示空
+    // ===== ?????芰雯??=====
+    m_GrassGrid.assign(5, std::vector<bool>(9, false)); // 5銵???false銵函內蝛?
     m_RowAllowed.assign(5, false);
     for (int row : m_CurrentLevelConfig.rows_unlocked) {
         if (row >= 0 && row < 5) {
@@ -470,7 +470,7 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         }
     }
 
-    // 根據允許的行數動態計算網格坐標
+    // ?寞??迂???詨???蝞雯?澆?璅?
     int allowedRowCount = 0;
     int minRow = 4, maxRow = 0;
     for (int r = 0; r < 5; ++r) {
@@ -485,25 +485,25 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     m_GridMaxRow = maxRow;
 
     if (allowedRowCount > 0) {
-        float baseTop = 180.0f;
-        float baseBottom = -290.0f;
+        float baseTop = 200.0f;
+        float baseBottom = -270.0f;
         float totalHeight = baseTop - baseBottom; // 470
-        float baselineSpacing = totalHeight / (5 - 1); // 基础行间距=117.5
+        float baselineSpacing = totalHeight / (5 - 1); // ?箇?銵頝?117.5
 
         if (allowedRowCount == 1) {
-            // 單行居中：使用基础间距
+            // ?株?撅葉嚗蝙?典蝖?渲?
             m_GridCellHeight = baselineSpacing;
             m_GridTopY = baseTop - minRow * baselineSpacing;
             m_GridBottomY = m_GridTopY;
         } else {
-            // 多行均勻分布
+            // 憭????
             m_GridCellHeight = baselineSpacing;
             m_GridTopY = baseTop - minRow * baselineSpacing;
             m_GridBottomY = baseTop - maxRow * baselineSpacing;
         }
     }
 
-    // ===== 初始化每行割草機 =====
+    // ===== ????銵?? =====
     m_LawnMowers.clear();
     {
         float leftX = m_GridLeftX;
@@ -532,30 +532,30 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     m_Zombies.clear();
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-    // ===== 初始化能量顯示文字 =====
+    // ===== ????＊蝷箸?摮?=====
     m_EnergyTextPtr = std::make_shared<Util::Text>("C:/PTSD-Plants-vs-Zombies/PTSD/assets/fonts/Inter.ttf", 24, std::to_string(m_PlayerEnergy), Util::Color(0, 0, 0));
     m_EnergyText = std::make_shared<Util::GameObject>(m_EnergyTextPtr, 30);
-    m_EnergyText->m_Transform.translation = {-540.0f, 285.0f}; // 左上角位置，這裡修改xy座標
+    m_EnergyText->m_Transform.translation = {-540.0f, 285.0f}; // 撌虫?閫?蝵殷??ㄐ靽格xy摨扳?
     root.AddChild(m_EnergyText);
 
-    m_IntroDone = true; // 初始化完成
+    m_IntroDone = true; // ??????
 }
 
 void LevelManager::Update(Util::Renderer& root, float deltaTime) {
-    // ===== 起始畫面按鈕 =====
+    // ===== 韏瑕??恍?? =====
     if (m_CurrentLevel == 0) {
         auto mousePos = Util::Input::GetCursorPosition();
         for (auto& btn : m_Buttons) {
             btn->UpdateHoverState(mousePos.x, mousePos.y);
             if (btn->IsClicked()) {
-                ChangeLevel(1, root); // 點開始，進入正式關卡
+                ChangeLevel(1, root); // 暺?憪??脣甇???
                 return;
             }
         }
-        return; // 起始畫面只處理按鈕，不做文字或卡片動畫
+        return; // 韏瑕??恍?芾?????銝????????
     }
 
-    // ===== 正式關卡文字動畫 =====
+    // ===== 甇?????? =====
     if (!m_IntroDone || !IsGameLevel()) return;
 
     if (m_IsGameOver) {
@@ -569,27 +569,27 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
     }
 
     if (m_WordPhase > 0 && m_Word) {
-        m_WordTimer += deltaTime; // 累計時間（秒）
+        m_WordTimer += deltaTime; // 蝝航???嚗?嚗?
         auto LerpScale = [](float a, float b, float t) { return a + (b - a) * t; };
 
         switch (m_WordPhase) {
             case 1: {
-                float t = std::min(m_WordTimer / 0.5f, 1.0f); // 0.5秒動畫
+                float t = std::min(m_WordTimer / 0.5f, 1.0f); // 0.5蝘???
                 m_Word->m_Transform.scale = { LerpScale(0.2f,0.3f,t), LerpScale(0.2f,0.3f,t) };
                 if (m_WordTimer > 0.5f) {
                     root.RemoveChild(m_Word);
                     m_Word = std::make_shared<Util::GameObject>(
                         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word2.png"), 10
                     );
-                    m_Word->m_Transform.scale = {0.2f, 0.2f}; // 設置初始縮放
-                    m_Word->m_Transform.translation = {0.0f, 0.0f}; // 設置初始位置
+                    m_Word->m_Transform.scale = {0.2f, 0.2f}; // 閮剔蔭??蝮格
+                    m_Word->m_Transform.translation = {0.0f, 0.0f}; // 閮剔蔭??雿蔭
                     root.AddChild(m_Word);
                     m_WordPhase = 2; m_WordTimer = 0.0f;
                 }
                 break;
             }
             case 2: {
-                float t = std::min(m_WordTimer / 0.5f, 1.0f); // 0.5秒動畫
+                float t = std::min(m_WordTimer / 0.5f, 1.0f); // 0.5蝘???
                 m_Word->m_Transform.scale = { LerpScale(0.2f,0.3f,t), LerpScale(0.2f,0.3f,t) };
                 if (m_WordTimer > 0.5f) {
                     root.RemoveChild(m_Word);
@@ -597,14 +597,14 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/word3.png"), 10
                     );
                     m_Word->m_Transform.scale = {0.7f,0.7f};
-                    m_Word->m_Transform.translation = {0.0f, 0.0f}; // 設置初始位置
+                    m_Word->m_Transform.translation = {0.0f, 0.0f}; // 閮剔蔭??雿蔭
                     root.AddChild(m_Word);
                     m_WordPhase = 3; m_WordTimer = 0.0f;
                 }
                 break;
             }
             case 3:
-                if (m_WordTimer > 1.17f) { // 約1.17秒顯示
+                if (m_WordTimer > 1.17f) { // 蝝?.17蝘＊蝷?
                     root.RemoveChild(m_Word);
                     m_Word = nullptr;
                     m_WordPhase = 0;
@@ -613,25 +613,25 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         }
     }
 
-    // ===== 遊戲開始：放置植物 =====
+    // ===== ???嚗蝵格???=====
     if (m_WordPhase == 0) {
         // Track elapsed time and update win condition checks
         m_ElapsedTime += deltaTime;
 
-        // 更新能量顯示
+        // ?湔?賡?憿舐內
         if (m_EnergyTextPtr) {
             m_EnergyTextPtr->SetText(std::to_string(m_PlayerEnergy));
         }
 
-        // 能量掉落產生 (每5秒)
-        m_SunSpawnTimer += deltaTime; // 累計時間（秒）
-        const float spawnInterval = 5.0f; // 5秒間隔
+        // ?賡???Ｙ? (瘥?蝘璈???
+        m_SunSpawnTimer += deltaTime;
+        const float spawnInterval = 5.0f;
         if (m_SunSpawnTimer >= spawnInterval) {
             m_SunSpawnTimer = 0.0f;
             float minX = -540.0f;
             float maxX = 540.0f;
             float x = minX + static_cast<float>(std::rand()) / RAND_MAX * (maxX - minX);
-            float y = 330.0f; // 畫面上方
+            float y = 330.0f;
 
             std::vector<std::string> energyPaths;
             for (int i = 1; i <= 29; ++i) {
@@ -639,23 +639,23 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
 
             auto energyObj = std::make_shared<Util::GameObject>(
-                std::make_shared<Util::Animation>(energyPaths, true, 50, true, 0), 15
+                std::make_shared<Util::Animation>(energyPaths, true, 50, true, 0), 30
             );
             energyObj->m_Transform.translation = {x, y};
-            energyObj->m_Transform.scale = {1.0f, 1.0f}; // 能量2倍大
+            energyObj->m_Transform.scale = {1.0f, 1.0f};
             root.AddChild(energyObj);
 
-            float dropSpeed = -40.0f; // 落下速度固定
-            float stopY = -120.0f - static_cast<float>(std::rand()) / RAND_MAX * 80.0f; // 隨機高度 -120 ~ -200
-            m_SunEnergies.push_back({energyObj, {0.0f, dropSpeed}, false, stopY});
+            float dropSpeed = -40.0f;
+            float stopY = -120.0f - static_cast<float>(std::rand()) / RAND_MAX * 80.0f;
+            m_SunEnergies.push_back({energyObj, {0.0f, dropSpeed}, false, stopY, 0.0f});
         }
 
-        // 更新卡片冷卻與可用狀態
+        // ?湔?∠??瑕??函???
         for (size_t i = 0; i < m_Cards.size(); ++i) {
             auto& card = m_Cards[i];
-            card->UpdateCooldown(deltaTime); // 使用真實的 deltaTime
+            card->UpdateCooldown(deltaTime); // 雿輻?祕??deltaTime
             bool hasEnergy = (m_PlayerEnergy >= card->GetData().cost);
-            // 不可用的卡片變灰, 有可用變回正常亮度
+            // 銝?函??∠?霈, ??刻??迤撣訾漁摨?
             card->SetEnergyAvailable(hasEnergy && card->IsReady());
 
             if (i < m_CardVisuals.size()) {
@@ -691,11 +691,27 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 
         // Wave-based zombie spawning system
         if (m_CurrentLevel >= 1 && m_CurrentLevel <= 10 && m_GameStateManager.GetCurrentWave() < static_cast<int>(m_CurrentLevelConfig.waves.size())) {
-            const Wave& currentWave = m_CurrentLevelConfig.waves[m_GameStateManager.GetCurrentWave()];
+            Wave& currentWave = m_CurrentLevelConfig.waves[m_GameStateManager.GetCurrentWave()];
             m_WaveStartTimer += deltaTime;
 
             // Check if wave delay has passed
             if (m_WaveStartTimer >= currentWave.start_delay) {
+                // Ensure FlagZombie leads the wave when present.
+                if (m_CurrentZombieSpawnTypeIndex == 0 && m_CurrentZombieTypeSpawned == 0) {
+                    auto it = std::find_if(
+                        currentWave.zombies.begin(),
+                        currentWave.zombies.end(),
+                        [](const ZombieSpawn& z) {
+                            return z.type == "FlagZombie" && z.count > 0;
+                        }
+                    );
+                    if (it != currentWave.zombies.end() && it != currentWave.zombies.begin()) {
+                        ZombieSpawn flagSpawn = *it;
+                        currentWave.zombies.erase(it);
+                        currentWave.zombies.insert(currentWave.zombies.begin(), flagSpawn);
+                    }
+                }
+
                 // Wave is active, spawn zombies
                 if (m_CurrentZombieSpawnTypeIndex < static_cast<int>(currentWave.zombies.size())) {
                     const ZombieSpawn& spawnConfig = currentWave.zombies[m_CurrentZombieSpawnTypeIndex];
@@ -723,8 +739,8 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                                 spawnRow = allowedRows[std::rand() % allowedRows.size()];
                             }
 
-                            float topY = 180.0f;
-                            float bottomY = -290.0f;
+                            float topY = 200.0f;
+                            float bottomY = -270.0f;
                             int rows = 5;
                             float cellHeight = (topY - bottomY) / (rows - 1);
                             float spawnY = topY - spawnRow * cellHeight + 20.0f;
@@ -769,7 +785,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             return;
         }
 
-        // 戰鬥：交由植物類別偵測與攻擊（豌豆射手會在自己的 Attack 內發射投射物）
+        // ?圈洛嚗漱?望??拚??亙皜祈??餅?嚗?鞊????刻撌梁? Attack ?抒撠?撠嚗?
         for (auto& plant : m_PlacedPlants) {
             plant->Update(deltaTime);
 
@@ -777,6 +793,24 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 const int producedSun = sunflower->GetSunProductionAmount();
                 m_PlayerEnergy += producedSun;
                 m_EnergyCollected += producedSun;
+
+                // Create a reward-drop-style energy orb
+                std::vector<std::string> energyPaths;
+                for (int i = 1; i <= 29; ++i) {
+                    energyPaths.push_back(RESOURCE_DIR"/Image/Other/energy/frame_" + std::to_string(i) + ".png");
+                }
+
+                auto energyObj = std::make_shared<Util::GameObject>(
+                    std::make_shared<Util::Animation>(energyPaths, true, 50, true, 0), 30
+                );
+                energyObj->m_Transform.translation = plant->m_Transform.translation;
+                energyObj->m_Transform.scale = {1.0f, 1.0f};
+                root.AddChild(energyObj);
+
+                float initialUpVelocity = 260.0f;
+                glm::vec2 initialVelocity = {0.0f, initialUpVelocity};
+                float gravity = -520.0f;
+                m_SunEnergies.push_back({energyObj, initialVelocity, false, plant->m_Transform.translation.y, gravity});
             }
 
             auto projectile = plant->Attack(m_Zombies, deltaTime);
@@ -793,7 +827,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
         }
 
-        // 更新豌豆投射物：飛行、碰撞、移除
+        // ?湔鞊????抬?憌??１?宏??
         for (int i = static_cast<int>(m_BeanProjectiles.size()) - 1; i >= 0; --i) {
             auto& bean = m_BeanProjectiles[i];
             bean.object->m_Transform.translation.x += bean.speed * deltaTime;
@@ -821,7 +855,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
         }
 
-        // 割草機：偵測殭屍接觸 → 激活並橫掃同排所有殭屍
+        // ?脰?璈??菜葫畾剖??亥孛 ??瞈瘣颱蒂璈急?????悌撅?
         for (auto& mower : m_LawnMowers) {
             if (mower->IsActive()) {
                 mower->m_Transform.translation.x += LawnMower::kMoveSpeed * deltaTime;
@@ -843,7 +877,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 }
             }
         }
-        // 移除已飛出右側畫面的割草機
+        // 蝘駁撌脤??箏?渡?Ｙ??脰?璈?
         for (int i = static_cast<int>(m_LawnMowers.size()) - 1; i >= 0; --i) {
             if (m_LawnMowers[i]->IsActive() &&
                 m_LawnMowers[i]->m_Transform.translation.x > 800.0f) {
@@ -852,7 +886,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
         }
 
-        // 戰鬥：殭屍接觸植物時停下並攻擊，否則持續前進
+        // ?圈洛嚗悌撅閫豢??拇???銝行???血?????
         const float gameOverLineX = (m_GridLeftX - 85.0f) - 10.0f;
         for (auto& zombie : m_Zombies) {
             // Unified fail line: any zombie type crossing this line ends the game.
@@ -894,7 +928,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
         }
 
-        // 移除死亡的殭屍或越界殭屍
+        // 蝘駁甇颱滿?悌撅?頞?畾剖?
         for (int i = static_cast<int>(m_Zombies.size()) - 1; i >= 0; --i) {
             auto& z = m_Zombies[i];
             if (z->IsDead()) {
@@ -913,7 +947,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             return;
         }
 
-        // 移除死亡植物並釋放格子
+        // 蝘駁甇颱滿璊銝阡??暹摮?
         for (int i = static_cast<int>(m_PlacedPlants.size()) - 1; i >= 0; --i) {
             auto& p = m_PlacedPlants[i];
             if (p->IsDead()) {
@@ -923,6 +957,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     col >= 0 && col < static_cast<int>(m_GrassGrid[row].size())) {
                     m_GrassGrid[row][col] = false;
                 }
+                
                 root.RemoveChild(p);
                 m_PlacedPlants.erase(m_PlacedPlants.begin() + i);
             }
@@ -930,10 +965,10 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 
         auto mousePos = Util::Input::GetCursorPosition();
 
-        // 更新能量掉落、撿取
+        // ?湔?賡?????
         {
-            glm::vec2 targetPos = {-540.0f, 300.0f}; // 能量文字上方一點位置
-            float deltaSeconds = deltaTime; // 使用真實的 deltaTime
+            glm::vec2 targetPos = {-540.0f, 300.0f}; // ?賡???銝銝暺?蝵?
+            float deltaSeconds = deltaTime; // 雿輻?祕??deltaTime
             for (int i = static_cast<int>(m_SunEnergies.size()) - 1; i >= 0; --i) {
                 auto& sun = m_SunEnergies[i];
                 auto& obj = sun.object;
@@ -951,8 +986,11 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     }
                     glm::vec2 dir = diff / dist;
                     float collectSpeed = std::max(200.0f, std::min(1200.0f, dist * 6.0f));
-                    obj->m_Transform.translation += dir * collectSpeed * deltaSeconds; // 從快到慢
+                    obj->m_Transform.translation += dir * collectSpeed * deltaSeconds; // 敺翰?唳
                 } else {
+                    // Apply gravity to velocity
+                    sun.velocity.y += sun.gravity * deltaSeconds;
+
                     obj->m_Transform.translation += sun.velocity * deltaSeconds;
 
                     if (obj->m_Transform.translation.y < sun.stopY) {
@@ -960,7 +998,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         sun.velocity = {0.0f, 0.0f};
                     }
 
-                    // 如果飛出底部就刪除（保險）
+                    // 憒?憌摨撠勗?歹?靽嚗?
                     if (obj->m_Transform.translation.y < -330.0f) {
                         root.RemoveChild(obj);
                         m_SunEnergies.erase(m_SunEnergies.begin() + i);
@@ -975,11 +1013,11 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         }
 
 
-        // 檢查卡片點擊
+        // 瑼Ｘ?∠?暺?
         if (Util::Input::IsKeyDown(Util::Keycode::MOUSE_LB) && !m_SelectedCard) {
             for (auto& card : m_Cards) {
                 if (card->IsReady() && m_PlayerEnergy >= card->GetData().cost) {
-                    // 計算實際大小
+                    // 閮?撖阡?憭批?
                     auto scaledSize = card->GetScaledSize();
                     float cardWidth = scaledSize.x;
                     float cardHeight = scaledSize.y;
@@ -1001,18 +1039,18 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
         }
 
-        // 更新跟隨植物位置
+        // ?湔頝璊雿蔭
         if (m_FollowingPlant) {
             m_FollowingPlant->m_Transform.translation = {mousePos.x, mousePos.y};
 
-            // 檢查預覽位置
+            // 瑼Ｘ?汗雿蔭
             int previewRow = -1, previewCol = -1;
             float cellWidth = (m_GridRightX - m_GridLeftX) / (m_GridCols - 1);
 
             for (int r = 0; r < 5; ++r) {
                 if (!m_RowAllowed[r]) continue;
 
-                // 計算此行的Y座標（基於最小行的相對偏移）
+                // 閮?甇方??摨扳?嚗?潭?撠??撠?蝘鳴?
                 float rowY = m_GridTopY - (r - m_GridMinRow) * m_GridCellHeight;
 
                 for (int c = 0; c < m_GridCols; ++c) {
@@ -1029,10 +1067,10 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 if (previewRow != -1) break;
             }
 
-            // 更新預覽植物
+            // ?湔?汗璊
             if (previewRow != -1 && previewCol != -1 && m_RowAllowed[previewRow] && !m_GrassGrid[previewRow][previewCol]) {
                 if (!m_PreviewPlant) {
-                    // 創建預覽植物（半透明）
+                    // ?萄遣?汗璊嚗???嚗?
                     m_PreviewPlant = std::make_shared<Util::GameObject>(
                         std::make_shared<Util::Animation>(m_SelectedCard->GetData().plantAnimationPaths, true, 50, true, 0), 10
                     );
@@ -1043,25 +1081,25 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 float rowY = m_GridTopY - (previewRow - m_GridMinRow) * m_GridCellHeight;
                 m_PreviewPlant->m_Transform.translation = {cellX, rowY};
             } else {
-                // 移除預覽植物
+                // 蝘駁?汗璊
                 if (m_PreviewPlant) {
                     root.RemoveChild(m_PreviewPlant);
                     m_PreviewPlant = nullptr;
                 }
             }
         } else {
-            // 沒有跟隨植物時也要清理預覽
+            // 瘝?頝璊??閬???閬?
             if (m_PreviewPlant) {
                 root.RemoveChild(m_PreviewPlant);
                 m_PreviewPlant = nullptr;
             }
         }
 
-        // 檢查放置
+        // 瑼Ｘ?曄蔭
         if (Util::Input::IsKeyUp(Util::Keycode::MOUSE_LB) && m_SelectedCard) {
-            // 如果有預覽植物且位置有效，直接使用預覽位置
+            // 憒???閬賣??拐?雿蔭??嚗?乩蝙?券?閬賭?蝵?
             if (m_PreviewPlant) {
-                // 找到對應的格子坐標
+                // ?曉撠??摮?璅?
                 float cellWidth = (m_GridRightX - m_GridLeftX) / (m_GridCols - 1);
                 glm::vec2 previewPos = m_PreviewPlant->m_Transform.translation;
                 int row = -1, col = -1;
@@ -1085,7 +1123,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 }
 
                 if (row != -1 && col != -1 && m_RowAllowed[row] && !m_GrassGrid[row][col]) {
-                    // 依卡片建立對應植物類別
+                    // 靘?遣蝡????拚???
                     std::shared_ptr<Plant> placedPlant;
                     const auto& data = m_SelectedCard->GetData();
                     if (data.name == "bean" || data.name == "peashooter") {
@@ -1122,14 +1160,14 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     m_PlayerEnergy -= data.cost;
                     m_SelectedCard->StartCooldown();
 
-                    // 清理
+                    // 皜?
                     m_PreviewPlant = nullptr;
                     root.RemoveChild(m_FollowingPlant);
                     m_FollowingPlant = nullptr;
                     m_SelectedCard = nullptr;
                 }
             } else {
-                // 沒有預覽植物，取消選擇
+                // 瘝??汗璊嚗?瘨??
                 root.RemoveChild(m_FollowingPlant);
                 m_FollowingPlant = nullptr;
                 m_SelectedCard = nullptr;
@@ -1190,7 +1228,7 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_GetPlantBoard = nullptr;
     m_RewardCardDisplay = nullptr;
     m_NextLevelButton = nullptr;
-    m_IntroDone = false; // 重置 intro 狀態
+    m_IntroDone = false; // ?蔭 intro ???
 
     // Reset energy and timers for new level
     m_EnergyCollected = 0;  // Reset collected energy

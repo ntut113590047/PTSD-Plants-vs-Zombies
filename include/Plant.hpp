@@ -44,7 +44,7 @@ public:
     float GetHealth() const;
     float GetAttackDamage() const;
     float GetAttackCooldown() const;
-    void TakeDamage(float damage);
+    virtual void TakeDamage(float damage);
     bool IsDead() const;
     bool TryAttack(float deltaTime);
     virtual bool DetectZombieInFront(const std::vector<std::shared_ptr<Zombie>>& zombies) const;
