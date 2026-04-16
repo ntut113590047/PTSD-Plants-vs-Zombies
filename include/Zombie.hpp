@@ -41,6 +41,9 @@ protected:
                                   const std::shared_ptr<Core::Drawable>& attackDrawable,
                                   const std::shared_ptr<Core::Drawable>& hitBrightIdleDrawable = nullptr,
                                   const std::shared_ptr<Core::Drawable>& hitBrightAttackDrawable = nullptr);
+    static std::vector<std::string> BuildBrightFramePaths(const std::vector<std::string>& normalPaths,
+                                                          const std::string& normalMarker,
+                                                          const std::string& brightMarker);
 
 private:
     void RefreshCurrentDrawable();

@@ -37,6 +37,8 @@ public:
     void ChangeLevel(int level, Util::Renderer& root);
     void SkipToNextLevel(Util::Renderer& root);  // Debug: skip to next level
 
+    void UpdateWaveProgressIndicator();
+
 private:
     bool IsGameLevel() const;
     std::shared_ptr<Zombie> SpawnZombie(const std::string& zombieType, int row, float y);
@@ -96,6 +98,10 @@ private:
     std::shared_ptr<Util::GameObject> m_PreviewPlant = nullptr; // 預覽植物（半透明）
     std::shared_ptr<Util::GameObject> m_EnergyText = nullptr; // 能量顯示文字
     std::shared_ptr<Util::Text> m_EnergyTextPtr = nullptr;
+    std::shared_ptr<Util::GameObject> m_LevelText = nullptr; // 關卡圖片顯示
+    std::shared_ptr<Util::GameObject> m_WaveProgressBar = nullptr; // progress bar background
+    std::shared_ptr<Util::GameObject> m_WaveProgressBlack = nullptr; // left-side black progress fill
+    std::shared_ptr<Util::GameObject> m_WaveProgressHead = nullptr; // zombie head indicator
 
     struct SunEnergy {
         std::shared_ptr<Util::GameObject> object;

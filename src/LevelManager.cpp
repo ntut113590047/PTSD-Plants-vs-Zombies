@@ -55,7 +55,6 @@ static std::vector<std::string> GetFramePaths(const std::string& resourcePath, i
     return paths;
 }
 
-
 LevelManager::LevelManager(int level)
     : m_CurrentLevel(level) {}
 
@@ -538,6 +537,42 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     m_EnergyText->m_Transform.translation = {-540.0f, 285.0f}; // 撌虫?閫?蝵殷??ㄐ靽格xy摨扳?
     root.AddChild(m_EnergyText);
 
+    // ===== ????∠?摮? =====
+    int levelGroup = (m_CurrentLevel - 1) / 10 + 1;
+    int levelIndex = (m_CurrentLevel - 1) % 10 + 1;
+    std::string levelText = std::to_string(levelGroup) + "-" + std::to_string(levelIndex);
+    m_LevelText = std::make_shared<Util::GameObject>(
+        std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/levelWord/word" + levelText + ".png"),
+        50
+    );
+    m_LevelText->m_Transform.translation = {400.0f, -340.0f};
+    m_LevelText->m_Transform.scale = {0.7f, 0.7f};
+    root.AddChild(m_LevelText);
+
+    m_WaveProgressBar = std::make_shared<Util::GameObject>(
+        std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/progress.png"),
+        51.0f
+    );
+    m_WaveProgressBar->m_Transform.translation = {550.0f, -340.0f};
+    m_WaveProgressBar->m_Transform.scale = {0.7f, 0.7f};
+    root.AddChild(m_WaveProgressBar);
+
+    m_WaveProgressBlack = std::make_shared<Util::GameObject>(
+        std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/progress_black.png"),
+        52.0f
+    );
+    m_WaveProgressBlack->m_Transform.translation = {550.0f, -340.0f};
+    m_WaveProgressBlack->m_Transform.scale = {1.0f, 0.7f};
+    root.AddChild(m_WaveProgressBlack);
+
+    m_WaveProgressHead = std::make_shared<Util::GameObject>(
+        std::make_shared<Util::Image>(RESOURCE_DIR"/Image/zombies/zombieHead.png"),
+        53.0f
+    );
+    m_WaveProgressHead->m_Transform.scale = {0.55f, 0.55f};
+    root.AddChild(m_WaveProgressHead);
+    UpdateWaveProgressIndicator();
+
     m_IntroDone = true; // ??????
 }
 
@@ -622,6 +657,8 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         if (m_EnergyTextPtr) {
             m_EnergyTextPtr->SetText(std::to_string(m_PlayerEnergy));
         }
+
+        UpdateWaveProgressIndicator();
 
         // ?賡???Ｙ? (瘥?蝘璈???
         m_SunSpawnTimer += deltaTime;
@@ -1176,6 +1213,42 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
     }
 }
 
+void LevelManager::UpdateWaveProgressIndicator() {
+    if (!m_WaveProgressBar || !m_WaveProgressBlack || !m_WaveProgressHead) {
+        return;
+    }
+
+    int totalWaves = m_GameStateManager.GetTotalWaves();
+    if (totalWaves <= 0) {
+        return;
+    }
+
+    const float progress = std::clamp(
+        static_cast<float>(m_GameStateManager.GetCurrentWave()) / static_cast<float>(totalWaves),
+        0.0f,
+        1.0f
+    );
+
+    const glm::vec2 barSize = m_WaveProgressBar->GetScaledSize();
+    const glm::vec2 headSize = m_WaveProgressHead->GetScaledSize();
+    const float borderMargin = barSize.x * 0.04f;
+    const float barCenterX = m_WaveProgressBar->m_Transform.translation.x;
+    const float barLeft = barCenterX - barSize.x * 0.5f + borderMargin;
+    const float barRight = barCenterX + barSize.x * 0.5f - borderMargin;
+
+    const float innerWidth = std::max(0.0f, barRight - barLeft);
+    float blackWidth = innerWidth * (1.0f - progress);
+    const float barScaleX = m_WaveProgressBar->m_Transform.scale.x;
+    float blackScaleX = (barSize.x > 0.0f) ? (barScaleX * blackWidth / barSize.x) : 0.0f;
+    m_WaveProgressBlack->m_Transform.scale = {blackScaleX, 0.45f};
+    float blackCenterX = barLeft + blackWidth * 0.5f;
+    m_WaveProgressBlack->m_Transform.translation = {blackCenterX, m_WaveProgressBar->m_Transform.translation.y};
+
+    const float boundaryX = barLeft + blackWidth;
+    float headX = boundaryX;
+    m_WaveProgressHead->m_Transform.translation = {headX, m_WaveProgressBar->m_Transform.translation.y};
+}
+
 void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     if (m_Background) { root.RemoveChild(m_Background); m_Background = nullptr; }
     if (m_CardSlot) { root.RemoveChild(m_CardSlot); m_CardSlot = nullptr; }
@@ -1200,6 +1273,10 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     if (m_FollowingPlant) root.RemoveChild(m_FollowingPlant);
     if (m_PreviewPlant) root.RemoveChild(m_PreviewPlant);
     if (m_EnergyText) root.RemoveChild(m_EnergyText);
+    if (m_LevelText) root.RemoveChild(m_LevelText);
+    if (m_WaveProgressBar) root.RemoveChild(m_WaveProgressBar);
+    if (m_WaveProgressBlack) root.RemoveChild(m_WaveProgressBlack);
+    if (m_WaveProgressHead) root.RemoveChild(m_WaveProgressHead);
     if (m_GameOverWord) root.RemoveChild(m_GameOverWord);
     if (m_GameOverBoard) root.RemoveChild(m_GameOverBoard);
     if (m_GameOverButton) root.RemoveChild(m_GameOverButton);
@@ -1221,6 +1298,10 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_SelectedCard = nullptr;
     m_EnergyText = nullptr;
     m_EnergyTextPtr = nullptr;
+    m_LevelText = nullptr;
+    m_WaveProgressBar = nullptr;
+    m_WaveProgressBlack = nullptr;
+    m_WaveProgressHead = nullptr;
     m_GameOverWord = nullptr;
     m_GameOverBoard = nullptr;
     m_GameOverButton = nullptr;

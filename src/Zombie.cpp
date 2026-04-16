@@ -1,8 +1,31 @@
 #include "Zombie.hpp"
 
 #include <algorithm>
+#include <filesystem>
 
 #include "Util/Animation.hpp"
+
+namespace fs = std::filesystem;
+
+std::vector<std::string> Zombie::BuildBrightFramePaths(const std::vector<std::string>& normalPaths,
+                                                           const std::string& normalMarker,
+                                                           const std::string& brightMarker) {
+    std::vector<std::string> brightPaths;
+    brightPaths.reserve(normalPaths.size());
+    for (const auto& path : normalPaths) {
+        std::string brightPath = path;
+        const auto pos = brightPath.find(normalMarker);
+        if (pos == std::string::npos) {
+            return normalPaths;
+        }
+        brightPath.replace(pos, normalMarker.size(), brightMarker);
+        if (!fs::exists(brightPath)) {
+            return normalPaths;
+        }
+        brightPaths.push_back(brightPath);
+    }
+    return brightPaths;
+}
 
 namespace {
 void SetDrawableKeepingAnimationPhase(const std::shared_ptr<Core::Drawable>& current,

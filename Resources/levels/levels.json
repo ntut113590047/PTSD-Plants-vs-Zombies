@@ -70,7 +70,7 @@
                                              "bean",
                                              "sunflower"
                                          ],
-                    "starting_energy":  150,
+                    "starting_energy":  50,
                     "waves":  [
                                   {
                                       "zombies":  [
@@ -162,7 +162,7 @@
                                              "sunflower",
                                              "cherry"
                                          ],
-                    "starting_energy":  100,
+                    "starting_energy":  50,
                     "waves":  [
                                   {
                                       "zombies":  [
@@ -285,7 +285,7 @@
                                              "cherry",
                                              "walnut"
                                          ],
-                    "starting_energy":  150,
+                    "starting_energy":  50,
                     "waves":  [
                                   {
                                       "zombies":  [
@@ -467,7 +467,7 @@
                                              "walnut",
                                              "potato"
                                          ],
-                    "starting_energy":  150,
+                    "starting_energy":  0,
                     "waves":  [
                                   {
                                       "zombies":  [
@@ -634,7 +634,7 @@
                                              "potato",
                                              "snowpea"
                                          ],
-                    "starting_energy":  200,
+                    "starting_energy":  50,
                     "waves":  [
                                   {
                                       "zombies":  [
@@ -842,7 +842,7 @@
                                              "snowpea",
                                              "chomper"
                                          ],
-                    "starting_energy":  250,
+                    "starting_energy":  50,
                     "waves":  [
                                   {
                                       "zombies":  [
@@ -1293,7 +1293,7 @@
                                              "chomper",
                                              "repeater"
                                          ],
-                    "starting_energy":  300,
+                    "starting_energy":  50,
                     "waves":  [
                                   {
                                       "zombies":  [
@@ -1562,7 +1562,7 @@
                                              "chomper",
                                              "repeater"
                                          ],
-                    "starting_energy":  350,
+                    "starting_energy":  50,
                     "waves":  [
                                   {
                                       "zombies":  [
@@ -2104,7 +2104,7 @@
                                               "chomper",
                                               "repeater"
                                           ],
-                     "starting_energy":  400,
+                     "starting_energy":  0,
                      "waves":  [
                                    {
                                        "zombies":  [

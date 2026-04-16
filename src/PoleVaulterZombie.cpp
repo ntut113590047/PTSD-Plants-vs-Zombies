@@ -16,21 +16,13 @@ PoleVaulterZombie::PoleVaulterZombie(const std::vector<std::string>& framePaths,
     (void)zIndex;
 
     auto idleAnim = std::make_shared<Util::Animation>(framePaths, true, 90, true, 0);
-
-    // Create bright idle frames for hit flash effect
-    std::vector<std::string> idleBrightPaths;
-    idleBrightPaths.reserve(framePaths.size());
-    for (const auto& path : framePaths) {
-        std::string brightPath = path;
-        const std::string marker = "/polevaulter/";
-        const std::string replacement = "/polevaulter_bright/";
-        const auto pos = brightPath.find(marker);
-        if (pos != std::string::npos) {
-            brightPath.replace(pos, marker.size(), replacement);
-        }
-        idleBrightPaths.push_back(brightPath);
-    }
-    auto idleBrightAnim = std::make_shared<Util::Animation>(idleBrightPaths, true, 90, true, 0);
+    auto idleBrightAnim = std::make_shared<Util::Animation>(
+        Zombie::BuildBrightFramePaths(framePaths, "/polevaulter/", "/polevaulter_bright/"),
+        true,
+        90,
+        true,
+        0
+    );
 
     // Configure drawables: idle as both idle and attack
     // When hit, show bright version
