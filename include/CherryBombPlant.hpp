@@ -12,6 +12,8 @@ public:
 
 private:
     bool m_HasExploded = false;
+    bool m_HasScheduledRemoval = false;
+    float m_TimeSincePlanted = 0.0f;
 };
 
 #endif

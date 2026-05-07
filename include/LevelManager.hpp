@@ -23,6 +23,7 @@ namespace LevelManagerConfig {
     constexpr int NUM_CARDS = 6;
     constexpr float CARDSLOT_TARGET_Y = 315.0f;
     constexpr float SUN_STOPPING_HEIGHT = -150.0f;
+    constexpr float SUN_GROUND_LIFETIME = 10.0f;
     constexpr float BEAN_SPEED = 260.0f;
     constexpr float BEAN_DAMAGE = 20.0f;
     constexpr int INITIAL_PLAYER_ENERGY = 50;
@@ -109,6 +110,7 @@ private:
         bool collecting = false;
         float stopY = LevelManagerConfig::SUN_STOPPING_HEIGHT;
         float gravity = 0.0f;
+        float groundedTime = 0.0f;
     };
 
     std::vector<SunEnergy> m_SunEnergies;

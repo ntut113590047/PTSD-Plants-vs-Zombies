@@ -116,7 +116,7 @@ PlantRegistry::PlantRegistry() {
             "cherry", 150, 50.0f,
             RESOURCE_DIR"/Image/Plants/cherryCard.png",
             paths,
-            1.0f
+            0.7f
         };
     }
 

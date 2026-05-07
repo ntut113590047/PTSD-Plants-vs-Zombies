@@ -2,6 +2,7 @@
 #include "Util/Input.hpp"
 #include "Util/Text.hpp"
 #include "Util/Animation.hpp"
+#include "Util/Image.hpp"
 #include "Util/Time.hpp"
 #include "PlantRegistry.hpp"
 #include "PeashooterPlant.hpp"
@@ -1035,6 +1036,19 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         sun.velocity = {0.0f, 0.0f};
                     }
 
+                    // Sun energy disappears if it stays on the ground too long.
+                    if (obj->m_Transform.translation.y <= sun.stopY + 0.01f &&
+                        std::abs(sun.velocity.y) < 0.01f) {
+                        sun.groundedTime += deltaSeconds;
+                        if (sun.groundedTime >= LevelManagerConfig::SUN_GROUND_LIFETIME) {
+                            root.RemoveChild(obj);
+                            m_SunEnergies.erase(m_SunEnergies.begin() + i);
+                            continue;
+                        }
+                    } else {
+                        sun.groundedTime = 0.0f;
+                    }
+
                     // 憒?憌摨撠勗?歹?靽嚗?
                     if (obj->m_Transform.translation.y < -330.0f) {
                         root.RemoveChild(obj);
@@ -1065,9 +1079,16 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     if (mousePos.x >= left && mousePos.x <= right &&
                         mousePos.y >= bottom && mousePos.y <= top) {
                         m_SelectedCard = card;
-                        m_FollowingPlant = std::make_shared<Util::GameObject>(
-                            std::make_shared<Util::Animation>(card->GetData().plantAnimationPaths, true, 50, true, 0), 20
-                        );
+                        const auto& paths = card->GetData().plantAnimationPaths;
+                        if (!paths.empty()) {
+                            m_FollowingPlant = std::make_shared<Util::GameObject>(
+                                std::make_shared<Util::Image>(paths.front()), 20
+                            );
+                        } else {
+                            m_FollowingPlant = std::make_shared<Util::GameObject>(
+                                std::make_shared<Util::Image>(card->GetData().cardImagePath), 20
+                            );
+                        }
                         m_FollowingPlant->m_Transform.scale = {card->GetData().scale, card->GetData().scale};
                         root.AddChild(m_FollowingPlant);
                         break;
@@ -1108,9 +1129,16 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             if (previewRow != -1 && previewCol != -1 && m_RowAllowed[previewRow] && !m_GrassGrid[previewRow][previewCol]) {
                 if (!m_PreviewPlant) {
                     // ?萄遣?汗璊嚗???嚗?
-                    m_PreviewPlant = std::make_shared<Util::GameObject>(
-                        std::make_shared<Util::Animation>(m_SelectedCard->GetData().plantAnimationPaths, true, 50, true, 0), 10
-                    );
+                    const auto& paths = m_SelectedCard->GetData().plantAnimationPaths;
+                    if (!paths.empty()) {
+                        m_PreviewPlant = std::make_shared<Util::GameObject>(
+                            std::make_shared<Util::Image>(paths.front()), 10
+                        );
+                    } else {
+                        m_PreviewPlant = std::make_shared<Util::GameObject>(
+                            std::make_shared<Util::Image>(m_SelectedCard->GetData().cardImagePath), 10
+                        );
+                    }
                     m_PreviewPlant->m_Transform.scale = {m_SelectedCard->GetData().scale, m_SelectedCard->GetData().scale};
                     root.AddChild(m_PreviewPlant);
                 }

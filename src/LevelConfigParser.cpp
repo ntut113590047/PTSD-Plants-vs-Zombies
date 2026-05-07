@@ -3,8 +3,6 @@
 #include <sstream>
 #include <iostream>
 #include <map>
-#include <cctype>
-#include <stdexcept>
 
 // Simple trim function
 static std::string trim(const std::string& str) {
@@ -15,25 +13,11 @@ static std::string trim(const std::string& str) {
 }
 
 // Simple JSON parser - handles basic structure needed for level config
-static void skipWhitespaceAndBom(const std::string& json, size_t& pos) {
-    // Skip UTF-8 BOM if present at current position.
-    if (pos + 2 < json.size() &&
-        static_cast<unsigned char>(json[pos]) == 0xEF &&
-        static_cast<unsigned char>(json[pos + 1]) == 0xBB &&
-        static_cast<unsigned char>(json[pos + 2]) == 0xBF) {
-        pos += 3;
-    }
-
-    while (pos < json.size() && std::isspace(static_cast<unsigned char>(json[pos]))) {
-        pos++;
-    }
-}
-
 static JsonValue parseJsonValue(const std::string& json, size_t& pos) {
     JsonValue val;
 
-    // Skip whitespace/BOM before parsing each token.
-    skipWhitespaceAndBom(json, pos);
+    // Skip whitespace
+    while (pos < json.size() && std::isspace(json[pos])) pos++;
 
     if (pos >= json.size()) return val;
 
@@ -43,8 +27,7 @@ static JsonValue parseJsonValue(const std::string& json, size_t& pos) {
         pos++; // skip {
 
         while (pos < json.size() && json[pos] != '}') {
-            skipWhitespaceAndBom(json, pos);
-            if (pos >= json.size()) break;
+            while (pos < json.size() && std::isspace(json[pos])) pos++;
             if (json[pos] == '}') break;
 
             // Parse key
@@ -61,15 +44,9 @@ static JsonValue parseJsonValue(const std::string& json, size_t& pos) {
                 // Parse value
                 JsonValue value = parseJsonValue(json, pos);
                 val.object_value[key] = value;
-            } else {
-                // Unknown token in object: advance one byte to avoid infinite loop.
-                pos++;
             }
 
-            while (pos < json.size() &&
-                   (std::isspace(static_cast<unsigned char>(json[pos])) || json[pos] == ',')) {
-                pos++;
-            }
+            while (pos < json.size() && (std::isspace(json[pos]) || json[pos] == ',')) pos++;
         }
         if (pos < json.size() && json[pos] == '}') pos++;
     }
@@ -79,17 +56,13 @@ static JsonValue parseJsonValue(const std::string& json, size_t& pos) {
         pos++; // skip [
 
         while (pos < json.size() && json[pos] != ']') {
-            skipWhitespaceAndBom(json, pos);
-            if (pos >= json.size()) break;
+            while (pos < json.size() && std::isspace(json[pos])) pos++;
             if (json[pos] == ']') break;
 
             JsonValue elem = parseJsonValue(json, pos);
             val.array_value.push_back(elem);
 
-            while (pos < json.size() &&
-                   (std::isspace(static_cast<unsigned char>(json[pos])) || json[pos] == ',')) {
-                pos++;
-            }
+            while (pos < json.size() && (std::isspace(json[pos]) || json[pos] == ',')) pos++;
         }
         if (pos < json.size() && json[pos] == ']') pos++;
     }
@@ -120,20 +93,10 @@ static JsonValue parseJsonValue(const std::string& json, size_t& pos) {
         while (pos < json.size() && (std::isdigit(json[pos]) || json[pos] == '.' || json[pos] == '-')) {
             numStr += json[pos++];
         }
-        if (!numStr.empty()) {
-            try {
-                val.num_value = std::stof(numStr);
-            } catch (const std::exception&) {
-                val.num_value = 0.0f;
-            }
-        } else {
-            // Unknown token fallback: consume one byte to avoid stalling parser.
-            pos++;
-            val.num_value = 0.0f;
-        }
+        val.num_value = std::stof(numStr);
     }
 
-    while (pos < json.size() && std::isspace(static_cast<unsigned char>(json[pos]))) pos++;
+    while (pos < json.size() && std::isspace(json[pos])) pos++;
     return val;
 }
 
