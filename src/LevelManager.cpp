@@ -187,10 +187,14 @@ void LevelManager::StartLevelClearReward(Util::Renderer& root) {
     const std::string cardPath = rewardData.cardImagePath.empty()
         ? std::string(RESOURCE_DIR "/Image/Plants/sunflowerCard.png")
         : rewardData.cardImagePath;
+    const std::string rewardVisualPath = (m_CurrentLevel == 4)
+        ? std::string(RESOURCE_DIR "/Image/Other/shovel.png")
+        : cardPath;
+    const float rewardDropScale = (m_CurrentLevel == 4) ? (0.75f * 2.0f) : 0.75f;
 
-    m_DroppedRewardCard = std::make_shared<Button>(cardPath, cardPath);
+    m_DroppedRewardCard = std::make_shared<Button>(rewardVisualPath, rewardVisualPath);
     m_DroppedRewardCard->SetZIndex(36.0f);
-    m_DroppedRewardCard->SetScale(0.75f, 0.75f);
+    m_DroppedRewardCard->SetScale(rewardDropScale, rewardDropScale);
     m_DroppedRewardCard->SetPosition(m_LastZombieDeathPosition.x, m_LastZombieDeathPosition.y + 12.0f);
     root.AddChild(m_DroppedRewardCard);
 
@@ -246,13 +250,17 @@ void LevelManager::UpdateLevelClearReward(Util::Renderer& root, float deltaTime)
         const std::string cardPath = rewardData.cardImagePath.empty()
             ? std::string(RESOURCE_DIR "/Image/Plants/sunflowerCard.png")
             : rewardData.cardImagePath;
+        const std::string rewardVisualPath = (m_CurrentLevel == 4)
+            ? std::string(RESOURCE_DIR "/Image/Other/shovel.png")
+            : cardPath;
+        const float rewardPanelScale = (m_CurrentLevel == 4) ? (0.9f * 2.0f) : 0.9f;
 
         m_RewardCardDisplay = std::make_shared<Util::GameObject>(
-            std::make_shared<Util::Image>(cardPath),
+            std::make_shared<Util::Image>(rewardVisualPath),
             35.0f
         );
         m_RewardCardDisplay->m_Transform.translation = {0.0f, 95.0f};
-        m_RewardCardDisplay->m_Transform.scale = {0.9f, 0.9f};
+        m_RewardCardDisplay->m_Transform.scale = {rewardPanelScale, rewardPanelScale};
         root.AddChild(m_RewardCardDisplay);
 
         m_NextLevelButton = std::make_shared<Button>(

@@ -3,6 +3,8 @@
 #include <sstream>
 #include <iostream>
 #include <map>
+#include <algorithm>
+#include <cmath>
 
 // Simple trim function
 static std::string trim(const std::string& str) {
@@ -98,6 +100,25 @@ static JsonValue parseJsonValue(const std::string& json, size_t& pos) {
 
     while (pos < json.size() && std::isspace(json[pos])) pos++;
     return val;
+}
+
+static void ApplyEasyDifficulty(LevelConfig& config) {
+    for (auto& wave : config.waves) {
+        wave.start_delay = std::max(0.0f, wave.start_delay * 1.5f);
+
+        for (auto& spawn : wave.zombies) {
+            const bool isFlagZombie = (spawn.type == "FlagZombie");
+
+            if (!isFlagZombie) {
+                // Reduce pressure but keep at least one zombie of each type.
+                spawn.count = std::max(1, static_cast<int>(std::ceil(spawn.count * 0.7f)));
+            }
+
+            // Space zombies out so players have more reaction time.
+            spawn.spawn_interval = std::max(0.1f, spawn.spawn_interval * 1.3f);
+            spawn.delay_offset = std::max(0.0f, spawn.delay_offset * 1.2f);
+        }
+    }
 }
 
 std::vector<LevelConfig> LevelConfigParser::LoadFromFile(const std::string& filePath) {
@@ -307,6 +328,8 @@ LevelConfig LevelConfigParser::ParseLevel(const JsonValue& levelJson, int levelN
             }
         }
     }
+
+    ApplyEasyDifficulty(config);
 
     return config;
 }

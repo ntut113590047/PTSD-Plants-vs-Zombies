@@ -7,6 +7,10 @@
 
 namespace fs = std::filesystem;
 
+namespace {
+constexpr float kZombieHealthScale = 0.75f;
+}
+
 std::vector<std::string> Zombie::BuildBrightFramePaths(const std::vector<std::string>& normalPaths,
                                                            const std::string& normalMarker,
                                                            const std::string& brightMarker) {
@@ -63,7 +67,7 @@ Zombie::Zombie(const std::shared_ptr<Core::Drawable>& drawable,
         : Util::GameObject(drawable, zIndex),
             m_Speed(speed),
             m_Row(row),
-            m_Health(health),
+            m_Health(health * kZombieHealthScale),
             m_AttackDamage(attackDamage),
             m_AttackCooldown(attackCooldown),
             m_AttackTimer(attackCooldown) {
