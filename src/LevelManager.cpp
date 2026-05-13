@@ -337,6 +337,30 @@ bool LevelManager::IsGameLevel() const {
     return m_CurrentLevel != 0;
 }
 
+bool LevelManager::IsConveyorLevel() const {
+    return m_CurrentLevel == 5 || m_CurrentLevel == 10;
+}
+
+void LevelManager::SpawnConveyorCard(Util::Renderer& root) {
+    if (!m_IsConveyorMode || m_LevelPlants.empty()) {
+        return;
+    }
+    if (m_Cards.size() >= LevelManagerConfig::NUM_CARDS) {
+        return;
+    }
+
+    const auto& data = m_LevelPlants[std::rand() % m_LevelPlants.size()];
+    const float y = m_CardSlot ? m_CardSlot->m_Transform.translation.y : m_CardSlotTargetY;
+
+    auto card = std::make_shared<PlantCard>(data, m_ConveyorRightX, y);
+    card->SetZIndex(m_CardSlot ? (m_CardSlot->GetZIndex() + 1) : 11.0f);
+    card->m_Transform.scale = {0.6f, 0.6f};
+    root.AddChild(card);
+
+    m_Cards.push_back(card);
+    m_CardVisuals.push_back({nullptr, nullptr});
+}
+
 void LevelManager::LoadLevel(Util::Renderer& root) {
 
     // ===== 韏瑕??恍 =====
@@ -361,6 +385,9 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     }
 
     // ===== 甇??? =====
+    m_IsConveyorMode = IsConveyorLevel();
+    m_ConveyorSpawnTimer = 0.0f;
+    m_ConveyorSpawnInterval = 4.0f;
     // Load level configuration from JSON
     if (m_AllLevelConfigs.empty()) {
         m_AllLevelConfigs = LevelConfigParser::LoadFromFile(RESOURCE_DIR"/levels/levels.json");
@@ -410,14 +437,20 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     root.AddChild(m_Word);
 
     // ===== ????局 =====
+    const std::string cardSlotPath =
+        m_IsConveyorMode
+            ? std::string(RESOURCE_DIR "/Image/Other/cardplot_slide.png")
+            : std::string(RESOURCE_DIR "/Image/Other/cardplot.png");
     m_CardSlot = std::make_shared<Util::GameObject>(
-        std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/cardplot.png"),
+        std::make_shared<Util::Image>(cardSlotPath),
         10
     );
     m_CardSlot->m_Transform.scale = {0.25f, 0.25f};
     m_CardSlot->m_Transform.translation = {-300.0f, m_CardSlotTargetY};
     root.AddChild(m_CardSlot);
     m_CardSlotActive = true;
+    m_ConveyorLeftX = m_CardSlot->m_Transform.translation.x - 150.0f;
+    m_ConveyorRightX = m_ConveyorLeftX + 80.0f * (LevelManagerConfig::NUM_CARDS - 1);
 
     // ===== ?????蝵?=====
     m_CardPositions.clear();
@@ -437,36 +470,41 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     // ===== ?萄遣?∠? =====
     m_Cards.clear();
     m_CardVisuals.clear();
-    for (size_t i = 0; i < LevelManagerConfig::NUM_CARDS; ++i) {
-        if (i >= m_LevelPlants.size()) break;
-        auto& data = m_LevelPlants[i];
-        auto card = std::make_shared<PlantCard>(data, m_CardPositions[i].x, m_CardPositions[i].y);
-        card->SetZIndex(m_CardSlot->GetZIndex() + 1);
-		card->m_Transform.scale = {0.6f, 0.6f};
-        root.AddChild(card);
-        m_Cards.push_back(card);
+    if (!m_IsConveyorMode) {
+        for (size_t i = 0; i < LevelManagerConfig::NUM_CARDS; ++i) {
+            if (i >= m_LevelPlants.size()) break;
+            auto& data = m_LevelPlants[i];
+            auto card = std::make_shared<PlantCard>(data, m_CardPositions[i].x, m_CardPositions[i].y);
+            card->SetZIndex(m_CardSlot->GetZIndex() + 1);
+			card->m_Transform.scale = {0.6f, 0.6f};
+            root.AddChild(card);
+            m_Cards.push_back(card);
 
-        // ?∠?銝?拙惜?桃蔗嚗??頞喳凝??餉????勗?敺銝?
-        auto energyDim = std::make_shared<Util::GameObject>(
-            std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/card_dim_overlay.png"),
-            card->GetZIndex() + 0.1f
-        );
-        energyDim->m_Transform.translation = card->m_Transform.translation;
-        auto cardSize = card->GetScaledSize();
-        energyDim->m_Transform.scale = {cardSize.x, cardSize.y};
-        energyDim->SetVisible(false);
-        root.AddChild(energyDim);
+            auto energyDim = std::make_shared<Util::GameObject>(
+                std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/card_dim_overlay.png"),
+                card->GetZIndex() + 0.1f
+            );
+            energyDim->m_Transform.translation = card->m_Transform.translation;
+            auto cardSize = card->GetScaledSize();
+            energyDim->m_Transform.scale = {cardSize.x, cardSize.y};
+            energyDim->SetVisible(false);
+            root.AddChild(energyDim);
 
-        auto cooldownDim = std::make_shared<Util::GameObject>(
-            std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/card_cooldown_overlay.png"),
-            card->GetZIndex() + 0.2f
-        );
-        cooldownDim->m_Transform.translation = card->m_Transform.translation;
-        cooldownDim->m_Transform.scale = {cardSize.x, cardSize.y};
-        cooldownDim->SetVisible(false);
-        root.AddChild(cooldownDim);
+            auto cooldownDim = std::make_shared<Util::GameObject>(
+                std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Other/card_cooldown_overlay.png"),
+                card->GetZIndex() + 0.2f
+            );
+            cooldownDim->m_Transform.translation = card->m_Transform.translation;
+            cooldownDim->m_Transform.scale = {cardSize.x, cardSize.y};
+            cooldownDim->SetVisible(false);
+            root.AddChild(cooldownDim);
 
-        m_CardVisuals.push_back({energyDim, cooldownDim});
+            m_CardVisuals.push_back({energyDim, cooldownDim});
+        }
+    } else {
+        for (int i = 0; i < 3; ++i) {
+            SpawnConveyorCard(root);
+        }
     }
 
     // ===== ?????芰雯??=====
@@ -536,6 +574,8 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
 
     m_SunEnergies.clear();
     m_BeanProjectiles.clear();
+    m_RollingNuts.clear();
+    m_BombEffects.clear();
     m_SunSpawnTimer = 0.0f;
     m_Zombies.clear();
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -669,68 +709,115 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 
         UpdateWaveProgressIndicator();
 
-        // ?賡???Ｙ? (瘥?蝘璈???
-        m_SunSpawnTimer += deltaTime;
-        const float spawnInterval = 5.0f;
-        if (m_SunSpawnTimer >= spawnInterval) {
-            m_SunSpawnTimer = 0.0f;
-            float minX = -540.0f;
-            float maxX = 540.0f;
-            float x = minX + static_cast<float>(std::rand()) / RAND_MAX * (maxX - minX);
-            float y = 330.0f;
+        if (!IsConveyorLevel()) {
+            m_SunSpawnTimer += deltaTime;
+            const float spawnInterval = 5.0f;
+            if (m_SunSpawnTimer >= spawnInterval) {
+                m_SunSpawnTimer = 0.0f;
+                float minX = -540.0f;
+                float maxX = 540.0f;
+                float x = minX + static_cast<float>(std::rand()) / RAND_MAX * (maxX - minX);
+                float y = 330.0f;
 
-            std::vector<std::string> energyPaths;
-            for (int i = 1; i <= 29; ++i) {
-                energyPaths.push_back(RESOURCE_DIR"/Image/Other/energy/frame_" + std::to_string(i) + ".png");
-            }
-
-            auto energyObj = std::make_shared<Util::GameObject>(
-                std::make_shared<Util::Animation>(energyPaths, true, 50, true, 0), 30
-            );
-            energyObj->m_Transform.translation = {x, y};
-            energyObj->m_Transform.scale = {1.0f, 1.0f};
-            root.AddChild(energyObj);
-
-            float dropSpeed = -40.0f;
-            float stopY = -120.0f - static_cast<float>(std::rand()) / RAND_MAX * 80.0f;
-            m_SunEnergies.push_back({energyObj, {0.0f, dropSpeed}, false, stopY, 0.0f});
-        }
-
-        // ?湔?∠??瑕??函???
-        for (size_t i = 0; i < m_Cards.size(); ++i) {
-            auto& card = m_Cards[i];
-            card->UpdateCooldown(deltaTime); // 雿輻?祕??deltaTime
-            bool hasEnergy = (m_PlayerEnergy >= card->GetData().cost);
-            // 銝?函??∠?霈, ??刻??迤撣訾漁摨?
-            card->SetEnergyAvailable(hasEnergy && card->IsReady());
-
-            if (i < m_CardVisuals.size()) {
-                auto& visuals = m_CardVisuals[i];
-                auto cardSize = card->GetScaledSize();
-
-                if (visuals.energyDimOverlay) {
-                    visuals.energyDimOverlay->m_Transform.translation = card->m_Transform.translation;
-                    visuals.energyDimOverlay->m_Transform.scale = {cardSize.x, cardSize.y};
-                    visuals.energyDimOverlay->SetVisible(!hasEnergy);
+                std::vector<std::string> energyPaths;
+                for (int i = 1; i <= 29; ++i) {
+                    energyPaths.push_back(RESOURCE_DIR"/Image/Other/energy/frame_" + std::to_string(i) + ".png");
                 }
 
-                if (visuals.cooldownOverlay) {
-                    float remainRatio = 0.0f;
-                    if (card->GetData().cooldown > 0.0f && card->IsCoolingDown()) {
-                        remainRatio = std::clamp(1.0f - card->GetCooldownProgress(), 0.0f, 1.0f);
+                auto energyObj = std::make_shared<Util::GameObject>(
+                    std::make_shared<Util::Animation>(energyPaths, true, 50, true, 0), 30
+                );
+                energyObj->m_Transform.translation = {x, y};
+                energyObj->m_Transform.scale = {1.0f, 1.0f};
+                root.AddChild(energyObj);
+
+                float dropSpeed = -40.0f;
+                float stopY = -120.0f - static_cast<float>(std::rand()) / RAND_MAX * 80.0f;
+                m_SunEnergies.push_back({energyObj, {0.0f, dropSpeed}, false, stopY, 0.0f});
+            }
+        }
+
+        if (!m_IsConveyorMode) {
+            for (size_t i = 0; i < m_Cards.size(); ++i) {
+                auto& card = m_Cards[i];
+                card->UpdateCooldown(deltaTime);
+                bool hasEnergy = (m_PlayerEnergy >= card->GetData().cost);
+                card->SetEnergyAvailable(hasEnergy && card->IsReady());
+
+                if (i < m_CardVisuals.size()) {
+                    auto& visuals = m_CardVisuals[i];
+                    auto cardSize = card->GetScaledSize();
+
+                    if (visuals.energyDimOverlay) {
+                        visuals.energyDimOverlay->m_Transform.translation = card->m_Transform.translation;
+                        visuals.energyDimOverlay->m_Transform.scale = {cardSize.x, cardSize.y};
+                        visuals.energyDimOverlay->SetVisible(!hasEnergy);
                     }
 
-                    if (remainRatio > 0.0f) {
-                        float h = cardSize.y * remainRatio;
-                        visuals.cooldownOverlay->m_Transform.scale = {cardSize.x, h};
-                        visuals.cooldownOverlay->m_Transform.translation = {
-                            card->m_Transform.translation.x,
-                            card->m_Transform.translation.y + cardSize.y * 0.5f - h * 0.5f
-                        };
-                        visuals.cooldownOverlay->SetVisible(true);
-                    } else {
-                        visuals.cooldownOverlay->SetVisible(false);
+                    if (visuals.cooldownOverlay) {
+                        float remainRatio = 0.0f;
+                        if (card->GetData().cooldown > 0.0f && card->IsCoolingDown()) {
+                            remainRatio = std::clamp(1.0f - card->GetCooldownProgress(), 0.0f, 1.0f);
+                        }
+
+                        if (remainRatio > 0.0f) {
+                            float h = cardSize.y * remainRatio;
+                            visuals.cooldownOverlay->m_Transform.scale = {cardSize.x, h};
+                            visuals.cooldownOverlay->m_Transform.translation = {
+                                card->m_Transform.translation.x,
+                                card->m_Transform.translation.y + cardSize.y * 0.5f - h * 0.5f
+                            };
+                            visuals.cooldownOverlay->SetVisible(true);
+                        } else {
+                            visuals.cooldownOverlay->SetVisible(false);
+                        }
                     }
+                }
+            }
+        } else {
+            m_ConveyorSpawnTimer += deltaTime;
+
+            std::vector<size_t> order(m_Cards.size());
+            for (size_t i = 0; i < order.size(); ++i) {
+                order[i] = i;
+            }
+            std::sort(order.begin(), order.end(), [&](size_t a, size_t b) {
+                return m_Cards[a]->m_Transform.translation.x < m_Cards[b]->m_Transform.translation.x;
+            });
+
+            const float cardGap = 2.0f;
+            float prevCenterX = 0.0f;
+            float prevWidth = 0.0f;
+            bool hasPrev = false;
+            float rightmostEdge = -1e9f;
+
+            for (size_t idx : order) {
+                auto& card = m_Cards[idx];
+                const float width = card->GetScaledSize().x;
+                float minCenterX = m_ConveyorLeftX;
+                if (hasPrev) {
+                    minCenterX = std::max(minCenterX, prevCenterX + (prevWidth + width) * 0.5f + cardGap);
+                }
+
+                float nextX = card->m_Transform.translation.x - m_ConveyorCardSpeed * deltaTime;
+                nextX = std::max(nextX, minCenterX);
+                card->m_Transform.translation = {nextX, m_CardSlot->m_Transform.translation.y};
+
+                prevCenterX = nextX;
+                prevWidth = width;
+                hasPrev = true;
+                rightmostEdge = std::max(rightmostEdge, nextX + width * 0.5f);
+            }
+
+            if (m_ConveyorSpawnTimer >= m_ConveyorSpawnInterval &&
+                m_Cards.size() < LevelManagerConfig::NUM_CARDS) {
+                const float spawnWidth = (!m_Cards.empty()) ? m_Cards.front()->GetScaledSize().x : 70.0f;
+                const float spawnLeftEdge = m_ConveyorRightX - spawnWidth * 0.5f;
+                const bool canSpawn = m_Cards.empty() || (rightmostEdge + cardGap <= spawnLeftEdge);
+
+                if (canSpawn) {
+                    SpawnConveyorCard(root);
+                    m_ConveyorSpawnTimer = 0.0f;
                 }
             }
         }
@@ -835,7 +922,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         for (auto& plant : m_PlacedPlants) {
             plant->Update(deltaTime);
 
-            if (auto sunflower = std::dynamic_pointer_cast<SunflowerPlant>(plant); sunflower && sunflower->TryProduceSun()) {
+            if (auto sunflower = std::dynamic_pointer_cast<SunflowerPlant>(plant); sunflower && sunflower->TryProduceSun() && !IsConveyorLevel()) {
                 const int producedSun = sunflower->GetSunProductionAmount();
                 m_PlayerEnergy += producedSun;
                 m_EnergyCollected += producedSun;
@@ -898,6 +985,75 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             if (consumed || bean.object->m_Transform.translation.x > 780.0f) {
                 root.RemoveChild(bean.object);
                 m_BeanProjectiles.erase(m_BeanProjectiles.begin() + i);
+            }
+        }
+
+        for (int i = static_cast<int>(m_RollingNuts.size()) - 1; i >= 0; --i) {
+            auto& nut = m_RollingNuts[i];
+            nut.object->m_Transform.translation += nut.velocity * deltaTime;
+
+            bool removeNut = false;
+            for (auto& zombie : m_Zombies) {
+                float dx = zombie->m_Transform.translation.x - nut.object->m_Transform.translation.x;
+                float dy = std::abs(zombie->m_Transform.translation.y - nut.object->m_Transform.translation.y);
+                bool sameRow = zombie->GetRow() == nut.row;
+                bool hit = nut.hasBounced
+                    ? (std::abs(dx) <= 35.0f && dy <= 35.0f)
+                    : (sameRow && dx <= 35.0f && dx >= -25.0f);
+
+                if (!hit) {
+                    continue;
+                }
+
+                if (nut.isRed) {
+                    std::vector<std::string> bombPaths;
+                    for (int frame = 1; frame <= 8; ++frame) {
+                        bombPaths.push_back(RESOURCE_DIR"/Image/Other/Bomb/frame_" + std::to_string(frame) + ".png");
+                    }
+                    auto bombAnim = std::make_shared<Util::Animation>(bombPaths, false, 60, false, 0);
+                    auto bombObj = std::make_shared<Util::GameObject>(bombAnim, 20.0f);
+                    bombObj->m_Transform.translation = nut.object->m_Transform.translation;
+                    bombObj->m_Transform.scale = {2.0f, 2.0f};
+                    root.AddChild(bombObj);
+                    m_BombEffects.push_back({bombObj, bombAnim});
+
+                    for (auto& victim : m_Zombies) {
+                        float bx = victim->m_Transform.translation.x - nut.object->m_Transform.translation.x;
+                        float by = victim->m_Transform.translation.y - nut.object->m_Transform.translation.y;
+                        if (std::sqrt(bx * bx + by * by) <= 150.0f) {
+                            victim->TakeDamage(500.0f);
+                        }
+                    }
+
+                    removeNut = true;
+                } else if (!nut.hasBounced) {
+                    zombie->TakeDamage(150.0f);
+                    constexpr float kFortyFiveDeg = 0.78539816339f;
+                    const float speed = std::max(1.0f, std::sqrt(nut.velocity.x * nut.velocity.x + nut.velocity.y * nut.velocity.y));
+                    const float direction = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
+                    nut.velocity = {speed * std::cos(kFortyFiveDeg), direction * speed * std::sin(kFortyFiveDeg)};
+                    nut.hasBounced = true;
+                }
+
+                break;
+            }
+
+            const auto& pos = nut.object->m_Transform.translation;
+            if (pos.x > 800.0f || pos.x < -700.0f || pos.y > 430.0f || pos.y < -430.0f) {
+                removeNut = true;
+            }
+
+            if (removeNut) {
+                root.RemoveChild(nut.object);
+                m_RollingNuts.erase(m_RollingNuts.begin() + i);
+            }
+        }
+
+        for (int i = static_cast<int>(m_BombEffects.size()) - 1; i >= 0; --i) {
+            auto& bomb = m_BombEffects[i];
+            if (bomb.anim && bomb.anim->GetState() == Util::Animation::State::ENDED) {
+                root.RemoveChild(bomb.object);
+                m_BombEffects.erase(m_BombEffects.begin() + i);
             }
         }
 
@@ -1075,7 +1231,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
         // 瑼Ｘ?∠?暺?
         if (Util::Input::IsKeyDown(Util::Keycode::MOUSE_LB) && !m_SelectedCard) {
             for (auto& card : m_Cards) {
-                if (card->IsReady() && m_PlayerEnergy >= card->GetData().cost) {
+                if ((m_IsConveyorMode || card->IsReady()) && m_PlayerEnergy >= card->GetData().cost) {
                     // 閮?撖阡?憭批?
                     auto scaledSize = card->GetScaledSize();
                     float cardWidth = scaledSize.x;
@@ -1134,7 +1290,8 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             }
 
             // ?湔?汗璊
-            if (previewRow != -1 && previewCol != -1 && m_RowAllowed[previewRow] && !m_GrassGrid[previewRow][previewCol]) {
+            if (previewRow != -1 && previewCol != -1 && m_RowAllowed[previewRow] && !m_GrassGrid[previewRow][previewCol]
+                && !(m_CurrentLevel == 5 && previewCol > 2)) {
                 if (!m_PreviewPlant) {
                     // ?萄遣?汗璊嚗???嚗?
                     const auto& paths = m_SelectedCard->GetData().plantAnimationPaths;
@@ -1195,43 +1352,69 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     }
                 }
 
-                if (row != -1 && col != -1 && m_RowAllowed[row] && !m_GrassGrid[row][col]) {
-                    // 靘?遣蝡????拚???
+                if (row != -1 && col != -1 && m_RowAllowed[row] && !m_GrassGrid[row][col]
+                    && !(m_CurrentLevel == 5 && col > 2)) {
                     std::shared_ptr<Plant> placedPlant;
                     const auto& data = m_SelectedCard->GetData();
-                    if (data.name == "bean" || data.name == "peashooter") {
-                        placedPlant = std::make_shared<PeashooterPlant>(data);
-                    } else if (data.name == "sunflower") {
-                        placedPlant = std::make_shared<SunflowerPlant>(data);
-                    } else if (data.name == "walnut") {
-                        placedPlant = std::make_shared<WallnutPlant>(data);
-                    } else if (data.name == "potato") {
-                        placedPlant = std::make_shared<PotatoMinePlant>(data);
-                    } else if (data.name == "repeater") {
-                        placedPlant = std::make_shared<RepeaterPlant>(data);
-                    } else if (data.name == "cherry") {
-                        placedPlant = std::make_shared<CherryBombPlant>(data);
-                    } else if (data.name == "snowpea") {
-                        placedPlant = std::make_shared<SnowPeaPlant>(data);
-                    } else if (data.name == "chomper") {
-                        placedPlant = std::make_shared<ChomperPlant>(data);
-                    } else {
-                        placedPlant = std::make_shared<Plant>(
-                            data,
-                            std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
+                    const bool isRollingNut = (data.name == "nutWall" || data.name == "redNutWall");
+
+                    if (isRollingNut) {
+                        const bool isRed = (data.name == "redNutWall");
+                        auto rollingNut = std::make_shared<Util::GameObject>(
+                            std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 80, true, 0),
                             20.0f
                         );
+                        rollingNut->m_Transform.translation = m_PreviewPlant->m_Transform.translation;
+                        rollingNut->m_Transform.scale = {data.scale, data.scale};
+                        root.AddChild(rollingNut);
+                        m_RollingNuts.push_back({rollingNut, row, {200.0f, 0.0f}, isRed, false});
+                    } else {
+                        if (data.name == "bean" || data.name == "peashooter") {
+                            placedPlant = std::make_shared<PeashooterPlant>(data);
+                        } else if (data.name == "sunflower") {
+                            placedPlant = std::make_shared<SunflowerPlant>(data);
+                        } else if (data.name == "walnut") {
+                            placedPlant = std::make_shared<WallnutPlant>(data);
+                        } else if (data.name == "potato") {
+                            placedPlant = std::make_shared<PotatoMinePlant>(data);
+                        } else if (data.name == "repeater") {
+                            placedPlant = std::make_shared<RepeaterPlant>(data);
+                        } else if (data.name == "cherry") {
+                            placedPlant = std::make_shared<CherryBombPlant>(data);
+                        } else if (data.name == "snowpea") {
+                            placedPlant = std::make_shared<SnowPeaPlant>(data);
+                        } else if (data.name == "chomper") {
+                            placedPlant = std::make_shared<ChomperPlant>(data);
+                        } else {
+                            placedPlant = std::make_shared<Plant>(
+                                data,
+                                std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
+                                20.0f
+                            );
+                        }
+
+                        placedPlant->m_Transform.translation = m_PreviewPlant->m_Transform.translation;
+                        placedPlant->SetGridPosition(row, col);
+                        root.AddChild(placedPlant);
+                        m_PlacedPlants.push_back(placedPlant);
+                        m_GrassGrid[row][col] = true;
                     }
 
-                    placedPlant->m_Transform.translation = m_PreviewPlant->m_Transform.translation;
-                    placedPlant->SetGridPosition(row, col);
-                    root.AddChild(placedPlant);
-                    m_PlacedPlants.push_back(placedPlant);
-
                     root.RemoveChild(m_PreviewPlant);
-                    m_GrassGrid[row][col] = true;
                     m_PlayerEnergy -= data.cost;
-                    m_SelectedCard->StartCooldown();
+                    if (m_IsConveyorMode) {
+                        auto cardIt = std::find(m_Cards.begin(), m_Cards.end(), m_SelectedCard);
+                        if (cardIt != m_Cards.end()) {
+                            const size_t removeIndex = static_cast<size_t>(std::distance(m_Cards.begin(), cardIt));
+                            root.RemoveChild(*cardIt);
+                            m_Cards.erase(cardIt);
+                            if (removeIndex < m_CardVisuals.size()) {
+                                m_CardVisuals.erase(m_CardVisuals.begin() + removeIndex);
+                            }
+                        }
+                    } else {
+                        m_SelectedCard->StartCooldown();
+                    }
 
                     // 皜?
                     m_PreviewPlant = nullptr;
@@ -1266,7 +1449,6 @@ void LevelManager::UpdateWaveProgressIndicator() {
     );
 
     const glm::vec2 barSize = m_WaveProgressBar->GetScaledSize();
-    const glm::vec2 headSize = m_WaveProgressHead->GetScaledSize();
     const float borderMargin = barSize.x * 0.04f;
     const float barCenterX = m_WaveProgressBar->m_Transform.translation.x;
     const float barLeft = barCenterX - barSize.x * 0.5f + borderMargin;
@@ -1303,6 +1485,12 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     for (auto& bean : m_BeanProjectiles) {
         if (bean.object) root.RemoveChild(bean.object);
     }
+    for (auto& nut : m_RollingNuts) {
+        if (nut.object) root.RemoveChild(nut.object);
+    }
+    for (auto& bomb : m_BombEffects) {
+        if (bomb.object) root.RemoveChild(bomb.object);
+    }
     for (auto& sun : m_SunEnergies) {
         if (sun.object) root.RemoveChild(sun.object);
     }
@@ -1328,6 +1516,8 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_LawnMowers.clear();
     m_PlacedPlants.clear();
     m_BeanProjectiles.clear();
+    m_RollingNuts.clear();
+    m_BombEffects.clear();
     m_SunEnergies.clear();  // Clear sun energy objects
     m_FollowingPlant = nullptr;
     m_PreviewPlant = nullptr;

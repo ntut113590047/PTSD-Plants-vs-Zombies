@@ -8,6 +8,7 @@
 #include "Util/GameObject.hpp"
 #include "Util/Renderer.hpp"
 #include "Util/Text.hpp"
+#include "Util/Animation.hpp"
 #include "Button.hpp"
 #include "PlantCard.hpp"
 #include "Plant.hpp"
@@ -42,6 +43,8 @@ public:
 
 private:
     bool IsGameLevel() const;
+    bool IsConveyorLevel() const;
+    void SpawnConveyorCard(Util::Renderer& root);
     std::shared_ptr<Zombie> SpawnZombie(const std::string& zombieType, int row, float y);
     void TriggerGameOver(Util::Renderer& root);
     void UpdateGameOverAnimation(Util::Renderer& root, float deltaTime);
@@ -77,6 +80,12 @@ private:
         std::shared_ptr<Util::GameObject> cooldownOverlay;
     };
     std::vector<CardVisuals> m_CardVisuals;
+    bool m_IsConveyorMode = false;
+    float m_ConveyorSpawnTimer = 0.0f;
+    float m_ConveyorSpawnInterval = 3.0f;
+    float m_ConveyorCardSpeed = 40.0f;
+    float m_ConveyorLeftX = -450.0f;
+    float m_ConveyorRightX = -50.0f;
 
     // 遊戲狀態
     int m_PlayerEnergy = LevelManagerConfig::INITIAL_PLAYER_ENERGY;
@@ -123,6 +132,21 @@ private:
         float slowDuration = 0.0f;
     };
     std::vector<BeanProjectile> m_BeanProjectiles;
+
+    struct RollingNut {
+        std::shared_ptr<Util::GameObject> object;
+        int row = 0;
+        glm::vec2 velocity = {200.0f, 0.0f};
+        bool isRed = false;
+        bool hasBounced = false;
+    };
+    std::vector<RollingNut> m_RollingNuts;
+
+    struct BombEffect {
+        std::shared_ptr<Util::GameObject> object;
+        std::shared_ptr<Util::Animation> anim;
+    };
+    std::vector<BombEffect> m_BombEffects;
     float m_SunSpawnTimer = 0.0f; // 計時器（秒）
     std::vector<std::shared_ptr<Zombie>> m_Zombies;
     float m_ZombieSpawnTimer = 0.0f;

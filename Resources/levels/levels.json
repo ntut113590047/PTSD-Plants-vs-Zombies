@@ -461,11 +461,8 @@
                                           4
                                       ],
                     "available_plants":  [
-                                             "bean",
-                                             "sunflower",
-                                             "cherry",
-                                             "walnut",
-                                             "potato"
+                                             "nutWall",
+                                             "redNutWall"
                                          ],
                     "starting_energy":  0,
                     "waves":  [

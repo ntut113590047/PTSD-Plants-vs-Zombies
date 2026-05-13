@@ -151,6 +151,32 @@ PlantRegistry::PlantRegistry() {
         {RESOURCE_DIR"/Image/Plants/nutCard.png"},
         0.5f
     };
+
+    // Rolling Walnut (Level 5 conveyor mode)
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/nutWall_Roll";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["nutWall"] = {
+            "nutWall", 0, 0.0f,
+            RESOURCE_DIR"/Image/Plants/nutCard.png",
+            paths,
+            0.7f
+        };
+    }
+
+    // Red Rolling Walnut (Level 5 conveyor mode)
+    {
+        std::string basePath = RESOURCE_DIR"/Image/Plants/redNutWall_Roll";
+        int frameCount = GetFrameCountForPath(basePath);
+        auto paths = GetFramePaths(basePath, frameCount);
+        m_PlantDataMap["redNutWall"] = {
+            "redNutWall", 0, 0.0f,
+            RESOURCE_DIR"/Image/Plants/redNutCard.png",
+            paths,
+            0.7f
+        };
+    }
 }
 
 PlantData PlantRegistry::GetPlantData(const std::string& plantName) const {
