@@ -628,8 +628,7 @@
                                              "sunflower",
                                              "cherry",
                                              "walnut",
-                                             "potato",
-                                             "snowpea"
+                                             "potato"
                                          ],
                     "starting_energy":  50,
                     "waves":  [
@@ -836,8 +835,7 @@
                                              "cherry",
                                              "walnut",
                                              "potato",
-                                             "snowpea",
-                                             "chomper"
+                                             "snowpea"
                                          ],
                     "starting_energy":  50,
                     "waves":  [
@@ -1283,12 +1281,10 @@
                     "available_plants":  [
                                              "bean",
                                              "sunflower",
-                                             "cherry",
                                              "walnut",
                                              "potato",
                                              "snowpea",
-                                             "chomper",
-                                             "repeater"
+                                             "chomper"
                                          ],
                     "starting_energy":  50,
                     "waves":  [
@@ -1552,9 +1548,7 @@
                     "available_plants":  [
                                              "bean",
                                              "sunflower",
-                                             "cherry",
                                              "walnut",
-                                             "potato",
                                              "snowpea",
                                              "chomper",
                                              "repeater"
@@ -2093,9 +2087,8 @@
                                        ],
                      "available_plants":  [
                                               "bean",
-                                              "sunflower",
-                                              "cherry",
                                               "walnut",
+                                              "cherry",
                                               "potato",
                                               "snowpea",
                                               "chomper",

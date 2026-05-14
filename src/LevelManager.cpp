@@ -150,6 +150,20 @@ void LevelManager::UpdateGameOverAnimation(Util::Renderer& root, float deltaTime
 }
 
 std::string LevelManager::GetRewardPlantNameForCurrentLevel() const {
+    // Hardcoded reward drops for level 5-8.
+    switch (m_CurrentLevel) {
+        case 5:
+            return "potato";
+        case 6:
+            return "snowpea";
+        case 7:
+            return "chomper";
+        case 8:
+            return "repeater";
+        default:
+            break;
+    }
+
     if (m_CurrentLevel < 1 || m_CurrentLevel > static_cast<int>(m_AllLevelConfigs.size())) {
         return "sunflower";
     }
@@ -345,11 +359,30 @@ void LevelManager::SpawnConveyorCard(Util::Renderer& root) {
     if (!m_IsConveyorMode || m_LevelPlants.empty()) {
         return;
     }
-    if (m_Cards.size() >= LevelManagerConfig::NUM_CARDS) {
-        return;
+
+    const PlantData* selectedData = nullptr;
+    if (m_CurrentLevel == 5) {
+        const PlantData* normalNut = nullptr;
+        const PlantData* redNut = nullptr;
+        for (const auto& plant : m_LevelPlants) {
+            if (plant.name == "nutWall") {
+                normalNut = &plant;
+            } else if (plant.name == "redNutWall") {
+                redNut = &plant;
+            }
+        }
+
+        // Level 5 weighted spawn: normal 70%, red 30%.
+        if (normalNut && redNut) {
+            selectedData = ((std::rand() % 100) < 30) ? redNut : normalNut;
+        }
     }
 
-    const auto& data = m_LevelPlants[std::rand() % m_LevelPlants.size()];
+    if (!selectedData) {
+        selectedData = &m_LevelPlants[std::rand() % m_LevelPlants.size()];
+    }
+
+    const auto& data = *selectedData;
     const float y = m_CardSlot ? m_CardSlot->m_Transform.translation.y : m_CardSlotTargetY;
 
     auto card = std::make_shared<PlantCard>(data, m_ConveyorRightX, y);
@@ -369,6 +402,8 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
             std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Background/startBackGround.png"),
             -10
         );
+        m_Background->m_Transform.scale = {1.1f, 1.1f};
+        m_Background->m_Transform.translation = {0.0f, 0.0f};
         root.AddChild(m_Background);
 
         auto startButton = std::make_shared<Button>(
@@ -401,6 +436,15 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         m_CurrentLevelConfig.level_number = m_CurrentLevel;
         m_CurrentLevelConfig.background = "phase3.png";
         m_CurrentLevelConfig.starting_energy = 50;
+    }
+
+    // Level 5 tuning: increase zombie counts.
+    if (m_CurrentLevel == 5) {
+        for (auto& wave : m_CurrentLevelConfig.waves) {
+            for (auto& spawn : wave.zombies) {
+                spawn.count = std::max(1, static_cast<int>(std::ceil(spawn.count * 1.4f)));
+            }
+        }
     }
 
     // Reset wave counters
@@ -445,12 +489,41 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
         std::make_shared<Util::Image>(cardSlotPath),
         10
     );
-    m_CardSlot->m_Transform.scale = {0.25f, 0.25f};
-    m_CardSlot->m_Transform.translation = {-300.0f, m_CardSlotTargetY};
+    m_CardSlot->m_Transform.scale = m_IsConveyorMode ? glm::vec2{1.0f, 0.80f} : glm::vec2{0.25f, 0.25f};
+    m_CardSlot->m_Transform.translation = {
+        m_IsConveyorMode ? (-300.0f + 200.0f) : -300.0f,
+        m_CardSlotTargetY
+    };
     root.AddChild(m_CardSlot);
     m_CardSlotActive = true;
-    m_ConveyorLeftX = m_CardSlot->m_Transform.translation.x - 150.0f;
-    m_ConveyorRightX = m_ConveyorLeftX + 80.0f * (LevelManagerConfig::NUM_CARDS - 1);
+    m_ShovelIcon = nullptr;
+    m_FollowingShovel = nullptr;
+    m_IsDraggingShovel = false;
+    const float conveyorLevel5OffsetX = (m_CurrentLevel == 5) ? -80.0f : 0.0f;
+    m_ConveyorLeftX = m_CardSlot->m_Transform.translation.x - 260.0f + conveyorLevel5OffsetX;
+    m_ConveyorRightX = m_CardSlot->m_Transform.translation.x + 430.0f + conveyorLevel5OffsetX;
+
+    if (m_CurrentLevel >= 5 && m_CurrentLevel <= 10) {
+        m_ShovelPlot = std::make_shared<Util::GameObject>(
+            std::make_shared<Util::Image>(RESOURCE_DIR "/Image/Other/shovelplot.png"),
+            m_CardSlot->GetZIndex()
+        );
+        const glm::vec2 slotSize = m_CardSlot->GetScaledSize();
+        m_ShovelPlot->m_Transform.translation = {
+            m_CardSlot->m_Transform.translation.x + slotSize.x * 0.5f + 55.0f,
+            m_CardSlot->m_Transform.translation.y
+        };
+        m_ShovelPlot->m_Transform.scale = {0.1f, 0.1f};
+        root.AddChild(m_ShovelPlot);
+
+        m_ShovelIcon = std::make_shared<Util::GameObject>(
+            std::make_shared<Util::Image>(RESOURCE_DIR "/Image/Other/shovel.png"),
+            m_CardSlot->GetZIndex() + 1.0f
+        );
+        m_ShovelIcon->m_Transform.translation = m_ShovelPlot->m_Transform.translation;
+        m_ShovelIcon->m_Transform.scale = {1.0f, 1.0f};
+        root.AddChild(m_ShovelIcon);
+    }
 
     // ===== ?????蝵?=====
     m_CardPositions.clear();
@@ -500,10 +573,6 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
             root.AddChild(cooldownDim);
 
             m_CardVisuals.push_back({energyDim, cooldownDim});
-        }
-    } else {
-        for (int i = 0; i < 3; ++i) {
-            SpawnConveyorCard(root);
         }
     }
 
@@ -581,10 +650,15 @@ void LevelManager::LoadLevel(Util::Renderer& root) {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     // ===== ????＊蝷箸?摮?=====
-    m_EnergyTextPtr = std::make_shared<Util::Text>("C:/PTSD-Plants-vs-Zombies/PTSD/assets/fonts/Inter.ttf", 24, std::to_string(m_PlayerEnergy), Util::Color(0, 0, 0));
-    m_EnergyText = std::make_shared<Util::GameObject>(m_EnergyTextPtr, 30);
-    m_EnergyText->m_Transform.translation = {-540.0f, 285.0f}; // 撌虫?閫?蝵殷??ㄐ靽格xy摨扳?
-    root.AddChild(m_EnergyText);
+    if (!IsConveyorLevel()) {
+        m_EnergyTextPtr = std::make_shared<Util::Text>("C:/PTSD-Plants-vs-Zombies/PTSD/assets/fonts/Inter.ttf", 24, std::to_string(m_PlayerEnergy), Util::Color(0, 0, 0));
+        m_EnergyText = std::make_shared<Util::GameObject>(m_EnergyTextPtr, 30);
+        m_EnergyText->m_Transform.translation = {-540.0f, 285.0f}; // 撌虫?閫?蝵殷??ㄐ靽格xy摨扳?
+        root.AddChild(m_EnergyText);
+    } else {
+        m_EnergyTextPtr = nullptr;
+        m_EnergyText = nullptr;
+    }
 
     // ===== ????∠?摮? =====
     int levelGroup = (m_CurrentLevel - 1) / 10 + 1;
@@ -809,8 +883,7 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 rightmostEdge = std::max(rightmostEdge, nextX + width * 0.5f);
             }
 
-            if (m_ConveyorSpawnTimer >= m_ConveyorSpawnInterval &&
-                m_Cards.size() < LevelManagerConfig::NUM_CARDS) {
+            if (m_ConveyorSpawnTimer >= m_ConveyorSpawnInterval) {
                 const float spawnWidth = (!m_Cards.empty()) ? m_Cards.front()->GetScaledSize().x : 70.0f;
                 const float spawnLeftEdge = m_ConveyorRightX - spawnWidth * 0.5f;
                 const bool canSpawn = m_Cards.empty() || (rightmostEdge + cardGap <= spawnLeftEdge);
@@ -992,8 +1065,20 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
             auto& nut = m_RollingNuts[i];
             nut.object->m_Transform.translation += nut.velocity * deltaTime;
 
+            if (nut.object->m_Transform.translation.y > 430.0f) {
+                nut.object->m_Transform.translation.y = 430.0f;
+                nut.velocity.y = -std::abs(nut.velocity.y);
+            } else if (nut.object->m_Transform.translation.y < -430.0f) {
+                nut.object->m_Transform.translation.y = -430.0f;
+                nut.velocity.y = std::abs(nut.velocity.y);
+            }
+
             bool removeNut = false;
             for (auto& zombie : m_Zombies) {
+                if (nut.hitZombies.find(zombie.get()) != nut.hitZombies.end()) {
+                    continue;
+                }
+
                 float dx = zombie->m_Transform.translation.x - nut.object->m_Transform.translation.x;
                 float dy = std::abs(zombie->m_Transform.translation.y - nut.object->m_Transform.translation.y);
                 bool sameRow = zombie->GetRow() == nut.row;
@@ -1010,10 +1095,10 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     for (int frame = 1; frame <= 8; ++frame) {
                         bombPaths.push_back(RESOURCE_DIR"/Image/Other/Bomb/frame_" + std::to_string(frame) + ".png");
                     }
-                    auto bombAnim = std::make_shared<Util::Animation>(bombPaths, false, 60, false, 0);
+                    auto bombAnim = std::make_shared<Util::Animation>(bombPaths, true, 60, false, 0);
                     auto bombObj = std::make_shared<Util::GameObject>(bombAnim, 20.0f);
                     bombObj->m_Transform.translation = nut.object->m_Transform.translation;
-                    bombObj->m_Transform.scale = {2.0f, 2.0f};
+                    bombObj->m_Transform.scale = {0.8f, 0.8f};
                     root.AddChild(bombObj);
                     m_BombEffects.push_back({bombObj, bombAnim});
 
@@ -1026,8 +1111,10 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     }
 
                     removeNut = true;
-                } else if (!nut.hasBounced) {
-                    zombie->TakeDamage(150.0f);
+                } else {
+                    zombie->TakeDamage(400.0f);
+                    nut.hitZombies.insert(zombie.get());
+
                     constexpr float kFortyFiveDeg = 0.78539816339f;
                     const float speed = std::max(1.0f, std::sqrt(nut.velocity.x * nut.velocity.x + nut.velocity.y * nut.velocity.y));
                     const float direction = (std::rand() % 2 == 0) ? 1.0f : -1.0f;
@@ -1035,11 +1122,13 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                     nut.hasBounced = true;
                 }
 
-                break;
+                if (nut.isRed || !removeNut) {
+                    break;
+                }
             }
 
             const auto& pos = nut.object->m_Transform.translation;
-            if (pos.x > 800.0f || pos.x < -700.0f || pos.y > 430.0f || pos.y < -430.0f) {
+            if (pos.x > 800.0f || pos.x < -700.0f) {
                 removeNut = true;
             }
 
@@ -1229,7 +1318,77 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
 
 
         // 瑼Ｘ?∠?暺?
-        if (Util::Input::IsKeyDown(Util::Keycode::MOUSE_LB) && !m_SelectedCard) {
+        if (m_ShovelPlot && m_ShovelIcon) {
+            m_ShovelIcon->m_Transform.translation = m_ShovelPlot->m_Transform.translation;
+            m_ShovelIcon->SetVisible(!m_IsDraggingShovel);
+        }
+
+        bool startedShovelDragThisFrame = false;
+        if (Util::Input::IsKeyDown(Util::Keycode::MOUSE_LB) && !m_SelectedCard && !m_IsDraggingShovel && m_ShovelPlot && m_ShovelIcon) {
+            const glm::vec2 iconSize = m_ShovelIcon->GetScaledSize();
+            const float iconLeft = m_ShovelIcon->m_Transform.translation.x - iconSize.x * 0.5f;
+            const float iconRight = m_ShovelIcon->m_Transform.translation.x + iconSize.x * 0.5f;
+            const float iconBottom = m_ShovelIcon->m_Transform.translation.y - iconSize.y * 0.5f;
+            const float iconTop = m_ShovelIcon->m_Transform.translation.y + iconSize.y * 0.5f;
+            if (mousePos.x >= iconLeft && mousePos.x <= iconRight && mousePos.y >= iconBottom && mousePos.y <= iconTop) {
+                m_IsDraggingShovel = true;
+                m_ShovelIcon->SetVisible(false);
+                m_FollowingShovel = std::make_shared<Util::GameObject>(
+                    std::make_shared<Util::Image>(RESOURCE_DIR "/Image/Other/shovel.png"),
+                    25.0f
+                );
+                m_FollowingShovel->m_Transform.scale = m_ShovelIcon->m_Transform.scale;
+                m_FollowingShovel->m_Transform.translation = {mousePos.x, mousePos.y};
+                root.AddChild(m_FollowingShovel);
+                startedShovelDragThisFrame = true;
+            }
+        }
+
+        if (m_IsDraggingShovel && m_FollowingShovel) {
+            m_FollowingShovel->m_Transform.translation = {mousePos.x, mousePos.y};
+            if (Util::Input::IsKeyUp(Util::Keycode::MOUSE_LB)) {
+                int shovelRow = -1;
+                int shovelCol = -1;
+                const float cellWidth = (m_GridRightX - m_GridLeftX) / (m_GridCols - 1);
+                for (int r = 0; r < 5; ++r) {
+                    if (!m_RowAllowed[r]) continue;
+                    const float rowY = m_GridTopY - (r - m_GridMinRow) * m_GridCellHeight;
+                    for (int c = 0; c < m_GridCols; ++c) {
+                        const float cellX = m_GridLeftX + c * cellWidth;
+                        const float halfSizeX = cellWidth * 0.5f;
+                        const float halfSizeY = m_GridCellHeight * 0.5f;
+                        if (mousePos.x >= cellX - halfSizeX && mousePos.x < cellX + halfSizeX &&
+                            mousePos.y <= rowY + halfSizeY && mousePos.y > rowY - halfSizeY) {
+                            shovelRow = r;
+                            shovelCol = c;
+                            break;
+                        }
+                    }
+                    if (shovelRow != -1) break;
+                }
+
+                if (shovelRow != -1 && shovelCol != -1 && m_GrassGrid[shovelRow][shovelCol]) {
+                    for (int i = static_cast<int>(m_PlacedPlants.size()) - 1; i >= 0; --i) {
+                        auto& plant = m_PlacedPlants[i];
+                        if (plant && plant->GetRow() == shovelRow && plant->GetCol() == shovelCol) {
+                            root.RemoveChild(plant);
+                            m_PlacedPlants.erase(m_PlacedPlants.begin() + i);
+                            m_GrassGrid[shovelRow][shovelCol] = false;
+                            break;
+                        }
+                    }
+                }
+
+                root.RemoveChild(m_FollowingShovel);
+                m_FollowingShovel = nullptr;
+                m_IsDraggingShovel = false;
+                if (m_ShovelIcon) {
+                    m_ShovelIcon->SetVisible(true);
+                }
+            }
+        }
+
+        if (!startedShovelDragThisFrame && !m_IsDraggingShovel && Util::Input::IsKeyDown(Util::Keycode::MOUSE_LB) && !m_SelectedCard) {
             for (auto& card : m_Cards) {
                 if ((m_IsConveyorMode || card->IsReady()) && m_PlayerEnergy >= card->GetData().cost) {
                     // 閮?撖阡?憭批?
@@ -1365,9 +1524,10 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                             20.0f
                         );
                         rollingNut->m_Transform.translation = m_PreviewPlant->m_Transform.translation;
-                        rollingNut->m_Transform.scale = {data.scale, data.scale};
+                        const float nutScale = data.scale;
+                        rollingNut->m_Transform.scale = {nutScale, nutScale};
                         root.AddChild(rollingNut);
-                        m_RollingNuts.push_back({rollingNut, row, {200.0f, 0.0f}, isRed, false});
+                        m_RollingNuts.push_back({rollingNut, row, {260.0f, 0.0f}, isRed, false, {}});
                     } else {
                         if (data.name == "bean" || data.name == "peashooter") {
                             placedPlant = std::make_shared<PeashooterPlant>(data);
@@ -1470,6 +1630,9 @@ void LevelManager::UpdateWaveProgressIndicator() {
 void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     if (m_Background) { root.RemoveChild(m_Background); m_Background = nullptr; }
     if (m_CardSlot) { root.RemoveChild(m_CardSlot); m_CardSlot = nullptr; }
+    if (m_ShovelPlot) { root.RemoveChild(m_ShovelPlot); m_ShovelPlot = nullptr; }
+    if (m_ShovelIcon) { root.RemoveChild(m_ShovelIcon); m_ShovelIcon = nullptr; }
+    if (m_FollowingShovel) { root.RemoveChild(m_FollowingShovel); m_FollowingShovel = nullptr; }
     if (m_Word) { root.RemoveChild(m_Word); m_Word = nullptr; }
     for (auto& btn : m_Buttons) root.RemoveChild(btn);
     for (auto& card : m_Cards) root.RemoveChild(card);
@@ -1522,6 +1685,10 @@ void LevelManager::ChangeLevel(int level, Util::Renderer& root) {
     m_FollowingPlant = nullptr;
     m_PreviewPlant = nullptr;
     m_SelectedCard = nullptr;
+    m_ShovelPlot = nullptr;
+    m_ShovelIcon = nullptr;
+    m_FollowingShovel = nullptr;
+    m_IsDraggingShovel = false;
     m_EnergyText = nullptr;
     m_EnergyTextPtr = nullptr;
     m_LevelText = nullptr;

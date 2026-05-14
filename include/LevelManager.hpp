@@ -68,6 +68,10 @@ private:
 
     // 🧩 卡片槽
     std::shared_ptr<Util::GameObject> m_CardSlot;
+    std::shared_ptr<Util::GameObject> m_ShovelPlot;
+    std::shared_ptr<Util::GameObject> m_ShovelIcon;
+    std::shared_ptr<Util::GameObject> m_FollowingShovel;
+    bool m_IsDraggingShovel = false;
     bool m_CardSlotActive = false;
     float m_CardSlotTargetY = LevelManagerConfig::CARDSLOT_TARGET_Y;
 
@@ -139,6 +143,7 @@ private:
         glm::vec2 velocity = {200.0f, 0.0f};
         bool isRed = false;
         bool hasBounced = false;
+        std::unordered_set<const Zombie*> hitZombies = {};
     };
     std::vector<RollingNut> m_RollingNuts;
 

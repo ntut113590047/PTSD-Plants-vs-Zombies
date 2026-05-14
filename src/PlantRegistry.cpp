@@ -161,7 +161,7 @@ PlantRegistry::PlantRegistry() {
             "nutWall", 0, 0.0f,
             RESOURCE_DIR"/Image/Plants/nutCard.png",
             paths,
-            0.7f
+            0.5f
         };
     }
 
@@ -174,7 +174,7 @@ PlantRegistry::PlantRegistry() {
             "redNutWall", 0, 0.0f,
             RESOURCE_DIR"/Image/Plants/redNutCard.png",
             paths,
-            0.7f
+            1.0f
         };
     }
 }

@@ -14,7 +14,7 @@ void App::Start() {
 }
 
 void App::Update(float deltaTime) {
-    constexpr float kGameTimeScale = 3.0f;
+    constexpr float kGameTimeScale = 1.0f;
     m_LevelManager->Update(m_Root, deltaTime * kGameTimeScale);
 
     if (Util::Input::IsKeyUp(Util::Keycode::ESCAPE) ||
