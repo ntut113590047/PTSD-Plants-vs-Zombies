@@ -103,7 +103,7 @@ PlantRegistry::PlantRegistry() {
             "repeater", 200, 1.0f,
             RESOURCE_DIR"/Image/Plants/doubleBeanCard.png",
             paths,
-            1.0f
+            0.35f
         };
     }
 
@@ -129,7 +129,7 @@ PlantRegistry::PlantRegistry() {
             "snowpea", 175, 7.5f,
             RESOURCE_DIR"/Image/Plants/coldBeanCard.png",
             paths,
-            1.0f
+            0.35f
         };
     }
     // Chomper - eating plant

@@ -1,6 +1,7 @@
 #include "Zombie.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <filesystem>
 
 #include "Util/Animation.hpp"
@@ -73,23 +74,20 @@ Zombie::Zombie(const std::shared_ptr<Core::Drawable>& drawable,
             m_AttackTimer(attackCooldown) {
             m_IdleDrawable = drawable;
             m_AttackDrawable = drawable;
+            m_SlowIdleDrawable = drawable;
+            m_SlowAttackDrawable = drawable;
     SetImageScale(defaultScale);
 }
 
 void Zombie::Update(float deltaTime) {
-    if (m_SlowTimer > 0.0f) {
-        m_SlowTimer -= deltaTime;
-        if (m_SlowTimer <= 0.0f) {
-            m_SlowTimer = 0.0f;
-            m_SlowMultiplier = 1.0f;
-        }
-    }
-
-    const float effectiveSpeed = m_Speed * m_SlowMultiplier;
+    const float effectiveSpeed = m_Speed * GetEffectiveSlowMultiplier();
     m_Transform.translation.x -= effectiveSpeed * deltaTime;
 }
 
 void Zombie::Tick(float deltaTime) {
+    UpdateSlowState(deltaTime);
+    UpdateAnimationSpeeds();
+
     if (m_HitFlashTimer > 0.0f) {
         m_HitFlashTimer -= deltaTime;
         if (m_HitFlashTimer <= 0.0f) {
@@ -154,8 +152,10 @@ void Zombie::ApplySlow(float slowMultiplier, float duration) {
     }
 
     const float clampedMultiplier = std::clamp(slowMultiplier, 0.05f, 1.0f);
-    m_SlowMultiplier = std::min(m_SlowMultiplier, clampedMultiplier);
-    m_SlowTimer = std::max(m_SlowTimer, duration);
+    m_SlowMultiplier = clampedMultiplier;
+    m_SlowTimer = duration;
+    UpdateAnimationSpeeds();
+    RefreshCurrentDrawable();
 }
 
 bool Zombie::IsDead() const {
@@ -166,12 +166,67 @@ bool Zombie::TryAttack(float deltaTime) {
     if (m_AttackDamage <= 0.0f) {
         return false;
     }
-    m_AttackTimer += deltaTime;
+    m_AttackTimer += deltaTime * GetEffectiveSlowMultiplier();
     if (m_AttackTimer >= m_AttackCooldown) {
         m_AttackTimer = 0.0f;
         return true;
     }
     return false;
+}
+
+void Zombie::UpdateSlowState(float deltaTime) {
+    if (m_SlowTimer <= 0.0f) {
+        return;
+    }
+
+    m_SlowTimer -= deltaTime;
+    if (m_SlowTimer <= 0.0f) {
+        m_SlowTimer = 0.0f;
+        m_SlowMultiplier = 1.0f;
+        UpdateAnimationSpeeds();
+        RefreshCurrentDrawable();
+    }
+}
+
+float Zombie::GetEffectiveSlowMultiplier() const {
+    if (m_SlowTimer > 0.0f && m_SlowMultiplier < 1.0f) {
+        return m_SlowMultiplier;
+    }
+    return 1.0f;
+}
+
+void Zombie::UpdateAnimationSpeeds() {
+    const float slowMultiplier = GetEffectiveSlowMultiplier();
+
+    UpdateAnimationSpeedForDrawable(m_IdleDrawable, slowMultiplier);
+    UpdateAnimationSpeedForDrawable(m_AttackDrawable, slowMultiplier);
+    UpdateAnimationSpeedForDrawable(m_HitBrightIdleDrawable, slowMultiplier);
+    UpdateAnimationSpeedForDrawable(m_HitBrightAttackDrawable, slowMultiplier);
+    UpdateAnimationSpeedForDrawable(m_SlowIdleDrawable, slowMultiplier);
+    UpdateAnimationSpeedForDrawable(m_SlowAttackDrawable, slowMultiplier);
+}
+
+void Zombie::UpdateAnimationSpeedForDrawable(const std::shared_ptr<Core::Drawable>& drawable, float slowMultiplier) {
+    if (!drawable) {
+        return;
+    }
+
+    auto anim = std::dynamic_pointer_cast<Util::Animation>(drawable);
+    if (!anim) {
+        return;
+    }
+
+    const Core::Drawable* key = drawable.get();
+    auto it = m_BaseAnimationIntervals.find(key);
+    if (it == m_BaseAnimationIntervals.end()) {
+        m_BaseAnimationIntervals[key] = anim->GetInterval();
+        it = m_BaseAnimationIntervals.find(key);
+    }
+
+    const int baseInterval = std::max(1, it->second);
+    const float safeMultiplier = std::max(0.05f, slowMultiplier);
+    const int slowedInterval = static_cast<int>(std::round(static_cast<float>(baseInterval) / safeMultiplier));
+    anim->SetInterval(std::max(1, slowedInterval));
 }
 
 void Zombie::ConfigureVisualDrawables(const std::shared_ptr<Core::Drawable>& idleDrawable,
@@ -192,6 +247,31 @@ void Zombie::ConfigureVisualDrawables(const std::shared_ptr<Core::Drawable>& idl
     } else {
         m_HitBrightAttackDrawable = m_HitBrightIdleDrawable;
     }
+
+    if (!m_SlowIdleDrawable) {
+        m_SlowIdleDrawable = m_IdleDrawable;
+    }
+    if (!m_SlowAttackDrawable) {
+        m_SlowAttackDrawable = m_AttackDrawable;
+    }
+
+    RefreshCurrentDrawable();
+}
+
+void Zombie::ConfigureSlowVisualDrawables(const std::shared_ptr<Core::Drawable>& slowIdleDrawable,
+                                          const std::shared_ptr<Core::Drawable>& slowAttackDrawable) {
+    if (slowIdleDrawable) {
+        m_SlowIdleDrawable = slowIdleDrawable;
+    } else {
+        m_SlowIdleDrawable = m_IdleDrawable;
+    }
+
+    if (slowAttackDrawable) {
+        m_SlowAttackDrawable = slowAttackDrawable;
+    } else {
+        m_SlowAttackDrawable = m_SlowIdleDrawable ? m_SlowIdleDrawable : m_AttackDrawable;
+    }
+
     RefreshCurrentDrawable();
 }
 
@@ -204,6 +284,19 @@ void Zombie::RefreshCurrentDrawable() {
 
         if (!m_IsAttacking && m_HitBrightIdleDrawable) {
             SetDrawableKeepingAnimationPhase(m_Drawable, m_HitBrightIdleDrawable, this);
+            return;
+        }
+    }
+
+    const bool isSlowed = (m_SlowTimer > 0.0f && m_SlowMultiplier < 1.0f);
+    if (isSlowed) {
+        if (m_IsAttacking && m_SlowAttackDrawable) {
+            SetDrawableKeepingAnimationPhase(m_Drawable, m_SlowAttackDrawable, this);
+            return;
+        }
+
+        if (!m_IsAttacking && m_SlowIdleDrawable) {
+            SetDrawableKeepingAnimationPhase(m_Drawable, m_SlowIdleDrawable, this);
             return;
         }
     }

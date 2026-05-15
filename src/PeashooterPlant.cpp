@@ -10,7 +10,7 @@ PeashooterPlant::PeashooterPlant(const PlantData& data)
             20.0f,
             300.0f,
             20.0f,
-            1.5f) {}
+            1.4f) {}
 
 void PeashooterPlant::Update(float deltaTime) {
     (void)deltaTime;

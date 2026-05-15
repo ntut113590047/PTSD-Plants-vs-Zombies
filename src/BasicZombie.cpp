@@ -35,5 +35,21 @@ BasicZombie::BasicZombie(const std::vector<std::string>& framePaths, int row, fl
         0
     );
 
+    auto idleBlueAnim = std::make_shared<Util::Animation>(
+        Zombie::BuildBrightFramePaths(framePaths, "/zombie/", "/zombie_blue/"),
+        true,
+        90,
+        true,
+        0
+    );
+    auto attackBlueAnim = std::make_shared<Util::Animation>(
+        Zombie::BuildBrightFramePaths(attackPaths, "/zombieAttack/", "/zombieAttack_blue/"),
+        true,
+        80,
+        true,
+        0
+    );
+
     ConfigureVisualDrawables(idleAnim, attackAnim, idleBrightAnim, attackBrightAnim);
+    ConfigureSlowVisualDrawables(idleBlueAnim, attackBlueAnim);
 }

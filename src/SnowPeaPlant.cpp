@@ -6,7 +6,7 @@
 
 namespace {
 constexpr float kSnowPeaSlowMultiplier = 0.5f; // Move speed becomes 50% while slowed.
-constexpr float kSnowPeaSlowDuration = 1.5f;
+constexpr float kSnowPeaSlowDuration = 7.0f;
 }
 
 SnowPeaPlant::SnowPeaPlant(const PlantData& data)
@@ -15,7 +15,7 @@ SnowPeaPlant::SnowPeaPlant(const PlantData& data)
             20.0f,
             300.0f,
             20.0f,
-            1.5f) {}
+            1.4f) {}
 
 void SnowPeaPlant::Update(float deltaTime) {
     (void)deltaTime;
@@ -38,7 +38,7 @@ std::optional<PlantProjectile> SnowPeaPlant::Attack(const std::vector<std::share
         m_Transform.translation.x + 30.0f,
         m_Transform.translation.y + 20.0f
     };
-    peaObj->m_Transform.scale = {0.5f, 0.5f};
+    peaObj->m_Transform.scale = {0.8f, 0.8f};
 
-    return PlantProjectile{peaObj, GetRow(), 500.0f, GetAttackDamage(), kSnowPeaSlowMultiplier, kSnowPeaSlowDuration};
+    return PlantProjectile{peaObj, GetRow(), 300.0f, GetAttackDamage(), kSnowPeaSlowMultiplier, kSnowPeaSlowDuration};
 }

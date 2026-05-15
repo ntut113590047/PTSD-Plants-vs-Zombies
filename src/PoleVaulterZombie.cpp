@@ -23,10 +23,18 @@ PoleVaulterZombie::PoleVaulterZombie(const std::vector<std::string>& framePaths,
         true,
         0
     );
+    auto idleBlueAnim = std::make_shared<Util::Animation>(
+        Zombie::BuildBrightFramePaths(framePaths, "/polevaulter/", "/polevaulter_blue/"),
+        true,
+        90,
+        true,
+        0
+    );
 
     // Configure drawables: idle as both idle and attack
     // When hit, show bright version
     ConfigureVisualDrawables(idleAnim, idleAnim, idleBrightAnim, idleBrightAnim);
+    ConfigureSlowVisualDrawables(idleBlueAnim, idleBlueAnim);
 }
 
 bool PoleVaulterZombie::HasVaulted() const {

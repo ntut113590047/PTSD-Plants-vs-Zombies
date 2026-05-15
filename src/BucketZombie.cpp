@@ -37,6 +37,12 @@ BucketZombie::BucketZombie(const std::vector<std::string>& framePaths, int row, 
     auto idleBrightAnim = std::make_shared<Util::Animation>(idleBrightPaths, true, 90, true, 0);
     auto attackBrightAnim = std::make_shared<Util::Animation>(attackBrightPaths, true, 90, true, 0);
 
+    auto idleBluePaths = Zombie::BuildBrightFramePaths(framePaths, "/bucketZombie/", "/bucketZombie_blue/");
+    auto attackBluePaths = Zombie::BuildBrightFramePaths(attackPaths, "/bucketZombieAttack/", "/bucketZombieAttack_blue/");
+    auto idleBlueAnim = std::make_shared<Util::Animation>(idleBluePaths, true, 90, true, 0);
+    auto attackBlueAnim = std::make_shared<Util::Animation>(attackBluePaths, true, 90, true, 0);
+
     // Configure drawables: idle and attack
     ConfigureVisualDrawables(idleAnim, attackAnim, idleBrightAnim, attackBrightAnim);
+    ConfigureSlowVisualDrawables(idleBlueAnim, attackBlueAnim);
 }

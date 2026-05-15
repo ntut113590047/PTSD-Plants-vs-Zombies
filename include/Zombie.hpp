@@ -2,6 +2,7 @@
 #define ZOMBIE_HPP
 
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 #include "Util/GameObject.hpp"
@@ -37,10 +38,16 @@ public:
     bool TryAttack(float deltaTime);
 
 protected:
+    void UpdateSlowState(float deltaTime);
+    float GetEffectiveSlowMultiplier() const;
+    void UpdateAnimationSpeeds();
+    void UpdateAnimationSpeedForDrawable(const std::shared_ptr<Core::Drawable>& drawable, float slowMultiplier);
     void ConfigureVisualDrawables(const std::shared_ptr<Core::Drawable>& idleDrawable,
                                   const std::shared_ptr<Core::Drawable>& attackDrawable,
                                   const std::shared_ptr<Core::Drawable>& hitBrightIdleDrawable = nullptr,
                                   const std::shared_ptr<Core::Drawable>& hitBrightAttackDrawable = nullptr);
+    void ConfigureSlowVisualDrawables(const std::shared_ptr<Core::Drawable>& slowIdleDrawable,
+                                      const std::shared_ptr<Core::Drawable>& slowAttackDrawable = nullptr);
     static std::vector<std::string> BuildBrightFramePaths(const std::vector<std::string>& normalPaths,
                                                           const std::string& normalMarker,
                                                           const std::string& brightMarker);
@@ -64,6 +71,9 @@ protected:
     std::shared_ptr<Core::Drawable> m_AttackDrawable = nullptr;
     std::shared_ptr<Core::Drawable> m_HitBrightIdleDrawable = nullptr;
     std::shared_ptr<Core::Drawable> m_HitBrightAttackDrawable = nullptr;
+    std::shared_ptr<Core::Drawable> m_SlowIdleDrawable = nullptr;
+    std::shared_ptr<Core::Drawable> m_SlowAttackDrawable = nullptr;
+    std::unordered_map<const Core::Drawable*, int> m_BaseAnimationIntervals;
 };
 
 #endif

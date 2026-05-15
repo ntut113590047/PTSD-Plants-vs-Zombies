@@ -11,7 +11,11 @@ public:
     std::optional<PlantProjectile> Attack(const std::vector<std::shared_ptr<Zombie>>& zombies, float deltaTime) override;
 
 private:
-    bool m_HasFiredSecondProjectile = false;
+    std::optional<PlantProjectile> CreateBeanProjectile() const;
+
+    bool m_IsSecondShotPending = false;
+    float m_SecondShotTimer = 0.0f;
+    static constexpr float SECOND_SHOT_DELAY = 0.2f;
 };
 
 #endif
