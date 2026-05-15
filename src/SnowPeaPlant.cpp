@@ -4,6 +4,11 @@
 #include "Util/Image.hpp"
 #include "Zombie.hpp"
 
+namespace {
+constexpr float kSnowPeaSlowMultiplier = 0.5f; // Move speed becomes 50% while slowed.
+constexpr float kSnowPeaSlowDuration = 1.5f;
+}
+
 SnowPeaPlant::SnowPeaPlant(const PlantData& data)
     : Plant(data,
             std::make_shared<Util::Animation>(data.plantAnimationPaths, true, 50, true, 0),
@@ -35,5 +40,5 @@ std::optional<PlantProjectile> SnowPeaPlant::Attack(const std::vector<std::share
     };
     peaObj->m_Transform.scale = {0.5f, 0.5f};
 
-    return PlantProjectile{peaObj, GetRow(), 500.0f, GetAttackDamage(), 0.5f, 1.5f};
+    return PlantProjectile{peaObj, GetRow(), 500.0f, GetAttackDamage(), kSnowPeaSlowMultiplier, kSnowPeaSlowDuration};
 }

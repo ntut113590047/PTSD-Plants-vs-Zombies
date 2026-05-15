@@ -1403,7 +1403,11 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                         mousePos.y >= bottom && mousePos.y <= top) {
                         m_SelectedCard = card;
                         const auto& paths = card->GetData().plantAnimationPaths;
-                        if (!paths.empty()) {
+                        if (card->GetData().name == "potato") {
+                            m_FollowingPlant = std::make_shared<Util::GameObject>(
+                                std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Plants/potato1.png"), 20
+                            );
+                        } else if (!paths.empty()) {
                             m_FollowingPlant = std::make_shared<Util::GameObject>(
                                 std::make_shared<Util::Image>(paths.front()), 20
                             );
@@ -1454,7 +1458,11 @@ void LevelManager::Update(Util::Renderer& root, float deltaTime) {
                 if (!m_PreviewPlant) {
                     // ?萄遣?汗璊嚗???嚗?
                     const auto& paths = m_SelectedCard->GetData().plantAnimationPaths;
-                    if (!paths.empty()) {
+                    if (m_SelectedCard->GetData().name == "potato") {
+                        m_PreviewPlant = std::make_shared<Util::GameObject>(
+                            std::make_shared<Util::Image>(RESOURCE_DIR"/Image/Plants/potato1.png"), 10
+                        );
+                    } else if (!paths.empty()) {
                         m_PreviewPlant = std::make_shared<Util::GameObject>(
                             std::make_shared<Util::Image>(paths.front()), 10
                         );
